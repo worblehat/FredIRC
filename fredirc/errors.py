@@ -1,0 +1,29 @@
+# Copyright (c) 2013 Tobias Marquardt
+#
+# Distributed under terms of the (2-clause) BSD  license.
+
+"""
+Exception classes for FredIrc.
+
+TODO Move these classes to the modules they belong to?
+"""
+
+
+class FredIrcError(Exception):
+    """ Base class for FredIrc specific Exceptions. Has a message with further description of the error. """
+
+    def __init__(self, message):
+        self.message = message
+
+    def __str__(self):
+        return repr(self.message)
+
+
+class CantHandleMessageError(FredIrcError):
+    """ Indicates that the specified message can not be handled by any of the normal message handlers. """
+    pass
+
+
+class ParserError(FredIrcError):
+    """ Indicates that a parser rejects it's input. """
+    pass
