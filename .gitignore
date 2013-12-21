@@ -1,3 +1,6 @@
+build/*
 doc/build/*
 .idea/*
 *.pyc
+FredIRC.egg-info
+dist/*
