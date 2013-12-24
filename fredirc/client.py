@@ -23,10 +23,9 @@ from fredirc.messages import ErrRepl
 class IRCClient(asyncio.Protocol):
     """ IRC client class managing the network connection and dispatching messages from the server.
 
-    This is the class you should inherit from to implement a client or bot.
-
     .. warning:: Currently only a single IRCClient instance is allowed! Don't run multiple clients.
-        This will result in undefined behaviour.
+        This will result in undefined behaviour. This will be fixed in future releases as soon as
+        possible.
 
     """
 
@@ -113,7 +112,9 @@ class IRCClient(asyncio.Protocol):
 
     def join(self, channel, *channels):
         """ Join the specified channel(s).
-        
+
+        Note that no matter what case the channel strings are in, in the handler functions of
+        :py:class:`.IRCHandler` channel names will probably always be lower case.
         Args:
             channel (str): one or more channels
         """
@@ -198,10 +199,10 @@ class IRCClient(asyncio.Protocol):
                     targets = parsing.parse_message_target(params[0])
                     msg = params[1]
                     for target in targets:
-                        if target.nick and target.nick.lower() == self._state.nick.lower(): #TODO case
+                        if target.nick and target.nick == self._state.nick:
                             self._handler.handle_private_message(msg, sender)
-                        elif target.channel and target.channel.lower() in self._state.channels: #TODO respect case
-                            self._handler.handle_channel_message(target.channel.lower(), msg, sender)
+                        elif target.channel and target.channel in self._state.channels:
+                            self._handler.handle_channel_message(target.channel, msg, sender)
             elif command == Cmd.JOIN:
                 nick = parsing.parse_user_prefix(prefix)[0]
                 channel = params[0]
@@ -288,7 +289,7 @@ class IRCClient(asyncio.Protocol):
             data = data.splitlines()
             self._buffer += data
             #TODO do we really need to create a copy here? there's probably a better way to allow pop during iteration.
-            #       Alternative: make buffer a byte string (and just append incomming data), then loop 'while self._buffer', look for terminator and remove the message
+            #       Alternative: make buffer a byte string (and just append incoming data), then loop 'while self._buffer', look for terminator and remove the message
             #       Alternative 2: make buffer a byte string, splitlines to list, iterate list, clear buffer. Con: while handling messages, in loop: buffer stays the same (empty or with all messages that were received)
             #       Con of buffer byte string: more difficult to debug
             tmp_buffer = list(self._buffer)
@@ -326,7 +327,9 @@ class IRCClientState(object):
     def __init__(self):
         self._state = IRCClientState._DISCONNECTED
         self.server = None
+        # Note: nicks in server messages always have the case in which they were registered
         self.nick = None
+        # Note: channel names seem to be always lower case in messages from the server
         self.channels = []
         self.mode = None
 

@@ -82,6 +82,10 @@ class IRCHandler(object):
     def handle_nick_in_use(self, nick):
         """ The chosen nick is already in use on this server.
 
+        If this event is received while connecting to a server (i.e. before :py:meth:`.handle_connect`
+        is called) another nick should be chosen before the connection times out.
+        (See :py:meth:`.IRCClient.nick`.)
+
         Args:
             nick (str): the nick name that is already in use
         """

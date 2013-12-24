@@ -9,7 +9,7 @@ TODO Move these classes to the modules they belong to?
 """
 
 
-class FredIrcError(Exception):
+class FredIRCError(Exception):
     """ Base class for FredIrc specific Exceptions. Has a message with further description of the error. """
 
     def __init__(self, message):
@@ -19,11 +19,11 @@ class FredIrcError(Exception):
         return repr(self.message)
 
 
-class CantHandleMessageError(FredIrcError):
+class CantHandleMessageError(FredIRCError):
     """ Indicates that the specified message can not be handled by any of the normal message handlers. """
     pass
 
 
-class ParserError(FredIrcError):
+class ParserError(FredIRCError):
     """ Indicates that a parser rejects it's input. """
     pass

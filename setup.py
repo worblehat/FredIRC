@@ -34,7 +34,7 @@ setup(
     install_requires=dependencies,
     license='BSD',
     keywords='irc client library bot',
-    url='http://github.com/worblehat/FredIRC',
+    url='http://fredirc.tobix.eu',
     long_description=read('README.rst'),
     classifiers=[
         'Development Status :: 4 - Beta',
