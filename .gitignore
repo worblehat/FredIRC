@@ -4,3 +4,6 @@ doc/build/*
 *.pyc
 FredIRC.egg-info
 dist/*
+TODO
+.project
+*.swp

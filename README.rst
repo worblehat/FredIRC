@@ -6,7 +6,7 @@ FredIRC is an event-driven client library for the
 It is especially suited as a framework for bots and aims to provide a high-level abstraction of
 `IRC's internals <http://tools.ietf.org/search/rfc2812>`_ and an easy-to-use API.
 
-FredIRC is distributed under terms of the `BSD 2-Clause license <http://opensource.org/licenses/BSD-2-Clause>`_.
+FredIRC is open source and distributed under terms of the `BSD 2-Clause license <http://opensource.org/licenses/BSD-2-Clause>`_.
 
 Links:
 ------
