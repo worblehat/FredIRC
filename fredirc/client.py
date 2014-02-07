@@ -6,21 +6,22 @@
 TODO
 """
 
-import asyncio
-import codecs
 import logging
 import re
 
 from fredirc import messages
 from fredirc import parsing
+from fredirc.connection import StandaloneConnection
+#from fredirc.connection import ThreadedConnection TODO
 from fredirc.errors import CantHandleMessageError
+from fredirc.errors import NotConnectedError
 from fredirc.errors import ParserError
 from fredirc.messages import Cmd
 from fredirc.messages import CmdRepl
 from fredirc.messages import ErrRepl
 
 
-class IRCClient(asyncio.Protocol):
+class IRCClient():
     """ IRC client class managing the network connection and dispatching messages from the server.
 
     .. warning:: Currently only a single IRCClient instance is allowed! Don't run multiple clients.
@@ -29,7 +30,7 @@ class IRCClient(asyncio.Protocol):
 
     """
 
-    def __init__(self, handler, nick, server, port=6667):
+    def __init__(self, handler, nick, server, port=6667, standalone=True):
         """ Create an IRCClient instance.
         
         To connect to the server and start the processing event loop call :py:meth:ˋ.IRCClient.runˋ
@@ -40,12 +41,14 @@ class IRCClient(asyncio.Protocol):
             server (str): server name or ip
             port (int): port number to connect to
         """
-        asyncio.Protocol.__init__(self)
+        if standalone:
+            self._connection = StandaloneConnection(self, server, port)
+        else:
+            raise NotImplementedError()  #self._connection = ThreadedConnection(self, server, port)
+        self._standalone = standalone
         self._handler = handler
         self._state = IRCClientState()
         self._handler.client = self #TODO how to set client in handler? constructor, setter, ...?
-        # Register customized decoding error handler
-        codecs.register_error('log_and_replace', self._decoding_error_handler)
         # Configure logger
         self._logger = logging.getLogger('FredIRC')
         log_file_handler = logging.FileHandler('irc.log')
@@ -56,9 +59,6 @@ class IRCClient(asyncio.Protocol):
         self._logger.info('Initializing IRC client')
         self._connected = False
         self._configured_nick = nick
-        self._configured_server = server
-        self._configured_port = port
-        self._buffer = []
 
     def run(self):
         """ Start the IRCClient's event loop.
@@ -67,12 +67,9 @@ class IRCClient(asyncio.Protocol):
         The client automatically connects to the server and registers itself with the specified nick.
         If this is successful, :py:meth:`.IRCHandler.handle_connect` is called.
         To disconnect from the server and terminate the event loop call :py:meth:`.IRCClient.quit`.
+        TODO document: will block, when standalone and return when not standalone
         """
-        loop = asyncio.get_event_loop()
-        if not loop.is_running():
-            task = asyncio.Task(loop.create_connection(self, self._configured_server, self._configured_port))
-            loop.run_until_complete(task)
-            loop.run_forever()
+        self._connection.start()
 
     def enable_logging(self, enable):
         """ Enable or disable logging.
@@ -106,9 +103,9 @@ class IRCClient(asyncio.Protocol):
             nick (str): nick name
         """
         #TODO make username and full name configurable
-        #self._send_message(messages.password()) #TODO not needed?
-        self._send_message(messages.nick(nick))
-        self._send_message(messages.user(nick, "FredIRC"))
+        #self._send_raw_message(messages.password()) #TODO not needed?
+        self._send_raw_message(messages.nick(nick))
+        self._send_raw_message(messages.user(nick, "FredIRC"))
 
     def join(self, channel, *channels):
         """ Join the specified channel(s).
@@ -118,7 +115,7 @@ class IRCClient(asyncio.Protocol):
         Args:
             channel (str): one or more channels
         """
-        self._send_message(messages.join((channel,) + channels))
+        self._send_raw_message(messages.join((channel,) + channels))
 
     def part(self, message, channel, *channels):
         """ Leave the specified channel(s).
@@ -126,16 +123,20 @@ class IRCClient(asyncio.Protocol):
         Args:
             channel (str): one or more channels
         """
-        self._send_message(messages.part((channel,) + channels, message))
+        self._send_raw_message(messages.part((channel,) + channels, message))
 
     def quit(self, message = None):
-        """ Disconnect from the IRC server and terminate the IRCClient's event loop. 
+        """ Disconnect from the IRC server.
+
+        If this IRCCient is running in standalone mode, the event loop is terminated and the run() method
+        will return.
+        After quitting, the IRCClient instance should not be used anymore (by calling run() again).
         
         Args:
             message (str): optional message, send to the server
         """
-        self._send_message(messages.quit(message))
-        self._shutdown()
+        self._send_raw_message(messages.quit(message))
+        self.shutdown()
 
     def send_message(self, channel, message):
         """ Send a message to a channel.
@@ -144,13 +145,25 @@ class IRCClient(asyncio.Protocol):
             channel (str): the channel the message is addressed to
             message (str): the message to send
         """
-        self._send_message(messages.privmsg(channel, message, self._state.nick))
+        self._send_raw_message(messages.privmsg(channel, message, self._state.nick))
 
     def pong(self):
         """ Send a pong message to the server. """
-        self._send_message(messages.pong(self._state.server))
+        self._send_raw_message(messages.pong(self._state.server))
 
     # --- Private methods ---
+
+    def _send_raw_message(self, message):
+        """ Used internally as convinient method to send messages. 
+
+        TODO maybe return boolean to indicate errors in methods that send messages?
+        Args:
+            message (str): raw irc message (without terminating \r\n)
+        """
+        try:
+            self._connection.send_message(message)
+        except NotConnectedError as e:
+            pass #TODO log error
 
     def _handle(self, message):
         """ Main message handling method.
@@ -230,78 +243,24 @@ class IRCClient(asyncio.Protocol):
             self._logger.error('Message Parsing failed. ' + e.message)
             self._logger.error('Message discarded!')
 
-    def _send_message(self, message):
-        """ Send a message to the server.
-        
-        Args:
-            message (str): A valid IRC message. Only carriage return and line feed are appended automatically.
-        """
-        self._logger.debug('Sending message: ' + message)
-        message = message + '\r\n'
-        self._transport.write(message.encode('utf-8'))
+    def shutdown(self):
+        """ Close the connection to the server and shutdown the IRCClient.
 
-    def _shutdown(self):
-        """ Shutdown the IRCClient by terminating the event loop. """
+        TODO document that quit() should be used.
+        TODO do we need to set the connection state here, or can we wait for the Connection's response to 
+                do this?
+        """
+        self._connection.terminate()
+
+    def _connection_established(self):
+        """ Should be called from the Connection object when the connection to the server was established. """
+        self._state.connected = True
+        self.register(self._configured_nick) #TODO move this to IRCHandler?
+
+    def _connection_shutdown(self):
+        """ Should be called from the Connection object when the connection to the server was closed. """
         self._logger.info('IRCCLient shutting down.')
         self._state.connected = False
-        asyncio.get_event_loop().close()
-        #TODO more to do? Close Connection gracefully? Beware: shutdown is called by quit()
-
-    def _decoding_error_handler(self, error):
-        """ Error handler that is used with the byte.decode() method.
-
-        Does the same as the built-in 'replace' error handler, but logs an error message before.
-
-        Args:
-            error (UnicodeDecodeError): The error that was raised during decode.
-        """
-        self._logger.error('Invalid character encoding: ' + error.reason)
-        self._logger.error('Replacing the malformed character.')
-        return codecs.replace_errors(error)
-
-    # --- Implemented methods from superclasses ---
-
-    def __call__(self):
-        """ Returns this IRCClient instance. Used as factory method for BaseEventLoop.create_connection(). """
-        return self
-
-    def connection_made(self, transport):
-        """ Implementation of inherited method (from :class:`asyncio.Protocol`). """
-        self._logger.info('Connected to server.')
-        self._transport = transport
-        self._state.connected = True
-        self.register(self._configured_nick) #TODO move this to IRCHandler
-
-    def connect_lost(self, exc):
-        """ Implementation of inherited method (from :class:`asyncio.Protocol`). """
-        self._logger.info('Connection closed.')
-        self._shutdown()
-
-    def eof_received(self):
-        """ Implementation of inherited method (from :class:`asyncio.Protocol`). """
-        self._logger.debug('Received EOF')
-        self._shutdown()
-
-    def data_received(self, data):
-        """ Implementation of inherited method (from :class:`asyncio.Protocol`). """
-        try:
-            data = data.decode('utf-8', 'log_and_replace')
-            data = data.splitlines()
-            self._buffer += data
-            #TODO do we really need to create a copy here? there's probably a better way to allow pop during iteration.
-            #       Alternative: make buffer a byte string (and just append incoming data), then loop 'while self._buffer', look for terminator and remove the message
-            #       Alternative 2: make buffer a byte string, splitlines to list, iterate list, clear buffer. Con: while handling messages, in loop: buffer stays the same (empty or with all messages that were received)
-            #       Con of buffer byte string: more difficult to debug
-            tmp_buffer = list(self._buffer)
-            for message in tmp_buffer:
-                self._logger.debug('Incoming message: ' + message)
-                self._handle(message)
-                self._buffer.pop(0)
-        # Shutdown client if unhandled exception occurs, as EventLoop does not provide a handle_error() method so far.
-        except Exception as e:
-            self._logger.exception('Unhandled Exception while running an IRCClient:')
-            self._logger.critical('Shutting down the client, due to an unhandled exception!')
-            self._shutdown()
 
 
 class IRCClientState(object):

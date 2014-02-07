@@ -21,9 +21,21 @@ class FredIRCError(Exception):
 
 class CantHandleMessageError(FredIRCError):
     """ Indicates that the specified message can not be handled by any of the normal message handlers. """
-    pass
+
+    def __init__(self, message):
+        super().__init__(message)
 
 
 class ParserError(FredIRCError):
     """ Indicates that a parser rejects it's input. """
-    pass
+
+    def __init__(self, message):
+        super().__init__(message)
+
+
+class NotConnectedError(FredIRCError):
+    """ TODO """ 
+
+    def __init__(self, message):
+        super().__init__(message)
+
