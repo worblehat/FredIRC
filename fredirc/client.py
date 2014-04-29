@@ -12,7 +12,7 @@ import re
 from fredirc import messages
 from fredirc import parsing
 from fredirc.connection import StandaloneConnection
-#from fredirc.connection import ThreadedConnection TODO
+from fredirc.connection import ThreadedConnection
 from fredirc.errors import CantHandleMessageError
 from fredirc.errors import NotConnectedError
 from fredirc.errors import ParserError
@@ -41,14 +41,6 @@ class IRCClient():
             server (str): server name or ip
             port (int): port number to connect to
         """
-        if standalone:
-            self._connection = StandaloneConnection(self, server, port)
-        else:
-            raise NotImplementedError()  #self._connection = ThreadedConnection(self, server, port)
-        self._standalone = standalone
-        self._handler = handler
-        self._state = IRCClientState()
-        self._handler.client = self #TODO how to set client in handler? constructor, setter, ...?
         # Configure logger
         self._logger = logging.getLogger('FredIRC')
         log_file_handler = logging.FileHandler('irc.log')
@@ -56,7 +48,16 @@ class IRCClient():
         self._logger.addHandler(log_file_handler)
         self._logger.setLevel(logging.INFO)
         self.enable_logging(True)
-        self._logger.info('Initializing IRC client')
+
+        if standalone:
+            self._connection = StandaloneConnection(self, server, port)
+        else:
+            self._connection = ThreadedConnection(self, server, port)
+        self._standalone = standalone
+        self._handler = handler
+        self._state = IRCClientState()
+        self._handler.client = self #TODO how to set client in handler? constructor, setter, ...?
+        self._logger.info('Initializing IRC client (standalone==' + str(standalone) + ')')
         self._connected = False
         self._configured_nick = nick
 
@@ -90,6 +91,19 @@ class IRCClient():
                             (DEBUG, INFO, WARNING, ERROR, CRITICAL)
         """
         self._logger.setLevel(level)
+
+    # --- Methods only needed in non-standalone mode ---
+
+    def process_events(self):
+        """ Process pending IRC events.
+
+        This method should be periodically called if IRCClient is running with an external event loop.
+        If IRCClient is running with it's own event loop (i.e. in standalone mode) calling process_events
+        will have no effect as IRCClient takes care of processing events by itself.
+        """
+        if not self._standalone:
+            while self._connection.has_in_event():
+                self._connection.process_next_in_event()
 
     # --- IRC related methods ---
 
@@ -136,7 +150,7 @@ class IRCClient():
             message (str): optional message, send to the server
         """
         self._send_raw_message(messages.quit(message))
-        self.shutdown()
+        self._shutdown()
 
     def send_message(self, channel, message):
         """ Send a message to a channel.
@@ -162,7 +176,7 @@ class IRCClient():
         """
         try:
             self._connection.send_message(message)
-        except NotConnectedError as e:
+        except NotConnectedError:
             pass #TODO log error
 
     def _handle(self, message):
@@ -243,11 +257,11 @@ class IRCClient():
             self._logger.error('Message Parsing failed. ' + e.message)
             self._logger.error('Message discarded!')
 
-    def shutdown(self):
-        """ Close the connection to the server and shutdown the IRCClient.
+    def _shutdown(self):
+        """ Initiate a shutdown by terminating the network connection.
 
         TODO document that quit() should be used.
-        TODO do we need to set the connection state here, or can we wait for the Connection's response to 
+        TODO do we need to set the connection state here, or can we wait for the Connection's response to
                 do this?
         """
         self._connection.terminate()

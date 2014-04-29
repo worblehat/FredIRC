@@ -86,7 +86,6 @@ def parse_message_target(msg_target):
     :return: MessageTargets, where each MessageTarget represents one 'msgto' from the grammar rule
     :rtype: tuple of MessageTarget
     """
-    #TODO NEXT DEBUG AND TEST AND REMOVE DEBUG CODE
     targets = list()
     targets_split = msg_target.split(',')
     for msgto in targets_split:

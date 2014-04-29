@@ -9,12 +9,14 @@ TODO
 from abc import ABCMeta
 from abc import abstractmethod
 import asyncio
+from asyncio import DefaultEventLoopPolicy
 import codecs
 import logging
 from queue import Queue
 from threading import Thread
 
 from fredirc.errors import NotConnectedError
+from fredirc.task import Task
 
 
 class ConnectionEvent(object):
@@ -47,17 +49,22 @@ class Connection(asyncio.Protocol, metaclass=ABCMeta):
     @abstractmethod
     def connection_shutdown(self):
         """ TODO """
-        pass
+        raise NotImplementedError()
 
     @abstractmethod
     def connection_initiation(self):
         """ TODO """
-        pass
+        raise NotImplementedError()
 
     @abstractmethod
-    def message_dispatching(self):
+    def message_dispatching(self, message):
         """ TODO """
-        pass
+        raise NotImplementedError()
+
+    @abstractmethod
+    def message_delivering(self, message):
+        """ TODO """
+        raise NotImplementedError()
 
     @abstractmethod
     def start(self):
@@ -69,22 +76,9 @@ class Connection(asyncio.Protocol, metaclass=ABCMeta):
             run() should be called from the implementation of start(). So this interface is compatible
             to Python's Thread module.
         """
-        pass
+        raise NotImplementedError()
 
-    def run(self):
-        """ Runs the infinite event loop of the Connection.
-
-            Blocks, until the event loop is terminated by calling terminate().
-            This method intentionally fullfills the Thread interface, so a subclass of Connection that
-            also inherits from Thread can be run in a separate thread without any modification to the event
-            loop related code.
-        """
-        loop = asyncio.get_event_loop()
-        if not loop.is_running():
-            task = asyncio.Task(loop.create_connection(self, self._server, self._port))
-            loop.run_until_complete(task)
-            loop.run_forever()
-
+    @abstractmethod
     def terminate(self):
         """ Gracefully terminate the Connection and the IO event loop.
 
@@ -95,11 +89,29 @@ class Connection(asyncio.Protocol, metaclass=ABCMeta):
         If the connection was not yet started or already terminated this method will have no effect and
         silently return.
         """
-        loop = asyncio.get_event_loop()
-        if loop.is_running():
-            loop.stop() #TODO really thread-safe?
-            # TODO where to call close() on the loop?
-            self.connection_shutdown()
+        raise NotImplementedError()
+
+    def run(self):
+        """ Runs the infinite event loop of the Connection.
+
+            Blocks, until the event loop is terminated by calling terminate().
+            This method intentionally fullfills the Thread interface, so a subclass of Connection that
+            also inherits from Thread can be run in a separate thread without any modification to the event
+            loop related code.
+        """
+        try:
+            loop = asyncio.get_event_loop()
+        except AssertionError:
+            # No event loop in the current context (probably because we are not in the main thread).
+            # Create an event loop from the default policy
+            policy = DefaultEventLoopPolicy()
+            policy.set_event_loop(policy.new_event_loop())
+            asyncio.set_event_loop_policy(policy)
+            loop = asyncio.get_event_loop()
+        if not loop.is_running():
+            task = asyncio.Task(loop.create_connection(self, self._server, self._port))
+            loop.run_until_complete(task)
+            loop.run_forever()
 
     def send_message(self, message):
         """ Send a message to the server.
@@ -107,12 +119,10 @@ class Connection(asyncio.Protocol, metaclass=ABCMeta):
         Args:
             message (str): A valid IRC message. Only carriage return and line feed are appended automatically.
         """
-        if asyncio.get_event_loop().is_running():
-            self._logger.debug('Sending message: ' + message)
-            message = message + '\r\n'
-            self._transport.write(message.encode('utf-8'))
-        else:
-            raise NotConnectedError("TODO")
+        self._logger.debug('Sending message: ' + message)
+        message = message + '\r\n'
+        self.message_delivering(message.encode('utf-8'))
+        #TODO!!!    raise NotConnectedError("TODO")
 
     def data_received(self, data):
         """ Implementation of inherited method (from :class:`asyncio.Protocol`). """
@@ -179,7 +189,87 @@ class StandaloneConnection(Connection):
     def message_dispatching(self, message):
         self._client._handle(message)
 
+    def message_delivering(self, message):
+        self._transport.write(message)
+
     def start(self):
         """ TODO doc: imitates behaviour of Thread """
         self.run()
 
+    def terminate(self):
+        loop = asyncio.get_event_loop()
+        if loop.is_running():
+            loop.stop() #TODO really thread-safe?
+            # TODO where to call close() on the loop?
+            self.connection_shutdown()
+
+
+class ThreadedConnection(Thread, Connection):
+
+    def __init__(self, client, server, port):
+        Thread.__init__(self)
+        Connection.__init__(self, client, server, port)
+        # Queues for synchronized communication with IRCClient
+        self._in_queue = Queue()    # Connection -> IRCCLient
+        self._out_queue = Queue()   # IRCCLient -> Connection
+        self._out_task = None
+
+    def has_in_event(self):
+        return self._in_queue.qsize() > 0
+
+    def has_out_event(self):
+        return self._out_queue.qsize() > 0
+
+    def process_next_in_event(self):
+        """
+        TODO document: pass silently when no event
+        """
+        event, data = self._in_queue.get()
+        if event == ConnectionEvent.CONNECTED:
+            # TODO assert: not connected yet
+            self._logger.info('Connected to server.')
+            self._client._connection_established()
+        elif event == ConnectionEvent.SHUTDOWN:
+            self._client._connection_shutdown()
+        elif event == ConnectionEvent.DATA_AVAILABLE:
+            self._client._handle(data)
+
+    # --- Implemented methods superclasses ---
+
+    #TODO why do we need to explicitly override this?!
+    def run(self):
+        Connection.run(self)
+
+    def start(self):
+        Thread.start(self)
+
+    def message_dispatching(self, message):
+        self._in_queue.put((ConnectionEvent.DATA_AVAILABLE, message))
+
+    def message_delivering(self, message):
+        self._out_queue.put((ConnectionEvent.DATA_AVAILABLE, message))
+
+    def connection_initiation(self):
+        self._in_queue.put((ConnectionEvent.CONNECTED, None))
+        if not self._out_task:
+
+            def process_out_events():
+                while self.has_out_event():
+                    event, data = self._out_queue.get()
+                    if event == ConnectionEvent.DATA_AVAILABLE:
+                        self._transport.write(data)
+                    elif event == ConnectionEvent.SHUTDOWN:
+                        loop = asyncio.get_event_loop()
+                        if loop.is_running():
+                            loop.stop() #TODO really thread-safe?
+                            # TODO where to call close() on the loop?
+                            self.connection_shutdown()
+
+            self._out_task = Task(0.1, True, process_out_events)
+            self._out_task.start()
+
+    def connection_shutdown(self):
+        self._in_queue.put((ConnectionEvent.SHUTDOWN, None))
+
+    def terminate(self):
+        self._out_queue.put((ConnectionEvent.SHUTDOWN, None))
