@@ -2,14 +2,17 @@
 #
 # Distributed under terms of the (2-clause) BSD  license.
 
-""" This module provides a task class that can be used to schedule a function that will be executed by the event loop.
+""" This module provides a task class that can be used to schedule a function
+    that will be executed by the event loop.
 
-.. note:: A task will be scheduled only if there is a running(!) :py:class:`.IRCClient` instance in the same process.
+.. note:: A task will be scheduled only if there is a running(!)
+          :py:class:`.IRCClient` instance in the same process.
 
 There are two ways to use a Task:
 
 1. Subclass Task and overwrite its run() method.
-2. Instantiate the task directly and provide a function as parameter to the constructor.
+2. Instantiate the task directly and provide a function as parameter to the
+   constructor.
 
 """
 
@@ -20,12 +23,15 @@ import types
 class Task(object):
     """A Task represents a function that is executed at a specific time.
 
-    After initialization the Task must be started explicitly via :py:meth:`.start()`.
+    After initialization the Task must be started explicitly via
+    :py:meth:`.start()`.
 
     Args:
-        delay (float): Time (in s) to defer the execution of the task after it is started or
-                      the interval for it's repeated execution if ''repeat=True''.
-        repeat (bool): If ''True'', the task will run periodically until it is stopped.
+        delay (float): Time (in s) to defer the execution of the task after it
+                       is started or the interval for it's repeated execution
+                       if ''repeat=True''.
+        repeat (bool): If ''True'', the task will run periodically until it is
+                       stopped.
         func (function type): function that will be called (the actual task)
     """
 
@@ -43,7 +49,8 @@ class Task(object):
     def run(self):
         """ Method that is called on execution of the Task.
 
-        Can be overwritten in subclasses or by passing a function argument to the constructor.
+        Can be overwritten in subclasses or by passing a function argument to
+        the constructor.
         """
         pass
 
@@ -65,7 +72,8 @@ class Task(object):
     def stop(self):
         """ Stop the task.
 
-        Will have no effect if task is not running. The task might be started again later.
+        Will have no effect if task is not running. The task might be started
+        again later.
         """
         if self._handler:
             self._handler.cancel()

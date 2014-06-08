@@ -10,7 +10,9 @@ TODO Move these classes to the modules they belong to?
 
 
 class FredIRCError(Exception):
-    """ Base class for FredIrc specific Exceptions. Has a message with further description of the error. """
+    """ Base class for FredIrc specific Exceptions. Has a message with further
+        description of the error.
+    """
 
     def __init__(self, message):
         self.message = message
@@ -20,7 +22,9 @@ class FredIRCError(Exception):
 
 
 class CantHandleMessageError(FredIRCError):
-    """ Indicates that the specified message can not be handled by any of the normal message handlers. """
+    """ Indicates that the specified message can not be handled by any of the
+        normal message handlers.
+    """
     pass
 
 
