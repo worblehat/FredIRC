@@ -6,6 +6,7 @@
 Exception classes for FredIrc.
 
 TODO Move these classes to the modules they belong to?
+TODO Consistent naming scheme for errors.
 """
 
 
@@ -13,13 +14,7 @@ class FredIRCError(Exception):
     """ Base class for FredIrc specific Exceptions. Has a message with further
         description of the error.
     """
-
-    def __init__(self, message):
-        self.message = message
-
-    def __str__(self):
-        return repr(self.message)
-
+    pass
 
 class CantHandleMessageError(FredIRCError):
     """ Indicates that the specified message can not be handled by any of the
@@ -31,3 +26,6 @@ class CantHandleMessageError(FredIRCError):
 class ParserError(FredIRCError):
     """ Indicates that a parser rejects it's input. """
     pass
+
+class ConnectionTimeoutError(FredIRCError):
+    """ The connection to a server timed out. """

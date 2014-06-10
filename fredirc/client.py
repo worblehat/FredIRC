@@ -14,6 +14,7 @@ import re
 from fredirc import messages
 from fredirc import parsing
 from fredirc.errors import CantHandleMessageError
+from fredirc.errors import ConnectionTimeoutError
 from fredirc.errors import ParserError
 from fredirc.messages import Cmd
 from fredirc.messages import CmdRepl
@@ -44,8 +45,6 @@ class IRCClient(asyncio.Protocol):
         asyncio.Protocol.__init__(self)
         self._handler = handler
         self._state = IRCClientState()
-        #TODO how to set client in handler? constructor, setter, ...?
-        self._handler.client = self
         # Register customized decoding error handler
         codecs.register_error('log_and_replace', self._decoding_error_handler)
         # Configure logger
@@ -62,14 +61,14 @@ class IRCClient(asyncio.Protocol):
         self._configured_server = server
         self._configured_port = port
         self._buffer = []
+        self._handler.handle_client_init(self)
 
     def run(self):
         """ Start the IRCClient's event loop.
 
         An endless event loop which will call the handle_* messages from
-        IRCHandler is started. The client automatically connects to the server
-        and registers itself with the specified nick.
-        If this is successful, :py:meth:`.IRCHandler.handle_connect` is called.
+        IRCHandler is started. The client connects to the server and
+        calls :py:meth:`.IRCHandler.handle_connect` if this is successful.
         To disconnect from the server and terminate the event loop call
         :py:meth:`.IRCClient.quit`.
         """
@@ -77,7 +76,15 @@ class IRCClient(asyncio.Protocol):
         if not loop.is_running():
             task = asyncio.Task(loop.create_connection(
                 self, self._configured_server, self._configured_port))
-            loop.run_until_complete(task)
+            try:
+                loop.run_until_complete(task)
+            except TimeoutError:
+                message = "Cannot connect to server " + \
+                          self._configured_server + " on port " + \
+                          str(self._configured_port) + \
+                          ". Connection timed out."
+                self._logger.error(message)
+                raise ConnectionTimeoutError(message)
             loop.run_forever()
 
     def enable_logging(self, enable):
@@ -103,19 +110,14 @@ class IRCClient(asyncio.Protocol):
 
     # --- IRC related methods ---
 
-    def register(self, nick):
-        """ Register to the IRC server using the specified nick.
-
-        .. note:: Registration is performed automatically by the client when
-                  :py:meth:`.IRCCLient.run` is called.
-
-        Args:
-            nick (str): nick name
+    def register(self):
+        """ Register to the IRC server using the nick specified on
+            initialization.
         """
         #TODO make username and full name configurable
         #self._send_message(messages.password()) #TODO not needed?
-        self._send_message(messages.nick(nick))
-        self._send_message(messages.user(nick, "FredIRC"))
+        self._send_message(messages.nick(self._configured_nick))
+        self._send_message(messages.user(self._configured_nick, "FredIRC"))
 
     def join(self, channel, *channels):
         """ Join the specified channel(s).
@@ -182,14 +184,14 @@ class IRCClient(asyncio.Protocol):
                     self._logger.debug('Handling numeric response: ' + command)
                     self._handler.handle_numeric_response(
                             numeric_reply, message)
-                    # Call handle_connect when we receive welcome message from
+                    # Call handle_register when we receive welcome message from
                     # server (as response to registration with NICK, USER and
                     # PASS)
                     if numeric_reply == CmdRepl.RPL_WELCOME:
                         self._state.registered = True
                         self._state.server = prefix
                         self._state.nick = params[0]
-                        self._handler.handle_connect()
+                        self._handler.handle_register()
                 elif 400 <= numeric_reply <= 599:
                     self._logger.debug(
                             'Handling numeric error response: ' + command)
@@ -244,8 +246,8 @@ class IRCClient(asyncio.Protocol):
             else:
                 raise CantHandleMessageError(message)
         except CantHandleMessageError as e:
-            self._logger.debug('Unhandled message: ' + e.message)
-            self._handler.handle_unhandled_message(e.message)
+            self._logger.debug('Unhandled message: ' + str(e))
+            self._handler.handle_unhandled_message(str(e))
         except ParserError as e:
             self._logger.error('Message Parsing failed. ' + e.message)
             self._logger.error('Message discarded!')
@@ -297,7 +299,7 @@ class IRCClient(asyncio.Protocol):
         self._logger.info('Connected to server.')
         self._transport = transport
         self._state.connected = True
-        self.register(self._configured_nick) #TODO move this to IRCHandler
+        self._handler.handle_connect()
 
     def connect_lost(self, exc):
         """ Implementation of inherited method
@@ -342,7 +344,7 @@ class IRCClient(asyncio.Protocol):
         # provide a handle_error() method so far.
         except Exception as e:
             self._logger.exception('Unhandled Exception while running an ' +
-                                   'IRCClient: ' + e.message)
+                                   'IRCClient: ' + str(e))
             self._logger.critical('Shutting down the client, due to an ' +
                                   'unhandled exception!')
             self._shutdown()

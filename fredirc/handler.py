@@ -15,14 +15,18 @@ class IRCHandler(object):
     defines an interface and all method bodies are empty.
     You probably want to subclass :py:class:`.BaseIRCHandler` instead of
     inheriting directly from this class.
-    TODO write class BaseIRCHandler (if not document auto-response to ping and
-         client member)
     """
 
+    def handle_client_init(self, client):
+        """ TODO """
+        pass
+
     def handle_connect(self):
-        """ The client established a connection to the server and registration
-            succeeded.
-        """
+        """ The client established a connection to the server. """
+        pass
+
+    def handle_register(self):
+        """ TODO """
         pass
 
     def handle_ping(self, server):
@@ -31,7 +35,7 @@ class IRCHandler(object):
         Args:
             server (str): name or ip of the server.
         """
-        self.client.pong()
+        pass
 
     def handle_numeric_response(self, response, message):
         """ A numeric response was received from the server.
@@ -152,3 +156,25 @@ class IRCHandler(object):
         pass
 
 
+class BaseIRCHandler(IRCHandler):
+    """ Minimal :py:class:`.IRCHandler` implementation.
+
+    Implements the most basic hander functionality that probably every bot will
+    need. It is recommended to subclass :py:class:`.BaseIRCHandler` instead
+    of :py:class:`.IRCHandler`.
+
+    What it does for you:
+    * store the :py:class:`.IRCClient` instance as attribute self.client on
+      :py:meth:`handle_client_init`
+    * register to the server on :py:meth:`.handle_connect`
+    * respond with pong on :py:meth:`.handle_ping`
+    """
+
+    def handle_client_init(self, client):
+        self.client = client
+
+    def handle_connect(self):
+        self.client.register()
+
+    def handle_ping(self, server):
+        self.client.pong()
