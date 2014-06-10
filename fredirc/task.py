@@ -1,6 +1,6 @@
-# Copyright (c) 2013 Tobias Marquardt
+# Copyright (c) 2014 Tobias Marquardt
 #
-# Distributed under terms of the (2-clause) BSD  license.
+# Distributed under terms of the (2-clause) BSD license.
 
 """ This module provides a task class that can be used to schedule a function
     that will be executed by the event loop.

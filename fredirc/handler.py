@@ -1,9 +1,10 @@
-# Copyright (c) 2013 Tobias Marquardt
+# Copyright (c) 2014 Tobias Marquardt
 #
-# Distributed under terms of the (2-clause) BSD  license.
+# Distributed under terms of the (2-clause) BSD license.
 
 """
-TODO
+Abstract IRC-Handler classes that handle IRC related events from a client.
+You probably want to subclass :py:class:`.BaseIRCHandler` to implement a bot.
 """
 
 
@@ -18,7 +19,7 @@ class IRCHandler(object):
     """
 
     def handle_client_init(self, client):
-        """ TODO """
+        """ This handler was attached to a client. """
         pass
 
     def handle_connect(self):
@@ -26,7 +27,7 @@ class IRCHandler(object):
         pass
 
     def handle_register(self):
-        """ TODO """
+        """ The client successfully registered to the server. """
         pass
 
     def handle_ping(self, server):

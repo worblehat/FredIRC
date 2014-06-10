@@ -1,10 +1,10 @@
-# Copyright (c) 2013 Tobias Marquardt
+# Copyright (c) 2014 Tobias Marquardt
 #
-# Distributed under terms of the (2-clause) BSD  license.
+# Distributed under terms of the (2-clause) BSD license.
 
 """
-Low level functions for creation of irc client messages, as well as classes with constants for string commands,
-numeric commands and error responses.
+Low level functions for creation of irc client messages, as well as classes
+with constants for string commands, numeric commands and error responses.
 Specification: RFC 2812 'IRC: Client Protocol'.
 """
 
@@ -49,7 +49,7 @@ def password(password=None):
 
 
 def user(user, real_name, invisible=False, receive_wallops=False):
-    # TODO set mode correctly 
+    # TODO set mode correctly
     mode = 0
     return Cmd.USER + ' ' + user + ' ' + str(mode) + ' * :' + real_name
 

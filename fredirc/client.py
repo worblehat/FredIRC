@@ -1,9 +1,9 @@
-# Copyright (c) 2013 Tobias Marquardt
+# Copyright (c) 2014 Tobias Marquardt
 #
-# Distributed under terms of the (2-clause) BSD  license.
+# Distributed under terms of the (2-clause) BSD license.
 
 """
-TODO
+Classes related to the basic IRC-client implementation of FredIRC.
 """
 
 import asyncio
@@ -13,7 +13,7 @@ import re
 
 from fredirc import messages
 from fredirc import parsing
-from fredirc.errors import CantHandleMessageError
+from fredirc.errors import MessageHandlingError
 from fredirc.errors import ConnectionTimeoutError
 from fredirc.errors import ParserError
 from fredirc.messages import Cmd
@@ -56,7 +56,6 @@ class IRCClient(asyncio.Protocol):
         self._logger.setLevel(logging.INFO)
         self.enable_logging(True)
         self._logger.info('Initializing IRC client')
-        self._connected = False
         self._configured_nick = nick
         self._configured_server = server
         self._configured_port = port
@@ -180,6 +179,7 @@ class IRCClient(asyncio.Protocol):
             three_digits = re.compile('[0-9][0-9][0-9]')
             if three_digits.match(command):
                 numeric_reply = int(command)
+                #--- Numeric Response ---#
                 if 0 <= numeric_reply <= 399:
                     self._logger.debug('Handling numeric response: ' + command)
                     self._handler.handle_numeric_response(
@@ -192,6 +192,7 @@ class IRCClient(asyncio.Protocol):
                         self._state.server = prefix
                         self._state.nick = params[0]
                         self._handler.handle_register()
+                #--- Numeric Error ---#
                 elif 400 <= numeric_reply <= 599:
                     self._logger.debug(
                             'Handling numeric error response: ' + command)
@@ -201,17 +202,19 @@ class IRCClient(asyncio.Protocol):
                 else:
                     self._logger.error('Received numeric response out of ' +
                                        'range: ' + command)
-                    raise CantHandleMessageError(message)
+                    raise MessageHandlingError(message)
+            #--- PING ---#
             elif command == Cmd.PING:
                 if len(params) > 1:
                     self._logger.error('Unexpected count of parameters in '+
                                        command + ' command: ' + message)
                 self._logger.debug('Handling ' + command + ' command.')
                 self._handler.handle_ping(params[0])
+            #--- PRIVMSG ---#
             elif command == Cmd.PRIVMSG:
                 self._logger.debug('Handling ' + command + ' command.')
                 if not len(params) == 2:
-                    raise CantHandleMessageError(message)
+                    raise MessageHandlingError(message)
                 sender = None
                 if prefix:
                     sender = parsing.parse_user_prefix(prefix)[0]
@@ -225,6 +228,7 @@ class IRCClient(asyncio.Protocol):
                              target.channel in self._state.channels:
                             self._handler.handle_channel_message(
                                     target.channel, msg, sender)
+            #--- JOIN ---#
             elif command == Cmd.JOIN:
                 nick = parsing.parse_user_prefix(prefix)[0]
                 channel = params[0]
@@ -234,6 +238,7 @@ class IRCClient(asyncio.Protocol):
                     self._handler.handle_own_join(channel)
                 else:
                     self._handler.handle_join(channel, nick)
+            #--- PART ---#
             elif command == Cmd.PART:
                 nick = parsing.parse_user_prefix(prefix)[0]
                 channel = params[0]
@@ -244,8 +249,8 @@ class IRCClient(asyncio.Protocol):
                 else:
                     self._handler.handle_part(channel, nick)
             else:
-                raise CantHandleMessageError(message)
-        except CantHandleMessageError as e:
+                raise MessageHandlingError(message)
+        except MessageHandlingError as e:
             self._logger.debug('Unhandled message: ' + str(e))
             self._handler.handle_unhandled_message(str(e))
         except ParserError as e:
@@ -365,7 +370,7 @@ class IRCClientState(object):
 
     TODO document behaviour of state properties
     TODO document that members are public and the user of this class is
-         responsible for ony setting values appropriate to the current state
+         responsible for setting values appropriate to the current state
          (by checking the state before)
     TODO unittests for state properties
     """

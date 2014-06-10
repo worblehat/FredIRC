@@ -1,12 +1,10 @@
-# Copyright (c) 2013 Tobias Marquardt
+# Copyright (c) 2014 Tobias Marquardt
 #
-# Distributed under terms of the (2-clause) BSD  license.
+# Distributed under terms of the (2-clause) BSD license.
 
 """
-Exception classes for FredIrc.
-
+Exception classes for FredIRC.
 TODO Move these classes to the modules they belong to?
-TODO Consistent naming scheme for errors.
 """
 
 
@@ -16,7 +14,8 @@ class FredIRCError(Exception):
     """
     pass
 
-class CantHandleMessageError(FredIRCError):
+
+class MessageHandlingError(FredIRCError):
     """ Indicates that the specified message can not be handled by any of the
         normal message handlers.
     """
@@ -26,6 +25,7 @@ class CantHandleMessageError(FredIRCError):
 class ParserError(FredIRCError):
     """ Indicates that a parser rejects it's input. """
     pass
+
 
 class ConnectionTimeoutError(FredIRCError):
     """ The connection to a server timed out. """

@@ -1,10 +1,10 @@
-# Copyright (c) 2013 Tobias Marquardt
+# Copyright (c) 2014 Tobias Marquardt
 #
-# Distributed under terms of the (2-clause) BSD  license.
+# Distributed under terms of the (2-clause) BSD license.
 
 """
 This module provides functions for parsing of irc messages.
-This is not an implementation of a complete parser but just 
+This is not an implementation of a complete parser but just
 functions that parse specific (parts of) irc messages and extract some
 information for further processing. Parsing errors might be raised on invalid
 input, but an accepted input does not automatically mean that it conforms to
