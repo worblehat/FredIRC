@@ -24,8 +24,8 @@ def parse(message):
        params     =  *14( SPACE middle ) [ SPACE ":" trailing ]
                   =/ 14( SPACE middle ) [ SPACE [ ":" ] trailing ]
     Prefix and parameters may be None. On the prefix and so called 'trailing'
-    parameters (i.e. parameters with whitespaces) the leading colon as well as
-    leading and trailing whitespaces are removed.
+    parameter (i.e. parameter with possible whitespaces) the leading colon is
+    removed.
     :param message: Raw irc message (without the CRLF)
     :type message: str
     :return: 3-element tuple
@@ -48,12 +48,10 @@ def parse(message):
     command = tmp_split[0]
     # Parameters
     if len(tmp_split) == 2:
-        param_split = tmp_split[1].split(':')
-        params_trailing = param_split[1:]
-        params_middle = param_split[0].split()
-        params_trailing = [param.strip() for param in params_trailing
-                           if len(param) > 0]
-        params = params_middle + params_trailing
+        param_split = tmp_split[1].split(':', 1)
+        params = param_split[0].split()
+        if len(param_split) == 2:
+            params.append(param_split[1])
     return (prefix, command, params)
 
 
