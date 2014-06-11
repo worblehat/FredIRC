@@ -122,7 +122,7 @@ class IRCHandler(object):
         """
         pass
 
-    def handle_part(self, channel, nick):
+    def handle_part(self, channel, nick, message):
         """ Called when 'nick' left the 'channel'.
 
         To handle partings of the IRCClient itself, use
@@ -131,6 +131,7 @@ class IRCHandler(object):
         Args:
             channel (str): a name of a channel, the client is currently in
             nick (str): nick of the member that left the channel
+            message (str): part message of the parting member (might be None)
         """
         pass
 

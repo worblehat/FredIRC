@@ -65,9 +65,9 @@ class IRCClient(asyncio.Protocol):
     def run(self):
         """ Start the IRCClient's event loop.
 
-        An endless event loop which will call the handle_* messages from
-        IRCHandler is started. The client connects to the server and
-        calls :py:meth:`.IRCHandler.handle_connect` if this is successful.
+        An endless event loop which will call the handle_* methods from
+        :py:class:`.IRCHandler` is started. The client connects to the server
+        and calls :py:meth:`.IRCHandler.handle_connect` if this is successful.
         To disconnect from the server and terminate the event loop call
         :py:meth:`.IRCClient.quit`.
         """
@@ -247,7 +247,10 @@ class IRCClient(asyncio.Protocol):
                         self._state.channels.remove(channel)
                     self._handler.handle_own_part(channel)
                 else:
-                    self._handler.handle_part(channel, nick)
+                    part_message = None
+                    if len(params) > 1:
+                        part_message = params[1]
+                    self._handler.handle_part(channel, nick, part_message)
             else:
                 raise MessageHandlingError(message)
         except MessageHandlingError as e:
