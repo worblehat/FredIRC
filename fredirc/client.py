@@ -31,20 +31,36 @@ class IRCClient(asyncio.Protocol):
 
     """
 
-    def __init__(self, handler, nick, server, port=6667):
+    def __init__(self,
+                 handler,
+                 nick,
+                 server,
+                 port=6667,
+                 user_name=None,
+                 real_name=None,
+                 password=None):
         """ Create an IRCClient instance.
 
         To connect to the server and start the processing event loop call
         :py:meth:ˋ.IRCClient.runˋ on the instance.
+        Nick, user name, real name and password are used by
+        :py:meth:`.IRCClient.register` to register the client to the server.
+
         Args:
             handler (IRCHandler): handler that handles events from this client
             nick (str): nick name for the client
             server (str): server name or ip
             port (int): port number to connect to
+            user_name (str): User name for registration to the server,
+                             if None, nick is used.
+            real_name (str): Full name of the client. If None, nick is used.
+            password (str): Optional password that might be used to
+                            authenticate to the server.
         """
         asyncio.Protocol.__init__(self)
         self._handler = handler
         self._state = IRCClientState()
+        self._buffer = []
         # Register customized decoding error handler
         codecs.register_error('log_and_replace', self._decoding_error_handler)
         # Configure logger
@@ -56,10 +72,14 @@ class IRCClient(asyncio.Protocol):
         self._logger.setLevel(logging.INFO)
         self.enable_logging(True)
         self._logger.info('Initializing IRC client')
+        # Connection and registration info
         self._configured_nick = nick
         self._configured_server = server
         self._configured_port = port
-        self._buffer = []
+        self._configured_user_name = user_name if user_name else nick
+        self._configured_real_name = real_name if real_name else nick
+        self._configured_password = password
+        # Pass this client object to the handler
         self._handler.handle_client_init(self)
 
     def run(self):
@@ -109,14 +129,34 @@ class IRCClient(asyncio.Protocol):
 
     # --- IRC related methods ---
 
-    def register(self):
-        """ Register to the IRC server using the nick specified on
-            initialization.
+    def register(self, nick=None, user_name=None, real_name=None, password=None):
+        """ Register to the IRC server.
+
+        When called with no arguments, registration data given on initialization
+        or the last call to register is used.
+
+        Args:
+            nick (str): Nick name for the client.
+            user_name (str): User name for registration to the server.
+            real_name (str): Full name of the client.
+            password (str): Optional password that might be used to
+                            authenticate to the server.
         """
-        #TODO make username and full name configurable
-        #self._send_message(messages.password()) #TODO not needed?
+        # Configure registration data
+        if nick:
+            self._configured_nick = nick
+        if user_name:
+            self._configured_user_name = user_name
+        if real_name:
+            self._configured_real_name = real_name
+        if password:
+            self._configured_password = password
+        # Send registration messages
+        if self._configured_password:
+            self._send_message(messages.password(self._configured_password))
         self._send_message(messages.nick(self._configured_nick))
-        self._send_message(messages.user(self._configured_nick, "FredIRC"))
+        self._send_message(messages.user(
+            self._configured_user_name, self._configured_real_name))
 
     def join(self, channel, *channels):
         """ Join the specified channel(s).
