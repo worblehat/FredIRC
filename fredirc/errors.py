@@ -4,9 +4,7 @@
 
 """
 Exception classes for FredIRC.
-TODO Move these classes to the modules they belong to?
 """
-
 
 class FredIRCError(Exception):
     """ Base class for FredIrc specific Exceptions. Has a message with further
@@ -29,3 +27,4 @@ class ParserError(FredIRCError):
 
 class ConnectionTimeoutError(FredIRCError):
     """ The connection to a server timed out. """
+    pass

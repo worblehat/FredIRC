@@ -369,6 +369,7 @@ class IRCClient(asyncio.Protocol):
         """
         try:
             data = data.decode('utf-8', 'log_and_replace')
+            self._logger.error('Received new data:\n' + data) #TODO
             data = data.splitlines()
             self._buffer += data
             # ### TODO ###
@@ -401,8 +402,9 @@ class IRCClient(asyncio.Protocol):
 class IRCClientState(object):
     """ Stores the state of an IRCClient.
 
-    This class is used by IRCClient to keep track of it's current state. The
-    main purpose is to bundle all the needed information and thus make it
+    This class is **internally** used by IRCClient to keep track of it's
+    current state.
+    The main purpose is to bundle all the needed information and thus make it
     easier to keep track of them.
 
     .. note:: The state information in this class should only be set in
@@ -410,13 +412,14 @@ class IRCClientState(object):
               For example: The nick is not set when the client sends a nick
               message, but when it receives a message from the server that says
               the nick has changed.
-
-    TODO document behaviour of state properties
-    TODO document that members are public and the user of this class is
-         responsible for setting values appropriate to the current state
-         (by checking the state before)
-    TODO unittests for state properties
     """
+
+    # TODO document behaviour of state properties
+    # TODO document that members are public and the user of this class is
+    #     responsible for setting values appropriate to the current state
+    #     (by checking the state before)
+    # TODO unittests for state properties
+
     # --- Constants, internally used to set the _state flag ---
     _DISCONNECTED = 0
     _CONNECTED = 1
