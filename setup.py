@@ -25,11 +25,10 @@ def read(file):
 
 setup(
     name='FredIRC',
-    version='0.1',
+    version='0.1.0',
     author='Tobias Marquardt',
     author_email='tm@tobix.eu',
-    description=('An easy-to-use event driven IRC client library well-suited '
-                    'for the development of bots.'),
+    description=('An easy-to-use, event driven framework for IRC bots.')
     packages=['fredirc', 'tests'],
     install_requires=dependencies,
     license='BSD',

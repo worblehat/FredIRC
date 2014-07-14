@@ -29,6 +29,21 @@ class IRCClient(asyncio.Protocol):
         run multiple clients. This will result in undefined behaviour. This
         will be fixed in future releases as soon as possible.
 
+    To connect to the server and start the processing event loop call
+    :py:meth:ˋ.IRCClient.runˋ on the instance.
+    Nick, user name, real name and password are used by
+    :py:meth:`.IRCClient.register` to register the client to the server.
+
+    Args:
+        handler (IRCHandler): handler that handles events from this client
+        nick (str): nick name for the client
+        server (str): server name or ip
+        port (int): port number to connect to
+        user_name (str): User name for registration to the server,
+                         if None, nick is used.
+        real_name (str): Full name of the client. If None, nick is used.
+        password (str): Optional password that might be used to
+                        authenticate to the server.
     """
 
     def __init__(self,
@@ -39,24 +54,6 @@ class IRCClient(asyncio.Protocol):
                  user_name=None,
                  real_name=None,
                  password=None):
-        """ Create an IRCClient instance.
-
-        To connect to the server and start the processing event loop call
-        :py:meth:ˋ.IRCClient.runˋ on the instance.
-        Nick, user name, real name and password are used by
-        :py:meth:`.IRCClient.register` to register the client to the server.
-
-        Args:
-            handler (IRCHandler): handler that handles events from this client
-            nick (str): nick name for the client
-            server (str): server name or ip
-            port (int): port number to connect to
-            user_name (str): User name for registration to the server,
-                             if None, nick is used.
-            real_name (str): Full name of the client. If None, nick is used.
-            password (str): Optional password that might be used to
-                            authenticate to the server.
-        """
         asyncio.Protocol.__init__(self)
         self._handler = handler
         self._state = IRCClientState()
@@ -174,6 +171,7 @@ class IRCClient(asyncio.Protocol):
         """ Leave the specified channel(s).
 
         Args:
+            message (str): part message
             channel (str): one or more channels
         """
         self._send_message(messages.part((channel,) + channels, message))
@@ -369,7 +367,6 @@ class IRCClient(asyncio.Protocol):
         """
         try:
             data = data.decode('utf-8', 'log_and_replace')
-            self._logger.error('Received new data:\n' + data) #TODO
             data = data.splitlines()
             self._buffer += data
             # ### TODO ###

@@ -15,9 +15,8 @@ from fredirc.errors import ParserError
 
 
 def parse(message):
-    """
-    Parse a message and return a triple containing prefix, command and
-    paramaters.
+    """ Parse a message and extract prefix, command and paramaters.
+
     Relevant part of the protocol's grammar:
        message    =  [ ":" prefix SPACE ] command [ params ] crlf
        command    =  1*letter / 3digit
@@ -26,10 +25,12 @@ def parse(message):
     Prefix and parameters may be None. On the prefix and so called 'trailing'
     parameter (i.e. parameter with possible whitespaces) the leading colon is
     removed.
-    :param message: Raw irc message (without the CRLF)
-    :type message: str
-    :return: 3-element tuple
-    :rtype: two strings (prefix and command) and a tuple of strings (params)
+
+    Args:
+        message (str): Raw irc message (without the CRLF)
+    Retval:
+        3-element tuple: two strings (prefix and command) and a tuple of
+        strings (params)
     """
     prefix = None
     params = None
@@ -59,9 +60,9 @@ def parse_user_prefix(prefix):
     """
     Parses:
         prefix = nickname [ [ "!" user ] "@" host ]
-    :return: triple (nick, user, host), user and host might be None
-    :rtype: triple of str
-        """
+    Retval:
+        triple (nick, user, host), user and host might be None
+    """
     user = None
     host = None
     nick = prefix
@@ -76,7 +77,8 @@ def parse_user_prefix(prefix):
     return nick, user, host
 
 def parse_message_target(msg_target):
-    """
+    """ Parse a message target.
+
     Parses:
       msgtarget  =  msgto *( "," msgto )
       msgto      =  channel / ( user [ "%" host ] "@" servername )
@@ -84,9 +86,9 @@ def parse_message_target(msg_target):
       msgto      =/ nickname / ( nickname "!" user "@" host )
       channel    =  ( "#" / "+" / ( "!" channelid ) / "&" ) chanstring
                     [ ":" chanstring ]
-    :return: MessageTargets, where each MessageTarget represents one 'msgto'
-             from the grammar rule
-    :rtype: tuple of MessageTarget
+    Retval:
+        Tuple of :py:class:`.MessageTarget`s, where each MessageTarget
+        represents one 'msgto' from the grammar rule
     """
     targets = list()
     targets_split = msg_target.split(',')
@@ -123,9 +125,9 @@ def parse_message_target(msg_target):
 
 
 class MessageTarget(object):
-    """
-    Represents a target of an IRC message. Corresponds to the non-terminal
-    'msgto' in IRC's grammer.
+    """ Represents a target of an IRC message.
+
+    Corresponds to the non-terminal 'msgto' in IRC's grammer.
     """
 
     def __init__(self, channel=None, nick=None, user=None, host=None,
