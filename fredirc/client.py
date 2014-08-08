@@ -98,7 +98,10 @@ class IRCClient(asyncio.Protocol):
                           ". Connection timed out."
                 self._logger.error(message)
                 raise ConnectionTimeoutError(message)
-            loop.run_forever()
+            try:
+                loop.run_forever()
+            finally:
+                loop.close()
 
     def enable_logging(self, enable):
         """ Enable or disable logging.
@@ -214,9 +217,7 @@ class IRCClient(asyncio.Protocol):
         """ Shutdown the IRCClient by terminating the event loop. """
         self._logger.info('IRCCLient shutting down.')
         self._state.connected = False
-        asyncio.get_event_loop().close()
-        #TODO More to do? Close Connection gracefully? Beware: shutdown is
-        #     called by quit()
+        asyncio.get_event_loop().stop()
 
     def _decoding_error_handler(self, error):
         """ Error handler that is used with the byte.decode() method.
