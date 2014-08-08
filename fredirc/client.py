@@ -9,16 +9,10 @@ Classes related to the basic IRC-client implementation of FredIRC.
 import asyncio
 import codecs
 import logging
-import re
 
 from fredirc import messages
-from fredirc import parsing
-from fredirc.errors import MessageHandlingError
 from fredirc.errors import ConnectionTimeoutError
-from fredirc.errors import ParserError
-from fredirc.messages import Cmd
-from fredirc.messages import CmdRepl
-from fredirc.messages import ErrRepl
+from fredirc.processor import MessageProcessor
 
 
 class IRCClient(asyncio.Protocol):
@@ -69,6 +63,9 @@ class IRCClient(asyncio.Protocol):
         self._logger.setLevel(logging.INFO)
         self.enable_logging(True)
         self._logger.info('Initializing IRC client')
+        # Init message processor
+        self._processor = MessageProcessor(self._handler, self._state,
+                                           self._logger)
         # Connection and registration info
         self._configured_nick = nick
         self._configured_server = server
@@ -202,102 +199,6 @@ class IRCClient(asyncio.Protocol):
 
     # --- Private methods ---
 
-    def _handle(self, message):
-        """ Main message handling method.
-
-        The message is parsed and a command specific handling message is
-        called.
-
-        Args:
-            message (str): complete, raw message as received from the server.
-        """
-        assert self._state.connected
-        try:
-            prefix, command, params = parsing.parse(message)
-            three_digits = re.compile('[0-9][0-9][0-9]')
-            if three_digits.match(command):
-                numeric_reply = int(command)
-                #--- Numeric Response ---#
-                if 0 <= numeric_reply <= 399:
-                    self._logger.debug('Handling numeric response: ' + command)
-                    self._handler.handle_numeric_response(
-                            numeric_reply, message)
-                    # Call handle_register when we receive welcome message from
-                    # server (as response to registration with NICK, USER and
-                    # PASS)
-                    if numeric_reply == CmdRepl.RPL_WELCOME:
-                        self._state.registered = True
-                        self._state.server = prefix
-                        self._state.nick = params[0]
-                        self._handler.handle_register()
-                #--- Numeric Error ---#
-                elif 400 <= numeric_reply <= 599:
-                    self._logger.debug(
-                            'Handling numeric error response: ' + command)
-                    self._handler.handle_numeric_error(numeric_reply, message)
-                    if numeric_reply == ErrRepl.ERR_NICKNAMEINUSE:
-                        self._handler.handle_nick_in_use(params[-2])
-                else:
-                    self._logger.error('Received numeric response out of ' +
-                                       'range: ' + command)
-                    raise MessageHandlingError(message)
-            #--- PING ---#
-            elif command == Cmd.PING:
-                if len(params) > 1:
-                    self._logger.error('Unexpected count of parameters in '+
-                                       command + ' command: ' + message)
-                self._logger.debug('Handling ' + command + ' command.')
-                self._handler.handle_ping(params[0])
-            #--- PRIVMSG ---#
-            elif command == Cmd.PRIVMSG:
-                self._logger.debug('Handling ' + command + ' command.')
-                if not len(params) == 2:
-                    raise MessageHandlingError(message)
-                sender = None
-                if prefix:
-                    sender = parsing.parse_user_prefix(prefix)[0]
-                if sender and not sender == self._state.nick:
-                    targets = parsing.parse_message_target(params[0])
-                    msg = params[1]
-                    for target in targets:
-                        if target.nick and target.nick == self._state.nick:
-                            self._handler.handle_private_message(msg, sender)
-                        elif target.channel and \
-                             target.channel in self._state.channels:
-                            self._handler.handle_channel_message(
-                                    target.channel, msg, sender)
-            #--- JOIN ---#
-            elif command == Cmd.JOIN:
-                nick = parsing.parse_user_prefix(prefix)[0]
-                channel = params[0]
-                if self._state.nick == nick:
-                    if not channel in self._state.channels:
-                        self._state.channels.append(channel)
-                    self._handler.handle_own_join(channel)
-                else:
-                    self._handler.handle_join(channel, nick)
-            #--- PART ---#
-            elif command == Cmd.PART:
-                nick = parsing.parse_user_prefix(prefix)[0]
-                channel = params[0]
-                if self._state.nick == nick:
-                    if channel in self._state.channels:
-                        self._state.channels.remove(channel)
-                    self._handler.handle_own_part(channel)
-                else:
-                    part_message = None
-                    if len(params) > 1:
-                        part_message = params[1]
-                    self._handler.handle_part(channel, nick, part_message)
-            else:
-                raise MessageHandlingError(message)
-        except MessageHandlingError as e:
-            self._logger.debug('Unhandled message: ' + str(e))
-            self._handler.handle_unhandled_message(str(e))
-        except ParserError as e:
-            self._logger.error('Message Parsing failed. ' + e.message)
-            self._logger.error('Message discarded!')
-
     def _send_message(self, message):
         """ Send a message to the server.
 
@@ -384,7 +285,7 @@ class IRCClient(asyncio.Protocol):
             tmp_buffer = list(self._buffer)
             for message in tmp_buffer:
                 self._logger.debug('Incoming message: ' + message)
-                self._handle(message)
+                self._processor.process(message)
                 self._buffer.pop(0)
         # Shutdown client if unhandled exception occurs, as EventLoop does not
         # provide a handle_error() method so far.
@@ -406,16 +307,30 @@ class IRCClientState(object):
 
     .. note:: The state information in this class should only be set in
               consequence of a message from the server confirming that state.
-              For example: The nick is not set when the client sends a nick
-              message, but when it receives a message from the server that says
-              the nick has changed.
-    """
+              For example: The nick should not be set when the client sends a
+              nick message, but when it receives a message from the server that
+              says the nick has changed.
 
-    # TODO document behaviour of state properties
-    # TODO document that members are public and the user of this class is
-    #     responsible for setting values appropriate to the current state
-    #     (by checking the state before)
-    # TODO unittests for state properties
+    To change the state the public properties connected and registered can be
+    set directly.
+    Note that there are dependencies between the states of the client.
+    If a client is registered, it must also be connected and if it is not
+    connected it can't be registered. These constraints are preserved
+    automatically.
+
+    For example:
+
+    ..code-block:: python
+
+    state = IRCClientState()
+    state.connected = True
+    state.registered = True
+    state.connected = False
+    print(state.registered) # False
+    state.registered = True
+    print(state.connected) # True
+
+    """
 
     # --- Constants, internally used to set the _state flag ---
     _DISCONNECTED = 0
