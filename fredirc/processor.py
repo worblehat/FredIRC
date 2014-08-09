@@ -70,9 +70,8 @@ class MessageProcessor(object):
 
     def _process_ping(self, params, raw_msg):
         if len(params) > 1:
-            self._logger.error('Unexpected count of parameters in '+
-                               command + ' command: ' + raw_msg)
-        self._logger.debug('Handling ' + command + ' command.')
+            self._logger.error('Unexpected count of parameters in PING'+
+                               ' command: ' + raw_msg)
         self._handler.handle_ping(params[0])
 
     def _process_privmsg(self, prefix, params, raw_msg):
