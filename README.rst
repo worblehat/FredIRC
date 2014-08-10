@@ -16,7 +16,7 @@ on the way.
 Links:
 ------
 
-* Download current version: *TBD*
+* Releases: https://github.com/worblehat/FredIRC/releases
 * Documentation: https://worblehat.github.io/FredIRC
 * Source code: https://github.com/worblehat/FredIRC
 * Issue tracker: https://github.com/worblehat/FredIRC/issues

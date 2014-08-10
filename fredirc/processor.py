@@ -12,8 +12,8 @@ from fredirc import parsing
 from fredirc.errors import MessageHandlingError
 from fredirc.errors import ParserError
 from fredirc.messages import Cmd
-from fredirc.messages import CmdRepl
-from fredirc.messages import ErrRepl
+from fredirc.messages import Rpl
+from fredirc.messages import Err
 
 class MessageProcessor(object):
     """ Processes raw messages from the server and takes appropriate action.
@@ -92,20 +92,32 @@ class MessageProcessor(object):
                             target.channel, msg, sender)
 
     def _process_numeric_reply(self, num, prefix, params, raw_msg):
-        self._handler.handle_numeric_response(num, raw_msg)
+        self._handler.handle_response(num, raw_msg)
         # Call handle_register when we receive welcome message from
         # server (as response to registration with NICK, USER and
         # PASS)
-        if num == CmdRepl.RPL_WELCOME:
+        if num == Rpl.WELCOME:
             self._state.registered = True
             self._state.server = prefix
             self._state.nick = params[0]
             self._handler.handle_register()
 
     def _process_numeric_error(self, num, params, raw_msg):
-        self._handler.handle_numeric_error(num, raw_msg)
-        if num == ErrRepl.ERR_NICKNAMEINUSE:
-            self._handler.handle_nick_in_use(params[-2])
+        # Remove the first parameter which is always the message target
+        params = params[1:]
+        param_names = Err.ERROR_PARAMETERS[num]
+        kwargs = {}
+        if len(params) != len(param_names):
+            self._logger.error('Unexpected number of parameters in error' +
+                               ' code message (' + str(num) + ')')
+            # Make sure all parameter keys are present in kwargs anyway and
+            # put all received params in the "message" value if there is one.
+            for name in param_names:
+                kwargs[name] = ' '.join(params) if name == 'message' else ''
+        else:
+            for name, value in zip(param_names, params):
+                kwargs[name] = value
+        self._handler.handle_error(num, **kwargs)
 
     def _process_join(self, prefix, params):
         nick = parsing.parse_user_prefix(prefix)[0]

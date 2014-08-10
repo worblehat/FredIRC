@@ -38,7 +38,7 @@ class IRCHandler(object):
         """
         pass
 
-    def handle_numeric_response(self, response, message):
+    def handle_response(self, response, message):
         """ A numeric response was received from the server.
 
         See the IRC client protocol specification for valid numeric response
@@ -51,16 +51,16 @@ class IRCHandler(object):
         """
         pass
 
-    def handle_numeric_error(self, error, message):
-        """ A numeric error was received from the server.
+    def handle_error(self, error, **params):
+        """ An irc error message was received from the server.
 
-        See the IRC client protocol specification for valid numeric error codes
-        and their meaning. There are extra handler methods for many common
-        errors, but this general handler is always called first.
+        The error codes are defined in :py:class:`fredirc.messages.ErrRepl`.
+        The contents of the params dictionary depend on the specific error and
+        are documented in :py:class:`fredirc.message.ErrRepl` as well.
 
         Args:
             error (int): 3-digit error code (between 400 and 599)
-            message (str): the whole received message
+            params (dict): named parameters of the error message
         """
         pass
 
@@ -85,18 +85,6 @@ class IRCHandler(object):
             message (str): the received message
             sender (str): Sender of the message, usually a nickname.
                           Might be None.
-        """
-        pass
-
-    def handle_nick_in_use(self, nick):
-        """ The chosen nick is already in use on this server.
-
-        If this event is received while connecting to a server (i.e. before
-        :py:meth:`.handle_connect` is called) another nick should be chosen
-        before the connection times out. (See :py:meth:`.IRCClient.nick`.)
-
-        Args:
-            nick (str): the nick name that is already in use
         """
         pass
 
