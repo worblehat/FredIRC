@@ -6,6 +6,8 @@
 Classes related to the basic IRC-client implementation of FredIRC.
 """
 
+__all__ = ["IRCClient"]
+
 import asyncio
 import codecs
 import logging

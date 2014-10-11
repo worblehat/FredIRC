@@ -28,12 +28,12 @@ setup(
     version='0.1.0',
     author='Tobias Marquardt',
     author_email='tm@tobix.eu',
-    description=('An easy-to-use, event driven framework for IRC bots.')
-    packages=['fredirc', 'tests'],
+    description=('An easy-to-use, event driven framework for IRC bots.'),
+    packages=['fredirc'],
     install_requires=dependencies,
     license='BSD',
-    keywords='irc client library bot',
-    url='http://fredirc.tobix.eu',
+    keywords='irc client library bot framework',
+    url='https://worblehat.github.io/FredIRC',
     long_description=read('README.rst'),
     classifiers=[
         'Development Status :: 4 - Beta',

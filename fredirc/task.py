@@ -16,6 +16,8 @@ There are two ways to use a Task:
 
 """
 
+__all__ = ["Task"]
+
 import asyncio
 import types
 

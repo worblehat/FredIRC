@@ -8,6 +8,8 @@ with constants for string commands, numeric commands and error responses.
 Specification: RFC 2812 'IRC: Client Protocol'.
 """
 
+__all__ = ["Err"]
+
 
 class Cmd:
     """ Commands """

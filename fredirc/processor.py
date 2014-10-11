@@ -6,6 +6,8 @@
 This module contains the MessageProcessor.
 """
 
+__all__ = []
+
 import re
 
 from fredirc import parsing

@@ -11,6 +11,8 @@ input, but an accepted input does not automatically mean that it conforms to
 the irc message grammar (as described in RFC 2812).
 """
 
+__all__ = []
+
 from fredirc.errors import ParserError
 
 

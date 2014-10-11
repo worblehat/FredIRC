@@ -6,6 +6,11 @@
 Exception classes for FredIRC.
 """
 
+__all__ = ["FredIRCError",
+           "MessageHandlingError",
+           "ParserError",
+           "ConnectionTimeoutError"]
+
 class FredIRCError(Exception):
     """ Base class for FredIrc specific Exceptions. Has a message with further
         description of the error.
