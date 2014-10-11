@@ -41,13 +41,13 @@ def parse(message):
         try:
             prefix, message = message.split(None, 1)
         except ValueError:
-            raise ParserError('Malformed message: ' + message)
+            raise ParserError('Malformed message: {}'.format(message))
         prefix = prefix[1:]
     # Command
     try:
         tmp_split = message.split(None, 1)
     except ValueError:
-        raise ParserError('Malformed message: ' + message)
+        raise ParserError('Malformed message: {}'.format(message))
     command = tmp_split[0]
     # Parameters
     if len(tmp_split) == 2:

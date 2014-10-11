@@ -6,7 +6,7 @@
 Classes related to the basic IRC-client implementation of FredIRC.
 """
 
-__all__ = ["IRCClient"]
+__all__ = ['IRCClient']
 
 import asyncio
 import codecs
@@ -94,10 +94,10 @@ class IRCClient(asyncio.Protocol):
             try:
                 loop.run_until_complete(task)
             except TimeoutError:
-                message = "Cannot connect to server " + \
-                          self._configured_server + " on port " + \
-                          str(self._configured_port) + \
-                          ". Connection timed out."
+                message = ('Cannot connect to server {} on port {}.' + \
+                           'Connection timed out').format(
+                                  self._configured_server,
+                                  self._configured_port)
                 self._logger.error(message)
                 raise ConnectionTimeoutError(message)
             try:
@@ -211,7 +211,7 @@ class IRCClient(asyncio.Protocol):
             message (str): A valid IRC message. Only carriage return and line
                            feed are appended automatically.
         """
-        self._logger.debug('Sending message: ' + message)
+        self._logger.debug('Sending message: {}'.format(message))
         message = message + '\r\n'
         self._transport.write(message.encode('utf-8'))
 
@@ -230,7 +230,8 @@ class IRCClient(asyncio.Protocol):
         Args:
             error (UnicodeDecodeError): The error that was raised during decode.
         """
-        self._logger.error('Invalid character encoding: ' + error.reason)
+        self._logger.error(
+                'Invalid character encoding: {}'.format(error.reason))
         self._logger.error('Replacing the malformed character.')
         return codecs.replace_errors(error)
 
@@ -287,14 +288,14 @@ class IRCClient(asyncio.Protocol):
             #
             tmp_buffer = list(self._buffer)
             for message in tmp_buffer:
-                self._logger.debug('Incoming message: ' + message)
+                self._logger.debug('Incoming message: {}'.format(message))
                 self._processor.process(message)
                 self._buffer.pop(0)
         # Shutdown client if unhandled exception occurs, as EventLoop does not
         # provide a handle_error() method so far.
         except Exception as e:
-            self._logger.exception('Unhandled Exception while running an ' +
-                                   'IRCClient: ' + str(e))
+            self._logger.exception(('Unhandled Exception while running an ' +
+                                   'IRCClient: {}').format(e))
             self._logger.critical('Shutting down the client, due to an ' +
                                   'unhandled exception!')
             self._shutdown()

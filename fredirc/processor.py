@@ -50,8 +50,8 @@ class MessageProcessor(object):
                 elif 400 <= numeric_reply <= 599:
                     self._process_numeric_error(numeric_reply, params, message)
                 else:
-                    self._logger.error('Received numeric response out of ' +
-                                       'range: ' + command)
+                    self._logger.error(('Received numeric response out of ' +
+                                       'range: {}').format(command))
                     raise MessageHandlingError(message)
             elif command == Cmd.PING:
                 self._process_ping(params, message)
@@ -64,16 +64,16 @@ class MessageProcessor(object):
             else:
                 raise MessageHandlingError(message)
         except MessageHandlingError as e:
-            self._logger.debug('Unhandled message: ' + str(e))
+            self._logger.debug('Unhandled message: {}'.format(e))
             self._handler.handle_unhandled_message(str(e))
         except ParserError as e:
-            self._logger.error('Message Parsing failed. ' + e.message)
+            self._logger.error('Message Parsing failed. {}'.format(e.message))
             self._logger.error('Message discarded!')
 
     def _process_ping(self, params, raw_msg):
         if len(params) > 1:
-            self._logger.error('Unexpected count of parameters in PING'+
-                               ' command: ' + raw_msg)
+            self._logger.error(('Unexpected count of parameters in PING ' +
+                               'command: {}').format(raw_msg))
         self._handler.handle_ping(params[0])
 
     def _process_privmsg(self, prefix, params, raw_msg):
@@ -110,8 +110,8 @@ class MessageProcessor(object):
         param_names = Err.ERROR_PARAMETERS[num]
         kwargs = {}
         if len(params) != len(param_names):
-            self._logger.error('Unexpected number of parameters in error' +
-                               ' code message (' + str(num) + ')')
+            self._logger.error(('Unexpected number of parameters in error ' +
+                               'code message ({})').format(num))
             # Make sure all parameter keys are present in kwargs anyway and
             # put all received params in the "message" value if there is one.
             for name in param_names:

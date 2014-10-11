@@ -8,7 +8,7 @@ with constants for string commands, numeric commands and error responses.
 Specification: RFC 2812 'IRC: Client Protocol'.
 """
 
-__all__ = ["Err"]
+__all__ = ['Err']
 
 
 class Cmd:
@@ -148,12 +148,14 @@ class Err:
     }
 
 def nick(name):
-    return Cmd.NICK + ' ' + name
+    return '{nick_cmd} {name}'.format(
+            nick_cmd=Cmd.NICK, name=name)
 
 
 def password(password=None):
     if password:
-        return Cmd.PASS + ' :' + password
+        return '{pass_cmd} :{password}'.format(
+                pass_cmd=Cmd.PASS, password=password)
     else:
         return Cmd.PASS
 
@@ -161,28 +163,35 @@ def password(password=None):
 def user(user, real_name, invisible=False, receive_wallops=False):
     # TODO set mode correctly
     mode = 0
-    return Cmd.USER + ' ' + user + ' ' + str(mode) + ' * :' + real_name
+    return '{user_cmd} {user} {mode} * :{real_name}'.format(
+            user_cmd=Cmd.USER, user=user, mode=mode, real_name=real_name)
 
 
 def quit(message=None):
     if message:
-        return Cmd.QUIT + ' :' + message
+        return '{quit_cmd} :{message}'.format(
+                quit_cmd=Cmd.QUIT, message=message)
     else:
         return Cmd.QUIT
 
 
 def join(channels):
-    return Cmd.JOIN + ' ' + ','.join(channels)
+    return '{join_cmd} {channels}'.format(
+            join_cmd=Cmd.JOIN, channels=','.join(channels))
 
 
 def pong(server):
-    return Cmd.PONG + ' :' + server
+    return '{pong_cmd} :{server}'.format(
+            pong_cmd=Cmd.PONG, server=server)
 
 
 def privmsg(target, message, sender=None):
     if not sender:
         sender = ''
-    return ':' + sender + ' ' + Cmd.PRIVMSG + ' ' + target + ' :' + message
+    return ':{sender} {msg_cmd} {target} :{message}'.format(
+            sender=sender, msg_cmd=Cmd.PRIVMSG, target=target, message=message)
 
 def part(channels, message):
-    return Cmd.PART + ' ' + ','.join(channels) + ' :' + message
+    return '{part_cmd} {channels} :{message}'.format(
+            part_cmd=Cmd.PART, channels=','.join(channels), message=message)
+

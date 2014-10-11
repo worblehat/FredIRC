@@ -7,8 +7,8 @@ Abstract IRC-Handler classes that handle IRC related events from a client.
 You probably want to subclass :py:class:`.BaseIRCHandler` to implement a bot.
 """
 
-__all__ = ["BaseIRCHandler",
-           "IRCHandler"]
+__all__ = ['BaseIRCHandler',
+           'IRCHandler']
 
 class IRCHandler(object):
     """ Abstract base class for IRC handler classes.
