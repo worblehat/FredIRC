@@ -1,6 +1,6 @@
 #! /usr/bin/env python
 #
-# Copyright (c) 2013 Tobias Marquardt
+# Copyright (c) 2014 Tobias Marquardt
 #
 # Distributed under terms of the (2-clause) BSD  license.
 

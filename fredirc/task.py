@@ -2,19 +2,7 @@
 #
 # Distributed under terms of the (2-clause) BSD license.
 
-""" This module provides a task class that can be used to schedule a function
-    that will be executed by the event loop.
-
-.. note:: A task will be scheduled only if there is a running(!)
-          :py:class:`.IRCClient` instance in the same process.
-
-There are two ways to use a Task:
-
-1. Subclass Task and overwrite its run() method.
-2. Instantiate the task directly and provide a function as parameter to the
-   constructor.
-
-"""
+""" This module provides a task class. """
 
 __all__ = ['Task']
 
@@ -23,7 +11,17 @@ import types
 
 
 class Task(object):
-    """A Task represents a function that is executed at a specific time.
+    """A Task can be used to schedule a function that will be executed by the
+    event loop.
+
+    .. note:: A task will be scheduled only if there is a running(!)
+              :py:class:`.IRCClient` instance in the same process.
+
+    There are two ways to use a Task:
+
+    1. Subclass Task and overwrite its run() method.
+    2. Instantiate the task directly and provide a function as parameter to the
+       constructor.
 
     After initialization the Task must be started explicitly via
     :py:meth:`.start()`.

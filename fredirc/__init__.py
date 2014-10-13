@@ -1,3 +1,7 @@
+# Copyright (c) 2014 Tobias Marquardt
+#
+# Distributed under terms of the (2-clause) BSD license.
+
 from .client import *
 from .errors import *
 from .handler import *
