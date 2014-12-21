@@ -74,9 +74,11 @@ class IRCHandler(object):
 
         Args:
             channel (str): the channel name
+
             message (str): the received message
+
             sender (str): Sender of the message, usually a nickname.
-                          Might be None.
+            Might be None.
         """
         pass
 

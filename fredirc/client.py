@@ -300,6 +300,21 @@ class IRCClient(asyncio.Protocol):
                                   'unhandled exception!')
             self._shutdown()
 
+    @property
+    def nick():
+        """ Current nick name of the client. """
+        return self._state.nick
+
+    @property
+    def server():
+        """ Name of the Server this client is currently connected to. """
+        return self._state.server
+
+    @property
+    def channels():
+        """ Names of channels this client is currently in. """
+        return tuple(self._state.channels)
+
 
 class IRCClientState(object):
     """ Stores the state of an IRCClient.
