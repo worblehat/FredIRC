@@ -1,7 +1,7 @@
 Beginner's Guide
 ================
 
-**Prerequesites**: :doc:`install`
+**Prerequisites**: :doc:`install`
 
 This page will guide you through the steps to implement a first IRC bot with
 FredIRC. It will be able to connect to a channel, greet new users and
@@ -89,7 +89,7 @@ Communicate with the Channel
 Now that your bot is in a channel, it can communicate with other users in that
 channel. For example it could greet new users. To do so, use
 :py:meth:`handle_join()<fredirc.IRCHandler.handle_join()>`
-which is called wehenever a user joins the channel:
+which is called whenever a user joins the channel:
 
 
 .. code-block:: python
