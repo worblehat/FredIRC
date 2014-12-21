@@ -40,12 +40,16 @@ can be installed by:
 Build the Documentation
 -------------------
 
-The source tree of FredIRC also includes this documentation, which can be build
-with:
+The source tree of FredIRC also includes this documentation.
+To build it, you will need to have
+`sphinx <https://pypi.python.org/pypi/Sphinx>`_ and
+`sphinxcontrib-napoleon <https://pypi.python.org/pypi/sphinxcontrib-napoleon>`_
+installed.
 
 .. code-block:: bash
 
     $ python setup.py build_sphinx
+
 
 Afterwards you can open ``doc/build/html/index.html`` in your web browser.
 
