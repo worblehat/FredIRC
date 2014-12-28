@@ -38,7 +38,7 @@ can be installed by:
     $ pip install dist/FredIRC-X.X.X.tar.gz
 
 Build the Documentation
--------------------
+-----------------------
 
 The source tree of FredIRC also includes this documentation.
 To build it, you will need to have

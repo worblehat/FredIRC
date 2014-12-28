@@ -35,7 +35,18 @@ class Rpl:
 
 
 class Err:
-    """ Error Replies """
+    """ Error Replies
+
+    Contains numerical constants for errors as defined by the irc client
+    protocol as well as the keywords of error specific parameters.
+    Error numbers and parameters are passed to
+    :py:meth:`handle_error(self, error, **params)<fredirc.IRCHandler.handle_error()>`.
+    You can take a look at :py:attr:`.ERROR_PARAMETERS` to find out the
+    parameter keywords for a particular error.
+
+    See the :ref:`beginner's guide<guide_handle-errors>` for an example on how
+    to use this class to handle errors.
+    """
 
     NOSUCHNICK = 401
     NOSUCHSERVER = 402

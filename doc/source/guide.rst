@@ -116,6 +116,8 @@ to respond to someone who sends 'Hello Fred' to the channel:
             if messsage.strip() == "Hello " + self.client.nick:
                 self.client.send_message("Hi " + sender + ". How are you?")
 
+.. _guide_handle-errors:
+
 Handle Errors
 -------------
 
