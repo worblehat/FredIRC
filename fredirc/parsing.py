@@ -55,7 +55,7 @@ def parse(message):
         params = param_split[0].split()
         if len(param_split) == 2:
             params.append(param_split[1])
-    return (prefix, command, params)
+    return prefix, command, params
 
 
 def parse_user_prefix(prefix):
@@ -77,6 +77,7 @@ def parse_user_prefix(prefix):
             nick = user_split[0]
             user = user_split[1]
     return nick, user, host
+
 
 def parse_message_target(msg_target):
     """ Parse a message target.

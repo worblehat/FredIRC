@@ -178,7 +178,7 @@ class IRCClient(asyncio.Protocol):
         """
         self._send_message(messages.part((channel,) + channels, message))
 
-    def quit(self, message = None):
+    def quit(self, message=None):
         """ Disconnect from the IRC server and terminate the IRCClient's event
             loop.
 
@@ -196,7 +196,7 @@ class IRCClient(asyncio.Protocol):
             message (str): the message to send
         """
         self._send_message(
-                messages.privmsg(channel, message, self._state.nick))
+            messages.privmsg(channel, message, self._state.nick))
 
     def pong(self):
         """ Send a pong message to the server. """
@@ -212,7 +212,7 @@ class IRCClient(asyncio.Protocol):
                            feed are appended automatically.
         """
         self._logger.debug('Sending message: {}'.format(message))
-        message = message + '\r\n'
+        message += '\r\n'
         self._transport.write(message.encode('utf-8'))
 
     def _shutdown(self):
@@ -231,7 +231,7 @@ class IRCClient(asyncio.Protocol):
             error (UnicodeDecodeError): The error that was raised during decode.
         """
         self._logger.error(
-                'Invalid character encoding: {}'.format(error.reason))
+            'Invalid character encoding: {}'.format(error.reason))
         self._logger.error('Replacing the malformed character.')
         return codecs.replace_errors(error)
 
@@ -301,17 +301,17 @@ class IRCClient(asyncio.Protocol):
             self._shutdown()
 
     @property
-    def nick():
+    def nick(self):
         """ Current nick name of the client. """
         return self._state.nick
 
     @property
-    def server():
+    def server(self):
         """ Name of the Server this client is currently connected to. """
         return self._state.server
 
     @property
-    def channels():
+    def channels(self):
         """ Names of channels this client is currently in. """
         return tuple(self._state.channels)
 

@@ -10,6 +10,7 @@ You probably want to subclass :py:class:`.BaseIRCHandler` to implement a bot.
 __all__ = ['BaseIRCHandler',
            'IRCHandler']
 
+
 class IRCHandler(object):
     """ Abstract base class for IRC handler classes.
 

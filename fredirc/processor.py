@@ -17,6 +17,7 @@ from fredirc.messages import Cmd
 from fredirc.messages import Rpl
 from fredirc.messages import Err
 
+
 class MessageProcessor(object):
     """ Processes raw messages from the server and takes appropriate action.
 
@@ -125,7 +126,7 @@ class MessageProcessor(object):
         nick = parsing.parse_user_prefix(prefix)[0]
         channel = params[0]
         if self._state.nick == nick:
-            if not channel in self._state.channels:
+            if channel not in self._state.channels:
                 self._state.channels.append(channel)
             self._handler.handle_own_join(channel)
         else:
