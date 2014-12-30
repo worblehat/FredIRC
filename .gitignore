@@ -6,4 +6,5 @@ FredIRC.egg-info
 dist/*
 TODO
 .project
+.directory
 *.swp
