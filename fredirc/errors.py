@@ -13,10 +13,14 @@ __all__ = ['FredIRCError',
 
 
 class FredIRCError(Exception):
-    """ Base class for FredIrc specific Exceptions. Has a message with further
+    """ Base class for FredIRC specific Exceptions. Contains a message with further
         description of the error.
     """
-    pass
+    def __init__(self, message):
+        self.message = message
+
+    def __str__(self):
+        return repr(self.message)
 
 
 class MessageHandlingError(FredIRCError):
