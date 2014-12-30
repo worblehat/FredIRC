@@ -34,6 +34,7 @@ setup(
     license='BSD',
     keywords='irc client library bot framework',
     url='https://worblehat.github.io/FredIRC',
+    download_url='https://github.com/worblehat/FredIRC/archive/v0.1.0.tar.gz',
     long_description=read('README.rst'),
     classifiers=[
         'Development Status :: 4 - Beta',
@@ -43,7 +44,7 @@ setup(
         'Programming Language :: Python :: 3.3',
         'Programming Language :: Python :: 3.4',
         'Topic :: Communications :: Chat :: Internet Relay Chat',
-        'Topic :: Software Development :: Libraries :: Python Modules'
-    ]
+        'Topic :: Software Development :: Libraries :: Python Modules',
+    ],
     )
 
