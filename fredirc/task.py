@@ -19,7 +19,7 @@ class Task(object):
 
     There are two ways to use a Task:
 
-    1. Subclass Task and overwrite its run() method.
+    1. Subclass Task and overwrite its :py:meth:`run()<.Task.run>` method.
     2. Instantiate the task directly and provide a function as parameter to the
        constructor.
 
@@ -27,10 +27,10 @@ class Task(object):
     :py:meth:`.start()`.
 
     Args:
-        delay (float): Time (in s) to defer the execution of the task after it
-                       is started or the interval for it's repeated execution
-                       if ''repeat=True''.
-        repeat (bool): If ''True'', the task will run periodically until it is
+        delay (float): Time (in seconds) to defer the execution of the task
+                       after it is started or the interval for its repeated
+                       execution if ``repeat=True``.
+        repeat (bool): If ``True`` the task will run periodically until it is
                        stopped.
         func (function type): function that will be called (the actual task)
     """
@@ -49,7 +49,7 @@ class Task(object):
     def run(self):
         """ Method that is called on execution of the Task.
 
-        Can be overwritten in subclasses or by passing a function argument to
+        Can be overwritten in subclasses or by passing a function to
         the constructor.
         """
         pass
@@ -62,7 +62,7 @@ class Task(object):
     def start(self):
         """ Start the task.
 
-        It will be executed in *delay* seconds.
+        It will be executed in ``delay`` seconds (as specified in the constructor).
         A started task can be stopped by calling :py:meth:`.stop()`.
         """
         if self._handler:

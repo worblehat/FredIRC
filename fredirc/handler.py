@@ -22,7 +22,11 @@ class IRCHandler(object):
     """
 
     def handle_client_init(self, client):
-        """ This handler was attached to a client. """
+        """ This handler was attached to a client.
+
+        Args:
+            client (:py:class:`.IRCClient`): The client.
+        """
         pass
 
     def handle_connect(self):
@@ -57,13 +61,14 @@ class IRCHandler(object):
     def handle_error(self, error, **params):
         """ An irc error message was received from the server.
 
-        The error codes are defined in :py:class:`fredirc.messages.ErrRepl`.
-        The contents of the params dictionary depend on the specific error and
-        are documented in :py:class:`fredirc.message.ErrRepl` as well.
+        The error codes are defined in :py:class:`Err<fredirc.Err>`.
+        The contents of the params dictionary depend on the specific error.
+        See the documentation of :py:class:`Err<fredirc.Err>` for details.
 
         Args:
             error (int): 3-digit error code (between 400 and 599)
-            params (dict): named parameters of the error message
+            params (dict): Parameters of the error message, each consisting of \
+                a parameter name and a value.
         """
         pass
 
@@ -94,7 +99,7 @@ class IRCHandler(object):
         pass
 
     def handle_join(self, channel, nick):
-        """ Called when 'nick' joined the 'channel'.
+        """ Called when a user joined the channel.
 
         To handle joins of the IRCClient itself, use
         :py:meth:`.handle_own_join`.
@@ -115,8 +120,8 @@ class IRCHandler(object):
         """
         pass
 
-    def handle_part(self, channel, nick, message):
-        """ Called when 'nick' left the 'channel'.
+    def handle_part(self, channel, nick, message=None):
+        """ Called when a user left the channel.
 
         To handle partings of the IRCClient itself, use
         :py:meth:`.handle_own_part`.
@@ -154,13 +159,14 @@ class IRCHandler(object):
 class BaseIRCHandler(IRCHandler):
     """ Minimal :py:class:`.IRCHandler` implementation.
 
-    Implements the most basic hander functionality that probably every bot will
+    Implements the most basic handler functionality that probably every bot will
     need. It is recommended to subclass :py:class:`.BaseIRCHandler` instead
     of :py:class:`.IRCHandler`.
 
     What it does for you:
-    * store the :py:class:`.IRCClient` instance as attribute self.client on
-      :py:meth:`handle_client_init`
+
+    * store the :py:class:`.IRCClient` instance as attribute ``self.client`` \
+        on :py:meth:`.handle_client_init`
     * register to the server on :py:meth:`.handle_connect`
     * respond with pong on :py:meth:`.handle_ping`
     """

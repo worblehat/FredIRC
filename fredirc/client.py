@@ -23,22 +23,23 @@ class IRCClient(asyncio.Protocol):
 
     .. warning:: Currently only a single IRCClient instance is allowed! Don't
         run multiple clients. This will result in undefined behaviour. This
-        will be fixed in future releases as soon as possible.
+        will probably be fixed in future releases.
 
     To connect to the server and start the processing event loop call
-    :py:meth:ˋ.IRCClient.runˋ on the instance.
+    :py:meth:`run()<.IRCClient.run>` on your IRCClient instance.
     Nick, user name, real name and password are used by
-    :py:meth:`.IRCClient.register` to register the client to the server.
+    :py:meth:`.register` to register the client to the server.
 
     Args:
-        handler (IRCHandler): handler that handles events from this client
+        handler (:py:class:`IRCHandler<fredirc.IRCHandler>`): \
+            handler that handles events from this client
         nick (str): nick name for the client
         server (str): server name or ip
         port (int): port number to connect to
-        user_name (str): User name for registration to the server,
-                         if None, nick is used.
+        user_name (str): User name for registration to the server.
+                         If None, nick is used.
         real_name (str): Full name of the client. If None, nick is used.
-        password (str): Optional password that might be used to
+        password (str): Optional password that can be used to
                         authenticate to the server.
     """
 
@@ -79,13 +80,14 @@ class IRCClient(asyncio.Protocol):
         self._handler.handle_client_init(self)
 
     def run(self):
-        """ Start the IRCClient's event loop.
+        """ Start the client's event loop.
 
-        An endless event loop which will call the handle_* methods from
+        An endless event loop which will call the ``handle_*`` methods from
         :py:class:`.IRCHandler` is started. The client connects to the server
-        and calls :py:meth:`.IRCHandler.handle_connect` if this is successful.
+        and calls :py:meth:`handle_connect()<.IRCHandler.handle_connect>` on
+        its handler if this is successful.
         To disconnect from the server and terminate the event loop call
-        :py:meth:`.IRCClient.quit`.
+        :py:meth:`.quit`.
         """
         loop = asyncio.get_event_loop()
         if not loop.is_running():
@@ -108,8 +110,10 @@ class IRCClient(asyncio.Protocol):
     def enable_logging(self, enable):
         """ Enable or disable logging.
 
-        Args:
-            enable (bool)
+        Logging is enabled by default.
+
+       Args:
+            enable (bool): ``True`` to enable logging, ``False`` disable it
         """
         if enable:
             self._logger.removeFilter(lambda x: 0)
@@ -120,9 +124,9 @@ class IRCClient(asyncio.Protocol):
         """ Set the log level that is used if logging is enabled.
 
         Args:
-            level (int): the log level as defined by constants in Python's
-                         :py:mod:ˋloggingˋ module (DEBUG, INFO, WARNING, ERROR,
-                         CRITICAL)
+            level (int): the log level as defined by constants in Python's \
+            `logging module <https://docs.python.org/2/library/logging.html#logging-levels>`_ \
+            (``DEBUG``, ``INFO``, ``WARNING``, ``ERROR``, ``CRITICAL``)
         """
         self._logger.setLevel(level)
 
@@ -179,8 +183,8 @@ class IRCClient(asyncio.Protocol):
         self._send_message(messages.part((channel,) + channels, message))
 
     def quit(self, message=None):
-        """ Disconnect from the IRC server and terminate the IRCClient's event
-            loop.
+        """ Disconnect from the IRC server and terminate the client's
+        :py:meth:`event loop<.IRCClient.run>`.
 
         Args:
             message (str): optional message, send to the server
@@ -192,7 +196,7 @@ class IRCClient(asyncio.Protocol):
         """ Send a message to a channel.
 
         Args:
-            channel (str): the channel the message is addressed to
+            channel (str): the addressed channel
             message (str): the message to send
         """
         self._send_message(
@@ -300,20 +304,34 @@ class IRCClient(asyncio.Protocol):
                                   'unhandled exception!')
             self._shutdown()
 
-    @property
-    def nick(self):
-        """ Current nick name of the client. """
+    def _get_nick(self):
         return self._state.nick
 
-    @property
-    def server(self):
-        """ Name of the Server this client is currently connected to. """
+    nick = property(_get_nick)
+    """ Current nick name of the client (*read-only*).
+
+    Returns:
+        str: nick name or ``None`` if client is not registered
+    """
+    def _get_server(self):
         return self._state.server
 
-    @property
-    def channels(self):
-        """ Names of channels this client is currently in. """
+    server = property(_get_server)
+    """ Name of the Server this client is currently connected to (*read-only*).
+
+    Returns:
+        str: server name or ``None`` if client is not connected to a server.
+    """
+
+    def _get_channels(self):
         return tuple(self._state.channels)
+
+    channels = property(_get_channels)
+    """ Names of channels this client is currently in (*read-only*).
+
+    Returns:
+        tuple: channel names as strings, tuple might be empty
+    """
 
 
 class IRCClientState(object):

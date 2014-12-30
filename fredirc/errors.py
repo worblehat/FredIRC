@@ -31,7 +31,7 @@ class MessageHandlingError(FredIRCError):
 
 
 class ParserError(FredIRCError):
-    """ Indicates that a parser rejects it's input. """
+    """ Indicates that a parser rejects its input. """
     pass
 
 
