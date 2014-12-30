@@ -1,0 +1,162 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    
+    <title>Installation &mdash; FredIRC 0.1.0 documentation</title>
+    
+    <link rel="stylesheet" href="_static/nature.css" type="text/css" />
+    <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
+    
+    <script type="text/javascript">
+      var DOCUMENTATION_OPTIONS = {
+        URL_ROOT:    './',
+        VERSION:     '0.1.0',
+        COLLAPSE_INDEX: false,
+        FILE_SUFFIX: '.html',
+        HAS_SOURCE:  true
+      };
+    </script>
+    <script type="text/javascript" src="_static/jquery.js"></script>
+    <script type="text/javascript" src="_static/underscore.js"></script>
+    <script type="text/javascript" src="_static/doctools.js"></script>
+    <link rel="top" title="FredIRC 0.1.0 documentation" href="index.html" />
+    <link rel="next" title="Beginner’s Guide" href="guide.html" />
+    <link rel="prev" title="Welcome to FredIRC’s documentation!" href="index.html" /> 
+  </head>
+  <body>
+    <div class="related">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="genindex.html" title="General Index"
+             accesskey="I">index</a></li>
+        <li class="right" >
+          <a href="guide.html" title="Beginner’s Guide"
+             accesskey="N">next</a> |</li>
+        <li class="right" >
+          <a href="index.html" title="Welcome to FredIRC’s documentation!"
+             accesskey="P">previous</a> |</li>
+        <li><a href="index.html">FredIRC 0.1.0 documentation</a> &raquo;</li> 
+      </ul>
+    </div>  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body">
+            
+  <div class="section" id="installation">
+<h1>Installation<a class="headerlink" href="#installation" title="Permalink to this headline">¶</a></h1>
+<p><strong>Prerequisites</strong>: Make sure you have <strong>Python 3.3 or above</strong> as well as
+<a class="reference external" href="https://pip.pypa.io">pip</a> installed on your system.</p>
+<div class="section" id="installation-via-pypi">
+<h2>Installation via PyPI<a class="headerlink" href="#installation-via-pypi" title="Permalink to this headline">¶</a></h2>
+<p>The <strong>recommended way</strong> to install FredIRC is to use the
+<a class="reference external" href="https://pypi.python.org">Python Package Index</a>.</p>
+<p>The following command will download FredIRC (and dependencies) from
+PyPI and install it for you:</p>
+<div class="highlight-bash"><div class="highlight"><pre><span class="nv">$ </span>pip install fredirc
+</pre></div>
+</div>
+<p>This is probably all you need to do. Now you can continue with the <a class="reference internal" href="guide.html"><em>Beginner&#8217;s Guide</em></a>.</p>
+</div>
+<div class="section" id="installation-from-source">
+<h2>Installation from Source<a class="headerlink" href="#installation-from-source" title="Permalink to this headline">¶</a></h2>
+<p>If you have FredIRC&#8217;s source distribution (e.g. by cloning the
+<a class="reference external" href="https://github.com/worblehat/FredIRC">git repository</a>) and want to install
+that version you need to create a distribution tarball first:</p>
+<div class="highlight-bash"><div class="highlight"><pre><span class="nv">$ </span>python setup.py sdist
+</pre></div>
+</div>
+<p>This will create a <tt class="docutils literal"><span class="pre">dist/</span></tt>-directory with a gzip compressed tar archive, that
+can be installed by:</p>
+<div class="highlight-bash"><div class="highlight"><pre><span class="nv">$ </span>pip install dist/FredIRC-X.X.X.tar.gz
+</pre></div>
+</div>
+</div>
+<div class="section" id="build-the-documentation">
+<h2>Build the Documentation<a class="headerlink" href="#build-the-documentation" title="Permalink to this headline">¶</a></h2>
+<p>The source tree of FredIRC also includes this documentation.
+To build it, you will need to have
+<a class="reference external" href="https://pypi.python.org/pypi/Sphinx">sphinx</a> and
+<a class="reference external" href="https://pypi.python.org/pypi/sphinxcontrib-napoleon">sphinxcontrib-napoleon</a>
+installed.</p>
+<div class="highlight-bash"><div class="highlight"><pre><span class="nv">$ </span>python setup.py build_sphinx
+</pre></div>
+</div>
+<p>Afterwards you can open <tt class="docutils literal"><span class="pre">doc/build/html/index.html</span></tt> in your web browser.</p>
+</div>
+<div class="section" id="uninstall">
+<h2>Uninstall<a class="headerlink" href="#uninstall" title="Permalink to this headline">¶</a></h2>
+<p>pip can also be used to uninstall FredIRC:</p>
+<div class="highlight-bash"><div class="highlight"><pre><span class="nv">$ </span>pip uninstall fredirc
+</pre></div>
+</div>
+</div>
+</div>
+
+
+          </div>
+        </div>
+      </div>
+      <div class="sphinxsidebar">
+        <div class="sphinxsidebarwrapper">
+  <h3><a href="index.html">Table Of Contents</a></h3>
+  <ul>
+<li><a class="reference internal" href="#">Installation</a><ul>
+<li><a class="reference internal" href="#installation-via-pypi">Installation via PyPI</a></li>
+<li><a class="reference internal" href="#installation-from-source">Installation from Source</a></li>
+<li><a class="reference internal" href="#build-the-documentation">Build the Documentation</a></li>
+<li><a class="reference internal" href="#uninstall">Uninstall</a></li>
+</ul>
+</li>
+</ul>
+
+  <h4>Previous topic</h4>
+  <p class="topless"><a href="index.html"
+                        title="previous chapter">Welcome to FredIRC&#8217;s documentation!</a></p>
+  <h4>Next topic</h4>
+  <p class="topless"><a href="guide.html"
+                        title="next chapter">Beginner&#8217;s Guide</a></p>
+<div id="searchbox" style="display: none">
+  <h3>Quick search</h3>
+    <form class="search" action="search.html" method="get">
+      <input type="text" name="q" />
+      <input type="submit" value="Go" />
+      <input type="hidden" name="check_keywords" value="yes" />
+      <input type="hidden" name="area" value="default" />
+    </form>
+    <p class="searchtip" style="font-size: 90%">
+    Enter search terms or a module, class or function name.
+    </p>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="related">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="genindex.html" title="General Index"
+             >index</a></li>
+        <li class="right" >
+          <a href="guide.html" title="Beginner’s Guide"
+             >next</a> |</li>
+        <li class="right" >
+          <a href="index.html" title="Welcome to FredIRC’s documentation!"
+             >previous</a> |</li>
+        <li><a href="index.html">FredIRC 0.1.0 documentation</a> &raquo;</li> 
+      </ul>
+    </div>
+    <div class="footer">
+        &copy; Copyright 2014, Tobias Marquardt.
+      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 1.2.3.
+    </div>
+  </body>
+</html>

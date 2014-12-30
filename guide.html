@@ -1,0 +1,295 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    
+    <title>Beginner’s Guide &mdash; FredIRC 0.1.0 documentation</title>
+    
+    <link rel="stylesheet" href="_static/nature.css" type="text/css" />
+    <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
+    
+    <script type="text/javascript">
+      var DOCUMENTATION_OPTIONS = {
+        URL_ROOT:    './',
+        VERSION:     '0.1.0',
+        COLLAPSE_INDEX: false,
+        FILE_SUFFIX: '.html',
+        HAS_SOURCE:  true
+      };
+    </script>
+    <script type="text/javascript" src="_static/jquery.js"></script>
+    <script type="text/javascript" src="_static/underscore.js"></script>
+    <script type="text/javascript" src="_static/doctools.js"></script>
+    <link rel="top" title="FredIRC 0.1.0 documentation" href="index.html" />
+    <link rel="next" title="API Reference" href="api.html" />
+    <link rel="prev" title="Installation" href="install.html" /> 
+  </head>
+  <body>
+    <div class="related">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="genindex.html" title="General Index"
+             accesskey="I">index</a></li>
+        <li class="right" >
+          <a href="api.html" title="API Reference"
+             accesskey="N">next</a> |</li>
+        <li class="right" >
+          <a href="install.html" title="Installation"
+             accesskey="P">previous</a> |</li>
+        <li><a href="index.html">FredIRC 0.1.0 documentation</a> &raquo;</li> 
+      </ul>
+    </div>  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body">
+            
+  <div class="section" id="beginner-s-guide">
+<h1>Beginner&#8217;s Guide<a class="headerlink" href="#beginner-s-guide" title="Permalink to this headline">¶</a></h1>
+<p><strong>Prerequisites</strong>: <a class="reference internal" href="install.html"><em>Installation</em></a></p>
+<p>This page will guide you through the steps to implement a first IRC bot with
+FredIRC. It will be able to connect to a channel, greet new users and
+respond to them. The complete source code of this example can be found at the
+end of this page.</p>
+<p>Note that we won&#8217;t go very much into details here. For a complete
+explanation of the used classes and methods see the <a class="reference internal" href="api.html"><em>API Reference</em></a>.</p>
+<div class="section" id="irchandler">
+<h2>IRCHandler<a class="headerlink" href="#irchandler" title="Permalink to this headline">¶</a></h2>
+<p>In FredIRC a bot is a class that handles events from an IRC server and may
+respond to them in some way. The base class for all bots is therefore
+<a class="reference internal" href="api.html#fredirc.IRCHandler" title="fredirc.IRCHandler"><tt class="xref py py-class docutils literal"><span class="pre">IRCHandler</span></tt></a>, which defines different
+handler-methods that are called on specific
+events (e.g.
+<a class="reference internal" href="api.html#fredirc.IRCHandler.handle_channel_message" title="fredirc.IRCHandler.handle_channel_message"><tt class="xref py py-meth docutils literal"><span class="pre">handle_channel_message()</span></tt></a>
+, <a class="reference internal" href="api.html#fredirc.IRCHandler.handle_join" title="fredirc.IRCHandler.handle_join"><tt class="xref py py-meth docutils literal"><span class="pre">handle_join()</span></tt></a>,...).
+In <a class="reference internal" href="api.html#fredirc.IRCHandler" title="fredirc.IRCHandler"><tt class="xref py py-class docutils literal"><span class="pre">IRCHandler</span></tt></a> all these methods are empty,
+so by default it does not do anything.</p>
+<p><a class="reference internal" href="api.html#fredirc.BaseIRCHandler" title="fredirc.BaseIRCHandler"><tt class="xref py py-class docutils literal"><span class="pre">BaseIRCHandler</span></tt></a> is a subclass of
+<a class="reference internal" href="api.html#fredirc.IRCHandler" title="fredirc.IRCHandler"><tt class="xref py py-class docutils literal"><span class="pre">IRCHandler</span></tt></a> and implements the absolute minimum
+to get a bot running. It is up to you, to subclass
+<a class="reference internal" href="api.html#fredirc.BaseIRCHandler" title="fredirc.BaseIRCHandler"><tt class="xref py py-class docutils literal"><span class="pre">BaseIRCHandler</span></tt></a> and implement the
+handler-methods you need.</p>
+<p>So first you&#8217;ll create a class for the bot:</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="kn">from</span> <span class="nn">fredirc</span> <span class="kn">import</span> <span class="n">BaseIRCHandler</span>
+
+<span class="k">class</span> <span class="nc">MyBot</span><span class="p">(</span><span class="n">BaseIRCHandler</span><span class="p">):</span>
+    <span class="k">pass</span>
+</pre></div>
+</div>
+</div>
+<div class="section" id="connect-to-a-server">
+<h2>Connect to a Server<a class="headerlink" href="#connect-to-a-server" title="Permalink to this headline">¶</a></h2>
+<p>To connect your bot to an IRC server, you have to create an instance of
+<a class="reference internal" href="api.html#fredirc.IRCClient" title="fredirc.IRCClient"><tt class="xref py py-class docutils literal"><span class="pre">IRCClient</span></tt></a> and pass your bot object to its
+constructor:</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="kn">from</span> <span class="nn">fredirc</span> <span class="kn">import</span> <span class="n">IRCClient</span>
+
+<span class="n">client</span> <span class="o">=</span> <span class="n">IRCClient</span><span class="p">(</span><span class="n">MyBot</span><span class="p">(),</span> <span class="s">&quot;Fred&quot;</span><span class="p">,</span> <span class="s">&quot;irc.freenode.com&quot;</span><span class="p">)</span>
+<span class="n">client</span><span class="o">.</span><span class="n">run</span><span class="p">()</span>
+</pre></div>
+</div>
+<p>The other two arguments are the bot&#8217;s nick name and the IRC server address.
+Calling <a class="reference internal" href="api.html#fredirc.IRCClient.run" title="fredirc.IRCClient.run"><tt class="xref py py-meth docutils literal"><span class="pre">run()</span></tt></a> on the client will start it.
+<a class="reference internal" href="api.html#fredirc.IRCClient.run" title="fredirc.IRCClient.run"><tt class="xref py py-meth docutils literal"><span class="pre">run()</span></tt></a> will not return as
+long as the client is running and connected to the server. So the actual
+event loop that coordinates the communication with the server is implemented
+inside of it.</p>
+</div>
+<div class="section" id="join-a-channel">
+<h2>Join a Channel<a class="headerlink" href="#join-a-channel" title="Permalink to this headline">¶</a></h2>
+<p>So far your bot will just connect to the server <em>irc.freenode.com</em> and register
+with nick <em>Fred</em>.</p>
+<p>Afterwards you probably want the bot to join a channel. To do so, implement
+the <a class="reference internal" href="api.html#fredirc.IRCHandler.handle_register" title="fredirc.IRCHandler.handle_register"><tt class="xref py py-meth docutils literal"><span class="pre">handle_register()</span></tt></a> method
+of <a class="reference internal" href="api.html#fredirc.IRCHandler" title="fredirc.IRCHandler"><tt class="xref py py-class docutils literal"><span class="pre">IRCHandler</span></tt></a>:</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="k">class</span> <span class="nc">MyBot</span><span class="p">(</span><span class="n">BaseIRCHandler</span><span class="p">):</span>
+
+    <span class="k">def</span> <span class="nf">handle_register</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">client</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="s">&quot;#SomeChannel&quot;</span><span class="p">)</span>
+</pre></div>
+</div>
+<p>This method will be called after successful registration. A bot has a client
+member that is the <a class="reference internal" href="api.html#fredirc.IRCClient" title="fredirc.IRCClient"><tt class="xref py py-class docutils literal"><span class="pre">IRCClient</span></tt></a> instance it is
+running in. To join a channel you can use the proper method of the client.
+Actually all communication with the server is done via method calls on
+<tt class="docutils literal"><span class="pre">self.client</span></tt>.</p>
+</div>
+<div class="section" id="communicate-with-the-channel">
+<h2>Communicate with the Channel<a class="headerlink" href="#communicate-with-the-channel" title="Permalink to this headline">¶</a></h2>
+<p>Now that your bot is in a channel, it can communicate with other users in that
+channel. For example it could greet new users. To do so, use
+<a class="reference internal" href="api.html#fredirc.IRCHandler.handle_join" title="fredirc.IRCHandler.handle_join"><tt class="xref py py-meth docutils literal"><span class="pre">handle_join()</span></tt></a>
+which is called whenever a user joins the channel:</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="k">class</span> <span class="nc">MyBot</span><span class="p">(</span><span class="n">BaseIRCHandler</span><span class="p">):</span>
+
+    <span class="p">(</span><span class="o">...</span><span class="p">)</span>
+
+    <span class="k">def</span> <span class="nf">handle_join</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">channel</span><span class="p">,</span> <span class="n">nick</span><span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">client</span><span class="o">.</span><span class="n">send_message</span><span class="p">(</span><span class="n">channel</span><span class="p">,</span> <span class="s">&#39;Welcome, &#39;</span> <span class="o">+</span> <span class="n">nick</span> <span class="o">+</span> <span class="s">&#39;!&#39;</span><span class="p">)</span>
+</pre></div>
+</div>
+<p>Of course your bot can also reply to messages from other users.
+As an example, you can use
+<a class="reference internal" href="api.html#fredirc.IRCHandler.handle_channel_message" title="fredirc.IRCHandler.handle_channel_message"><tt class="xref py py-meth docutils literal"><span class="pre">handle_channel_message()</span></tt></a>
+to respond to someone who sends &#8216;Hello Fred&#8217; to the channel:</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="k">class</span> <span class="nc">MyBot</span><span class="p">(</span><span class="n">BaseIRCHandler</span><span class="p">):</span>
+
+    <span class="p">(</span><span class="o">...</span><span class="p">)</span>
+
+    <span class="k">def</span> <span class="nf">handle_channel_message</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">channel</span><span class="p">,</span> <span class="n">message</span><span class="p">,</span> <span class="n">sender</span><span class="p">):</span>
+        <span class="k">if</span> <span class="n">messsage</span><span class="o">.</span><span class="n">strip</span><span class="p">()</span> <span class="o">==</span> <span class="s">&quot;Hello &quot;</span> <span class="o">+</span> <span class="bp">self</span><span class="o">.</span><span class="n">client</span><span class="o">.</span><span class="n">nick</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">client</span><span class="o">.</span><span class="n">send_message</span><span class="p">(</span><span class="s">&quot;Hi &quot;</span> <span class="o">+</span> <span class="n">sender</span> <span class="o">+</span> <span class="s">&quot;. How are you?&quot;</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<div class="section" id="handle-errors">
+<span id="guide-handle-errors"></span><h2>Handle Errors<a class="headerlink" href="#handle-errors" title="Permalink to this headline">¶</a></h2>
+<p>In an IRC session a lot of unexpected situations or even errors can occur.
+The server reports those errors by sending an error reply to the client.
+To react to those errors appropriately you might want to implement
+<a class="reference internal" href="api.html#fredirc.IRCHandler.handle_error" title="fredirc.IRCHandler.handle_error"><tt class="xref py py-meth docutils literal"><span class="pre">handle_error()</span></tt></a>.</p>
+<p>A common &#8216;error&#8217; that should be handled is the situation where your chosen nick
+name is already in use by someone else. In that case you should register
+with a different nick. Here we just append a random number to the
+previous nick:</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="kn">from</span> <span class="nn">fredirc</span> <span class="kn">import</span> <span class="n">Err</span>
+<span class="kn">from</span> <span class="nn">random</span> <span class="kn">import</span> <span class="n">Random</span>
+
+<span class="k">class</span> <span class="nc">MyBot</span><span class="p">(</span><span class="n">BaseIRCHandler</span><span class="p">):</span>
+
+    <span class="p">(</span><span class="o">...</span><span class="p">)</span>
+
+    <span class="k">def</span> <span class="nf">handle_error</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">num</span><span class="p">,</span> <span class="o">**</span><span class="n">params</span><span class="p">):</span>
+        <span class="k">if</span> <span class="n">num</span> <span class="o">==</span> <span class="n">Err</span><span class="o">.</span><span class="n">NICKNAMEINUSE</span><span class="p">:</span>
+            <span class="n">new_nick</span> <span class="o">=</span> <span class="n">params</span><span class="p">[</span><span class="s">&#39;nick&#39;</span><span class="p">]</span> <span class="o">+</span> <span class="n">Random</span><span class="p">()</span><span class="o">.</span><span class="n">randint</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="mi">9</span><span class="p">)</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">client</span><span class="o">.</span><span class="n">register</span><span class="p">(</span><span class="n">nick</span> <span class="o">=</span> <span class="n">new_nick</span><span class="p">)</span>
+</pre></div>
+</div>
+<p>The parameter <tt class="docutils literal"><span class="pre">num</span></tt> contains a number that can be used to identify the error
+and <tt class="docutils literal"><span class="pre">params</span></tt> is a variable length list of named values specific to the error.
+In case of <tt class="docutils literal"><span class="pre">NICKNAMEINUSE</span></tt> error, <tt class="docutils literal"><span class="pre">params['nick']</span></tt> contains the nick you
+tried to register with.</p>
+<p>See <a class="reference internal" href="api.html#fredirc.Err" title="fredirc.Err"><tt class="xref py py-class docutils literal"><span class="pre">Err</span></tt></a> for a complete list of errors and their
+parameters.</p>
+</div>
+<div class="section" id="run-the-bot">
+<h2>Run the Bot<a class="headerlink" href="#run-the-bot" title="Permalink to this headline">¶</a></h2>
+<p>Assuming you&#8217;ve put your code in a file called <tt class="docutils literal"><span class="pre">bot.py</span></tt>, you can run your bot
+with:</p>
+<div class="highlight-bash"><div class="highlight"><pre><span class="nv">$ </span>python3 bot.py
+</pre></div>
+</div>
+<p>By default a log file called <tt class="docutils literal"><span class="pre">irc.log</span></tt> will be created in the current working
+directory. So if your bot does not behave as expected you should take a look
+at this file. You can also change the
+<a class="reference internal" href="api.html#fredirc.IRCClient.set_log_level" title="fredirc.IRCClient.set_log_level"><tt class="xref py py-meth docutils literal"><span class="pre">log</span> <span class="pre">level</span></tt></a> or
+<a class="reference internal" href="api.html#fredirc.IRCClient.enable_logging" title="fredirc.IRCClient.enable_logging"><tt class="xref py py-meth docutils literal"><span class="pre">disable</span> <span class="pre">logging</span></tt></a>
+via the <a class="reference internal" href="api.html#fredirc.IRCClient" title="fredirc.IRCClient"><tt class="xref py py-class docutils literal"><span class="pre">IRCClient</span></tt></a> instance.</p>
+<p>If you want to run the client in the background without occupying a terminal
+I recommend the <tt class="docutils literal"><span class="pre">nohup</span></tt> command on Linux:</p>
+<div class="highlight-bash"><div class="highlight"><pre><span class="nv">$ </span>nohup python3 bot.py <span class="p">&amp;</span>
+</pre></div>
+</div>
+</div>
+<div class="section" id="complete-example">
+<h2>Complete Example<a class="headerlink" href="#complete-example" title="Permalink to this headline">¶</a></h2>
+<p>The complete code from above in one listing:</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="kn">from</span> <span class="nn">fredirc</span> <span class="kn">import</span> <span class="n">BaseIRCHandler</span>
+<span class="kn">from</span> <span class="nn">fredirc</span> <span class="kn">import</span> <span class="n">Err</span>
+<span class="kn">from</span> <span class="nn">fredirc</span> <span class="kn">import</span> <span class="n">IRCClient</span>
+
+<span class="kn">from</span> <span class="nn">random</span> <span class="kn">import</span> <span class="n">Random</span>
+
+<span class="n">client</span> <span class="o">=</span> <span class="n">IRCClient</span><span class="p">(</span><span class="n">MyBot</span><span class="p">(),</span> <span class="s">&quot;Fred&quot;</span><span class="p">,</span> <span class="s">&quot;irc.freenode.com&quot;</span><span class="p">)</span>
+<span class="n">client</span><span class="o">.</span><span class="n">run</span><span class="p">()</span>
+
+<span class="k">class</span> <span class="nc">MyBot</span><span class="p">(</span><span class="n">BaseIRCHandler</span><span class="p">):</span>
+
+    <span class="k">def</span> <span class="nf">handle_register</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">client</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="s">&quot;#SomeChannel&quot;</span><span class="p">)</span>
+
+    <span class="k">def</span> <span class="nf">handle_join</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">channel</span><span class="p">,</span> <span class="n">nick</span><span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">client</span><span class="o">.</span><span class="n">send_message</span><span class="p">(</span><span class="n">channel</span><span class="p">,</span> <span class="s">&#39;Welcome, &#39;</span> <span class="o">+</span> <span class="n">nick</span> <span class="o">+</span> <span class="s">&#39;!&#39;</span><span class="p">)</span>
+
+    <span class="k">def</span> <span class="nf">handle_channel_message</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">channel</span><span class="p">,</span> <span class="n">message</span><span class="p">,</span> <span class="n">sender</span><span class="p">):</span>
+        <span class="k">if</span> <span class="n">messsage</span><span class="o">.</span><span class="n">strip</span><span class="p">()</span> <span class="o">==</span> <span class="s">&quot;Hello &quot;</span> <span class="o">+</span> <span class="bp">self</span><span class="o">.</span><span class="n">client</span><span class="o">.</span><span class="n">nick</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">client</span><span class="o">.</span><span class="n">send_message</span><span class="p">(</span><span class="s">&quot;Hi &quot;</span> <span class="o">+</span> <span class="n">sender</span> <span class="o">+</span> <span class="s">&quot;. How are you?&quot;</span><span class="p">)</span>
+
+    <span class="k">def</span> <span class="nf">handle_error</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">num</span><span class="p">,</span> <span class="o">**</span><span class="n">params</span><span class="p">):</span>
+        <span class="k">if</span> <span class="n">num</span> <span class="o">==</span> <span class="n">Err</span><span class="o">.</span><span class="n">NICKNAMEINUSE</span><span class="p">:</span>
+            <span class="n">new_nick</span> <span class="o">=</span> <span class="n">params</span><span class="p">[</span><span class="s">&#39;nick&#39;</span><span class="p">]</span> <span class="o">+</span> <span class="n">Random</span><span class="p">()</span><span class="o">.</span><span class="n">randint</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="mi">9</span><span class="p">)</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">client</span><span class="o">.</span><span class="n">register</span><span class="p">(</span><span class="n">nick</span> <span class="o">=</span> <span class="n">new_nick</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+</div>
+
+
+          </div>
+        </div>
+      </div>
+      <div class="sphinxsidebar">
+        <div class="sphinxsidebarwrapper">
+  <h3><a href="index.html">Table Of Contents</a></h3>
+  <ul>
+<li><a class="reference internal" href="#">Beginner&#8217;s Guide</a><ul>
+<li><a class="reference internal" href="#irchandler">IRCHandler</a></li>
+<li><a class="reference internal" href="#connect-to-a-server">Connect to a Server</a></li>
+<li><a class="reference internal" href="#join-a-channel">Join a Channel</a></li>
+<li><a class="reference internal" href="#communicate-with-the-channel">Communicate with the Channel</a></li>
+<li><a class="reference internal" href="#handle-errors">Handle Errors</a></li>
+<li><a class="reference internal" href="#run-the-bot">Run the Bot</a></li>
+<li><a class="reference internal" href="#complete-example">Complete Example</a></li>
+</ul>
+</li>
+</ul>
+
+  <h4>Previous topic</h4>
+  <p class="topless"><a href="install.html"
+                        title="previous chapter">Installation</a></p>
+  <h4>Next topic</h4>
+  <p class="topless"><a href="api.html"
+                        title="next chapter">API Reference</a></p>
+<div id="searchbox" style="display: none">
+  <h3>Quick search</h3>
+    <form class="search" action="search.html" method="get">
+      <input type="text" name="q" />
+      <input type="submit" value="Go" />
+      <input type="hidden" name="check_keywords" value="yes" />
+      <input type="hidden" name="area" value="default" />
+    </form>
+    <p class="searchtip" style="font-size: 90%">
+    Enter search terms or a module, class or function name.
+    </p>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="related">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="genindex.html" title="General Index"
+             >index</a></li>
+        <li class="right" >
+          <a href="api.html" title="API Reference"
+             >next</a> |</li>
+        <li class="right" >
+          <a href="install.html" title="Installation"
+             >previous</a> |</li>
+        <li><a href="index.html">FredIRC 0.1.0 documentation</a> &raquo;</li> 
+      </ul>
+    </div>
+    <div class="footer">
+        &copy; Copyright 2014, Tobias Marquardt.
+      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 1.2.3.
+    </div>
+  </body>
+</html>

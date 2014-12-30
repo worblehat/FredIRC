@@ -1,1 +1,187 @@
-Under Construction...
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    
+    <title>Welcome to FredIRC’s documentation! &mdash; FredIRC 0.1.0 documentation</title>
+    
+    <link rel="stylesheet" href="_static/nature.css" type="text/css" />
+    <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
+    
+    <script type="text/javascript">
+      var DOCUMENTATION_OPTIONS = {
+        URL_ROOT:    './',
+        VERSION:     '0.1.0',
+        COLLAPSE_INDEX: false,
+        FILE_SUFFIX: '.html',
+        HAS_SOURCE:  true
+      };
+    </script>
+    <script type="text/javascript" src="_static/jquery.js"></script>
+    <script type="text/javascript" src="_static/underscore.js"></script>
+    <script type="text/javascript" src="_static/doctools.js"></script>
+    <link rel="top" title="FredIRC 0.1.0 documentation" href="#" />
+    <link rel="next" title="Installation" href="install.html" /> 
+  </head>
+  <body>
+    <div class="related">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="genindex.html" title="General Index"
+             accesskey="I">index</a></li>
+        <li class="right" >
+          <a href="install.html" title="Installation"
+             accesskey="N">next</a> |</li>
+        <li><a href="#">FredIRC 0.1.0 documentation</a> &raquo;</li> 
+      </ul>
+    </div>  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body">
+            
+  <div class="section" id="welcome-to-fredirc-s-documentation">
+<h1>Welcome to FredIRC&#8217;s documentation!<a class="headerlink" href="#welcome-to-fredirc-s-documentation" title="Permalink to this headline">¶</a></h1>
+<p>FredIRC is an event-driven Python framework for
+<a class="reference external" href="http://en.wikipedia.org/wiki/Internet_Relay_Chat">IRC (Internet Relay Chat)</a>
+bots. It aims to provide a high-level abstraction of
+<a class="reference external" href="http://tools.ietf.org/search/rfc2812">IRC&#8217;s internals</a>, an easy-to-use API
+and convinient utilities related to bot development.</p>
+<p>FredIRC is developed in <a class="reference external" href="http://www.python.org/">Python</a> and requires at
+least version 3.3. It only depends on
+<a class="reference external" href="https://pypi.python.org/pypi/asyncio">asyncio</a> which is part of the
+standard library since Python 3.4 anyway.</p>
+<div class="section" id="features">
+<h2>Features<a class="headerlink" href="#features" title="Permalink to this headline">¶</a></h2>
+<p>The main features are:</p>
+<ul class="simple">
+<li>Easy-to-use interface for IRC bots</li>
+<li>Internal event-loop that dispatches high-level IRC events</li>
+<li>Different kinds of tasks which can be scheduled by the user</li>
+</ul>
+<div class="admonition note">
+<p class="first admonition-title">Note</p>
+<p class="last">FredIRC is <strong>already usable</strong> but the project is still in an early
+stage of development. So far only the very basics needed to write
+simple IRC bots are implemented. As long as FredIRC has a 0.x.x
+version number, backward-incompatible API changes might be
+introduced (but mentioned in the change log).</p>
+</div>
+</div>
+<div class="section" id="documentation">
+<h2>Documentation<a class="headerlink" href="#documentation" title="Permalink to this headline">¶</a></h2>
+<div class="toctree-wrapper compound">
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="install.html">Installation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="guide.html">Beginner&#8217;s Guide</a></li>
+<li class="toctree-l1"><a class="reference internal" href="api.html">API Reference</a></li>
+<li class="toctree-l1"><a class="reference internal" href="history.html">Changelog</a></li>
+</ul>
+</div>
+</div>
+<div class="section" id="development">
+<h2>Development<a class="headerlink" href="#development" title="Permalink to this headline">¶</a></h2>
+<p>FredIRC is <strong>open source</strong> and distributed under terms of the
+<a class="reference external" href="http://opensource.org/licenses/BSD-2-Clause">BSD 2-Clause license</a>.
+Contributions (code, docs, ...) are always welcome!</p>
+<div class="section" id="resources">
+<h3>Resources<a class="headerlink" href="#resources" title="Permalink to this headline">¶</a></h3>
+<ul class="simple">
+<li>See the <a class="reference internal" href="history.html"><em>Changelog</em></a> for the history of FredIRC</li>
+<li>The source code repository is hosted at
+<a class="reference external" href="https://github.com/worblehat/FredIRC">Github</a></li>
+<li>For problems, questions and suggested improvements regarding FredIRC,
+please use the Github
+<a class="reference external" href="https://github.com/worblehat/FredIRC/issues">issue tracker</a> or
+contact me directly via tm[at]tobix[dot].eu</li>
+<li>Besides the <a class="reference internal" href="api.html"><em>public API reference</em></a> there is a reference that
+also includes the internal modules and classes not intended for use by the
+end user: <a class="reference internal" href="api_internal.html"><em>Internal API reference</em></a></li>
+</ul>
+</div>
+<div class="section" id="irc-protocol">
+<h3>IRC Protocol<a class="headerlink" href="#irc-protocol" title="Permalink to this headline">¶</a></h3>
+<p>FredIRC tries to implement RFC2812. But as this is no strict standard,
+there might be problems with specific IRC Deamons. It was mostly tested with
+ircd-hybrid.</p>
+</div>
+<div class="section" id="wishlist">
+<h3>Wishlist<a class="headerlink" href="#wishlist" title="Permalink to this headline">¶</a></h3>
+<ul class="simple">
+<li>Implement more of the
+<a class="reference external" href="http://tools.ietf.org/search/rfc2812">IRC client protocol</a>, especially the
+channel operation messages.</li>
+<li>Allow multiple server connections</li>
+<li>Allow multiple IRCClient instances at the same time</li>
+<li>(X)DCC functionality</li>
+<li>Port to Python 3.0/3.1/3.2 (maybe by using
+<a class="reference external" href="http://trollius.readthedocs.org/">Trollius</a>)</li>
+</ul>
+</div>
+</div>
+</div>
+
+
+          </div>
+        </div>
+      </div>
+      <div class="sphinxsidebar">
+        <div class="sphinxsidebarwrapper">
+  <h3><a href="#">Table Of Contents</a></h3>
+  <ul>
+<li><a class="reference internal" href="#">Welcome to FredIRC&#8217;s documentation!</a><ul>
+<li><a class="reference internal" href="#features">Features</a></li>
+<li><a class="reference internal" href="#documentation">Documentation</a></li>
+<li><a class="reference internal" href="#development">Development</a><ul>
+<li><a class="reference internal" href="#resources">Resources</a></li>
+<li><a class="reference internal" href="#irc-protocol">IRC Protocol</a></li>
+<li><a class="reference internal" href="#wishlist">Wishlist</a></li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+
+  <h4>Next topic</h4>
+  <p class="topless"><a href="install.html"
+                        title="next chapter">Installation</a></p>
+<div id="searchbox" style="display: none">
+  <h3>Quick search</h3>
+    <form class="search" action="search.html" method="get">
+      <input type="text" name="q" />
+      <input type="submit" value="Go" />
+      <input type="hidden" name="check_keywords" value="yes" />
+      <input type="hidden" name="area" value="default" />
+    </form>
+    <p class="searchtip" style="font-size: 90%">
+    Enter search terms or a module, class or function name.
+    </p>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="related">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="genindex.html" title="General Index"
+             >index</a></li>
+        <li class="right" >
+          <a href="install.html" title="Installation"
+             >next</a> |</li>
+        <li><a href="#">FredIRC 0.1.0 documentation</a> &raquo;</li> 
+      </ul>
+    </div>
+    <div class="footer">
+        &copy; Copyright 2014, Tobias Marquardt.
+      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 1.2.3.
+    </div>
+  </body>
+</html>
