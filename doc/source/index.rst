@@ -27,6 +27,16 @@ The main features are:
           version number, backward-incompatible API changes might be
           introduced (but mentioned in the change log).
 
+For a more detailed list of features see the :doc:`history`.
+
+Links
+-----
+
+* `Source Code Repository <https://github.com/worblehat/FredIRC>`_
+* `PyPi-Site <https://pypi.python.org/pypi/FredIRC>`_
+* `Issue Tracker <https://github.com/worblehat/FredIRC/issues>`_
+* `Releases <https://github.com/worblehat/FredIRC/releases>`_
+
 Documentation
 -------------
 
@@ -48,9 +58,9 @@ Contributions (code, docs, ...) are always welcome!
 Resources
 +++++++++
 
-* See the :doc:`Changelog <history>` for the history of FredIRC
 * The source code repository is hosted at
   `Github <https://github.com/worblehat/FredIRC>`_
+* See the :doc:`Changelog <history>` for the history of FredIRC
 * For problems, questions and suggested improvements regarding FredIRC,
   please use the Github
   `issue tracker <https://github.com/worblehat/FredIRC/issues>`_ or
@@ -73,6 +83,7 @@ Wishlist
   `IRC client protocol <http://tools.ietf.org/search/rfc2812>`_, especially the
   channel operation messages.
 * Allow multiple server connections
+* Utility classes for general bot development
 * Allow multiple IRCClient instances at the same time
 * (X)DCC functionality
 * Port to Python 3.0/3.1/3.2 (maybe by using

@@ -1,2 +1,2 @@
-
-v0.1.0
+The list of changes can be found at:
+https://worblehat.github.io/FredIRC/history.html
