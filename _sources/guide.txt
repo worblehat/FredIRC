@@ -114,7 +114,7 @@ to respond to someone who sends 'Hello Fred' to the channel:
 
         def handle_channel_message(self, channel, message, sender):
             if messsage.strip() == "Hello " + self.client.nick:
-                self.client.send_message("Hi " + sender + ". How are you?")
+                self.client.send_message(channel, "Hi " + sender + ". How are you?")
 
 .. _guide_handle-errors:
 
@@ -203,7 +203,7 @@ The complete code from above in one listing:
 
         def handle_channel_message(self, channel, message, sender):
             if messsage.strip() == "Hello " + self.client.nick:
-                self.client.send_message("Hi " + sender + ". How are you?")
+                self.client.send_message(channel, "Hi " + sender + ". How are you?")
 
         def handle_error(self, num, **params):
             if num == Err.NICKNAMEINUSE:
