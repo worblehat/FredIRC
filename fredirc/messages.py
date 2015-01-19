@@ -19,6 +19,7 @@ class Cmd:
     NICK = 'NICK'
     USER = 'USER'
     QUIT = 'QUIT'
+    MODE = 'MODE'
     # Channel Operations
     JOIN = 'JOIN'
     PART = 'PART'
@@ -27,6 +28,30 @@ class Cmd:
     # Miscellaneous
     PING = 'PING'
     PONG = 'PONG'
+
+
+class UserMode:
+    """ User Modes
+
+    User modes apply server-wide. So user mode 'o' should not be confused
+    with channel mode 'o'.
+    """
+    AWAY = 'a'
+    INVISIBLE = 'i'
+    WALLOPS_RECEIVER = 'w'
+    RESTRICTED = 'r'
+    OPERATOR = 'o'
+    LOCAL_OPERATOR = 'O'
+    NOTICES_RECEIVER = 's'
+
+
+class ChannelMode:
+    """ Channel Modes """
+    # Channel modes affecting a single user
+    OPERATOR = 'o'
+    VOICE = 'v'
+    # Channel modes affecting the channel itself
+    # TODO...
 
 
 class Rpl:
