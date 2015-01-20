@@ -416,7 +416,7 @@ class IRCClientState(object):
     def _unregister(self):
         """ Reset all attributes that require registration to a server. """
         self.nick = None
-        self.channels = None
+        self.channels = []
         self.mode = None
 
     def _disconnect(self):
