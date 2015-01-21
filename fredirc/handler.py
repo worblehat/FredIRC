@@ -143,6 +143,26 @@ class IRCHandler(object):
         """
         pass
 
+    def handle_got_op(self, channel, user):
+        """ TODO
+        """
+        pass
+
+    def handle_lost_op(self, channel, user):
+        """ TODO
+        """
+        pass
+
+    def handle_got_voice(self, channel, user):
+        """ TODO
+        """
+        pass
+
+    def handle_lost_voice(self, channel, user):
+        """ TODO
+        """
+        pass
+
     def handle_unhandled_message(self, message):
         """ This handler is called whenever a message is not handled by any
             other handler.
