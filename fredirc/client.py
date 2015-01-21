@@ -383,7 +383,8 @@ class IRCClientState(object):
         # Note: Channel names seem to be always lower case in messages from
         #       the server.
         self.channels = []
-        self.mode = None
+        # Channels, where the client is channel operator in:
+        self.operatorIn = []
 
     # --- Properties that provide an interface to the internal _state flag ---
 
@@ -417,7 +418,7 @@ class IRCClientState(object):
         """ Reset all attributes that require registration to a server. """
         self.nick = None
         self.channels = []
-        self.mode = None
+        self.operatorIn = []
 
     def _disconnect(self):
         """ Reset all attributes that require connection to a server. """

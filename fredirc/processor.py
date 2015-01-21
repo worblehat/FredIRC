@@ -13,6 +13,7 @@ import re
 from fredirc import parsing
 from fredirc.errors import MessageHandlingError
 from fredirc.errors import ParserError
+from fredirc.messages import ChannelMode
 from fredirc.messages import Cmd
 from fredirc.messages import Rpl
 from fredirc.messages import Err
@@ -62,6 +63,8 @@ class MessageProcessor(object):
                 self._process_join(prefix, params)
             elif command == Cmd.PART:
                 self._process_part(prefix, params)
+            elif command == Cmd.MODE:
+                self._process_mode(prefix, params, message)
             else:
                 raise MessageHandlingError(message)
         except MessageHandlingError as e:
@@ -144,3 +147,34 @@ class MessageProcessor(object):
             if len(params) > 1:
                 part_message = params[1]
             self._handler.handle_part(channel, nick, part_message)
+
+    def _process_mode(self, prefix, params, raw_msg):
+        target = parsing.parse_message_target(params[0])[0]
+        if target.channel:  # Channel Mode
+            self._process_channel_mode(target.channel, params[1:])
+        elif target.nick:  # User Mode
+            # User modes not yet implemented
+            # self._process_user_mode(target.nick, params[1:])
+            raise MessageHandlingError(raw_msg)
+        else:
+            raise MessageHandlingError(raw_msg)
+
+    def _process_channel_mode(self, channel, params):
+        mode_changes = parsing.parse_channel_mode_params(params)
+        for mode_change in mode_changes:
+            # Look for channel modes that affect users
+            if mode_change.mode == ChannelMode.OPERATOR:
+                user = mode_change.params[0]
+                if mode_change.added:
+                    self._state.operatorIn.append(channel)
+                    self._handler.handle_got_op(channel, user)
+                else:
+                    self._state.operatorIn.remove(channel)
+                    self._handler.handle_lost_op(channel, user)
+            elif mode_change.mode == ChannelMode.VOICE:
+                user = mode_change.params[0]
+                if mode_change.added:
+                    self._handler.handle_got_voice(channel, user)
+                else:
+                    self._handler.handle_lost_voice(channel, user)
+
