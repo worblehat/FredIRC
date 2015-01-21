@@ -128,7 +128,7 @@ def parse_message_target(msg_target):
     return tuple(targets)
 
 
-def parse_chanel_mode_params(params):
+def parse_channel_mode_params(params):
     """ Parse parameters of a channel mode message.
 
     The channel name must not be included in the parameter list!
@@ -161,9 +161,10 @@ def parse_chanel_mode_params(params):
         else:   # param contains <modes>
             # Easy so far, as we are only looking for a 'o' or 'v' at the end of
             # the modes (they must be at the end, because they expect a parameter)
-            if param[-1:] == ChannelMode.OPERATOR or \
-               param[-1:] == ChannelMode.VOICE:
-                mode_changes.append(ChannelModeChange(added, ChannelMode.OPERATOR))
+            mode = param[-1:]
+            if mode == ChannelMode.OPERATOR or \
+               mode == ChannelMode.VOICE:
+                mode_changes.append(ChannelModeChange(added, mode))
 
     return tuple(mode_changes)
 
