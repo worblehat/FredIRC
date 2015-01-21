@@ -51,7 +51,7 @@ class ChannelMode:
     OPERATOR = 'o'
     VOICE = 'v'
     # Channel modes affecting the channel itself
-    # TODO...
+    # Not yet implemented...
 
 
 class Rpl:

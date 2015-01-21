@@ -14,6 +14,7 @@ the irc message grammar (as described in RFC 2812).
 __all__ = []
 
 from fredirc.errors import ParserError
+from fredirc.messages import ChannelMode
 
 
 def parse(message):
@@ -125,6 +126,61 @@ def parse_message_target(msg_target):
             mt = MessageTarget(nick=msgto)
         targets.append(mt)
     return tuple(targets)
+
+
+def parse_chanel_mode_params(params):
+    """ Parse parameters of a channel mode message.
+
+    The channel name must not be included in the parameter list!
+    .. warning::
+        This is incomplete! So far we only parse those modes that are
+        handled by FredIRC.
+
+    Parses: *( ( "-" / "+" ) *<modes> *<modeparams> )
+
+    Retval:
+        tuple of ChannelModeChange
+    """
+    if not params[0].startswith('+') and not params[0].startswith('-'):
+        raise ParserError(str(params))  #TODO ParserError expects the whole mesasge
+    mode_changes = []
+
+    for param in params:
+        added = None
+        if param.startswith('+'):
+            added = True
+        elif param.startswith('-'):
+            added = False
+
+        if added is None:
+            # param contains <modeparams> for the previous modeChange
+            if len(mode_changes):
+                if not mode_changes[-1].params:
+                    mode_changes[-1].params = []
+                mode_changes[-1].params.append(param)
+        else:   # param contains <modes>
+            # Easy so far, as we are only looking for a 'o' or 'v' at the end of
+            # the modes (they must be at the end, because they expect a parameter)
+            if param[-1:] == ChannelMode.OPERATOR or \
+               param[-1:] == ChannelMode.VOICE:
+                mode_changes.append(ChannelModeChange(added, ChannelMode.OPERATOR))
+
+    return tuple(mode_changes)
+
+
+class ChannelModeChange(object):
+    """ Object that contains information about a changed channel mode.
+
+    Args:
+        added (bool): True, if the mode was added. False, otherwise.
+        mode (str): the mode
+        params (tuple of str): Parameters of this mode-change (e.g. target)
+    """
+
+    def __init__(self, added, mode, params=None):
+        self.added = added
+        self.mode = mode
+        self.params = params
 
 
 class MessageTarget(object):
