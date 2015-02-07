@@ -102,7 +102,8 @@ def parse_message_target(msg_target):
         if msgto.startswith('#') or \
            msgto.startswith('+') or \
            msgto.startswith('&'):
-            mt = MessageTarget(channel=msgto)
+            # We want channel names to always be lower-case in fredirc!
+            mt = MessageTarget(channel=msgto.lower())
         elif '@' in msgto:
             user_split = msgto.split('@', 1)
             if '!' in user_split[0]:

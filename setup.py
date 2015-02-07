@@ -20,7 +20,7 @@ else:
     dependencies = []
 
 def read(file):
-    """ Utility function to the the README file. """
+    """ Utility function to read the README-file. """
     return open(os.path.join(os.path.dirname(__file__), file)).read()
 
 setup(

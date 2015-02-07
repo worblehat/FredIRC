@@ -206,6 +206,15 @@ class IRCClient(asyncio.Protocol):
         """ Send a pong message to the server. """
         self._send_message(messages.pong(self._state.server))
 
+    def is_op_in(self, channel):
+        """
+        Check if this client has operator rights in the given channel.
+
+        Args:
+            channel (str): the channel (case-insensitive)
+        """
+        return channel.lower() in self._state.operatorIn;
+
     # --- Private methods ---
 
     def _send_message(self, message):
@@ -380,8 +389,7 @@ class IRCClientState(object):
         # Note: Nicks in server messages always have the case in which they
         #       were registered.
         self.nick = None
-        # Note: Channel names seem to be always lower case in messages from
-        #       the server.
+        # Note: Channel names will always be saved lower case
         self.channels = []
         # Channels, where the client is channel operator in:
         self.operatorIn = []
