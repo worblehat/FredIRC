@@ -233,3 +233,13 @@ def part(channels, message):
     return '{part_cmd} {channels} :{message}'.format(
             part_cmd=Cmd.PART, channels=','.join(channels), message=message)
 
+
+def channel_mode(channel, mode_change):
+    """
+    Args:
+        mode_change (ChannelModelChange)
+    """
+    change = '+' if mode_change.added else '-'
+    return '{mode_cmd} {channel} {change}{mode} {params}'.format(
+            mode_cmd=Cmd.MODE, channel=channel, change=change,
+            mode=mode_change.mode, params=' '.join(mode_change.params))

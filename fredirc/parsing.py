@@ -173,6 +173,9 @@ def parse_channel_mode_params(params):
 class ChannelModeChange(object):
     """ Object that contains information about a changed channel mode.
 
+    Note: Does not contain the channel name itself, but only the parameters
+    of the mode-message.
+
     Args:
         added (bool): True, if the mode was added. False, otherwise.
         mode (str): the mode
@@ -188,7 +191,7 @@ class ChannelModeChange(object):
 class MessageTarget(object):
     """ Represents a target of an IRC message.
 
-    Corresponds to the non-terminal 'msgto' in IRC's grammer.
+    Corresponds to the non-terminal 'msgto' in IRC's grammar.
     """
 
     def __init__(self, channel=None, nick=None, user=None, host=None,

@@ -14,6 +14,8 @@ import logging
 
 from fredirc import messages
 from fredirc.errors import ConnectionTimeoutError
+from fredirc.messages import ChannelMode
+from fredirc.parsing import ChannelModeChange
 from fredirc.processor import MessageProcessor
 
 
@@ -205,6 +207,62 @@ class IRCClient(asyncio.Protocol):
     def pong(self):
         """ Send a pong message to the server. """
         self._send_message(messages.pong(self._state.server))
+
+    def give_op(self, channel, user):
+        """ Grant operator rights to a user on a channel.
+
+        If the client is no operator, the server will respond with an
+        error message that can be handled via
+        :py:meth:`fredirc.handler.handle_error`.
+
+        Args:
+            channel (str): the channel
+            user (str): the affected user
+        """
+        mode_change = ChannelModeChange(True, ChannelMode.OPERATOR, (user,))
+        self._send_message(messages.channel_mode(channel, mode_change))
+
+    def revoke_op(self, channel, user):
+        """ Revoke operator rights from user on a channel.
+
+        If the client is no operator, the server will respond with an
+            error message that can be handled via
+        :py:meth:`fredirc.handler.handle_error`.
+
+        Args:
+            channel (str): the channel
+            user (str): the affected user
+        """
+        mode_change = ChannelModeChange(False, ChannelMode.OPERATOR, (user,))
+        self._send_message(messages.channel_mode(channel, mode_change))
+
+    def give_voice(self, channel, user):
+        """ Grant voice rights to a user on a channel.
+
+        If the client is no operator, the server will respond with an
+            error message that can be handled via
+        :py:meth:`fredirc.handler.handle_error`.
+
+        Args:
+            channel (str): the channel
+            user (str): the affected user
+        """
+        mode_change = ChannelModeChange(True, ChannelMode.VOICE, (user,))
+        self._send_message(messages.channel_mode(channel, mode_change))
+
+    def revoke_voice(self, channel, user):
+        """ Revoke voice rights from user on a channel.
+
+        If the client is no operator, the server will respond with an
+            error message that can be handled via
+        :py:meth:`fredirc.handler.handle_error`.
+
+        Args:
+            channel (str): the channel
+            user (str): the affected user
+        """
+        mode_change = ChannelModeChange(False, ChannelMode.VOICE, (user,))
+        self._send_message(messages.channel_mode(channel, mode_change))
 
     def is_op_in(self, channel):
         """
