@@ -33,6 +33,14 @@ class IRCHandler(object):
         """ The client established a connection to the server. """
         pass
 
+    def handle_disconnect(self):
+        """ The client lost connection to the server.
+
+        This might be the result of an network error but also occurs after
+        a quit by the client or a forced disconnect by the server.
+        """
+        pass
+
     def handle_register(self):
         """ The client successfully registered to the server. """
         pass

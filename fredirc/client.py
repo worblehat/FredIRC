@@ -192,7 +192,6 @@ class IRCClient(asyncio.Protocol):
             message (str): optional message, send to the server
         """
         self._send_message(messages.quit(message))
-        self._shutdown()
 
     def send_message(self, channel, message):
         """ Send a message to a channel.
@@ -295,10 +294,14 @@ class IRCClient(asyncio.Protocol):
         message += '\r\n'
         self._transport.write(message.encode('utf-8'))
 
+    def _disconnect(self):
+        """ Tell the IRCClient that it lost its connection to the server. """
+        self._state.connected = False
+        self._handler.handle_disconnect()
+
     def _shutdown(self):
         """ Shutdown the IRCClient by terminating the event loop. """
         self._logger.info('IRCCLient shutting down.')
-        self._state.connected = False
         asyncio.get_event_loop().stop()
 
     def _decoding_error_handler(self, error):
@@ -337,14 +340,14 @@ class IRCClient(asyncio.Protocol):
             (from :class:`asyncio.Protocol`).
         """
         self._logger.info('Connection closed.')
-        self._shutdown()
+        self._disconnect()
 
     def eof_received(self):
         """ Implementation of inherited method
             (from :class:`asyncio.Protocol`).
         """
         self._logger.debug('Received EOF')
-        self._shutdown()
+        self._disconnect()
 
     def data_received(self, data):
         """ Implementation of inherited method
