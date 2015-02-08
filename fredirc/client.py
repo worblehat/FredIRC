@@ -132,6 +132,14 @@ class IRCClient(asyncio.Protocol):
         """
         self._logger.setLevel(level)
 
+    def terminate(self):
+        """ Shutdown the IRCClient by terminating the event loop.
+
+        Control flow will continue after the call to :py:meth:`.run`.
+        """
+        self._logger.info('Event-Loop terminated.')
+        asyncio.get_event_loop().stop()
+
     # --- IRC related methods ---
 
     def register(self, nick=None, user_name=None, real_name=None, password=None):
@@ -299,11 +307,6 @@ class IRCClient(asyncio.Protocol):
         self._state.connected = False
         self._handler.handle_disconnect()
 
-    def _shutdown(self):
-        """ Shutdown the IRCClient by terminating the event loop. """
-        self._logger.info('IRCCLient shutting down.')
-        asyncio.get_event_loop().stop()
-
     def _decoding_error_handler(self, error):
         """ Error handler that is used with the byte.decode() method.
 
@@ -381,7 +384,7 @@ class IRCClient(asyncio.Protocol):
                                    'IRCClient: {}').format(e))
             self._logger.critical('Shutting down the client, due to an ' +
                                   'unhandled exception!')
-            self._shutdown()
+            self.terminate()
 
     def _get_nick(self):
         return self._state.nick
