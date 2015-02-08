@@ -213,7 +213,16 @@ class IRCClient(asyncio.Protocol):
         Args:
             channel (str): the channel (case-insensitive)
         """
-        return channel.lower() in self._state.operatorIn;
+        return channel.lower() in self._state.operator_in
+
+    def has_voice_in(self, channel):
+        """
+        Check if this client has voice rights in the given channel.
+
+        Args:
+            channel (str): the channel (case-insensitive)
+        """
+        return channel.lower() in self._state.has_voice_in
 
     # --- Private methods ---
 
@@ -392,7 +401,9 @@ class IRCClientState(object):
         # Note: Channel names will always be saved lower case
         self.channels = []
         # Channels, where the client is channel operator in:
-        self.operatorIn = []
+        self.operator_in = []
+        # Channels, where the client has voice rights in:
+        self.has_voice_in = []
 
     # --- Properties that provide an interface to the internal _state flag ---
 
@@ -426,7 +437,8 @@ class IRCClientState(object):
         """ Reset all attributes that require registration to a server. """
         self.nick = None
         self.channels = []
-        self.operatorIn = []
+        self.operator_in = []
+        self.has_voice_in = []
 
     def _disconnect(self):
         """ Reset all attributes that require connection to a server. """

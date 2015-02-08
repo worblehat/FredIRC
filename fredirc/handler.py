@@ -143,23 +143,43 @@ class IRCHandler(object):
         """
         pass
 
-    def handle_got_op(self, channel, user):
-        """ TODO
+    def handle_got_op(self, channel, nick, initiator):
+        """ A user received operator status.
+
+        Args:
+            channel (str): name of the channel
+            nick (str): the user who became operator
+            initiator (str): the user who granted the operator rights
         """
         pass
 
-    def handle_lost_op(self, channel, user):
-        """ TODO
+    def handle_lost_op(self, channel, nick, initiator):
+        """ A user lost operator status.
+
+        Args:
+            channel (str): name of the channel
+            nick (str): the user who is no longer operator
+            initiator (str): the user who initiated the mode change
         """
         pass
 
-    def handle_got_voice(self, channel, user):
-        """ TODO
+    def handle_got_voice(self, channel, nick, initiator):
+        """ A user received voice rights.
+
+        Args:
+            channel (str): name of the channel
+            nick (str): the user who received voice
+            initiator (str): the user who granted the voice rights
         """
         pass
 
-    def handle_lost_voice(self, channel, user):
-        """ TODO
+    def handle_lost_voice(self, channel, nick, initiator):
+        """ A user lost voide rights.
+
+        Args:
+            channel (str): name of the channel
+            nick (str): the user who no longer has voice
+            initiator (str): the user who initiated the mode change
         """
         pass
 

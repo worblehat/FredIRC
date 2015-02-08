@@ -150,8 +150,9 @@ class MessageProcessor(object):
 
     def _process_mode(self, prefix, params, raw_msg):
         target = parsing.parse_message_target(params[0])[0]
+        initiator = parsing.parse_user_prefix(prefix)[0]
         if target.channel:  # Channel Mode
-            self._process_channel_mode(target.channel, params[1:])
+            self._process_channel_mode(target.channel, params[1:], initiator)
         elif target.nick:  # User Mode
             # User modes not yet implemented
             # self._process_user_mode(target.nick, params[1:])
@@ -159,22 +160,24 @@ class MessageProcessor(object):
         else:
             raise MessageHandlingError(raw_msg)
 
-    def _process_channel_mode(self, channel, params):
+    def _process_channel_mode(self, channel, params, initiator):
         mode_changes = parsing.parse_channel_mode_params(params)
         for mode_change in mode_changes:
             # Look for channel modes that affect users
             if mode_change.mode == ChannelMode.OPERATOR:
                 user = mode_change.params[0]
                 if mode_change.added:
-                    self._state.operatorIn.append(channel)
-                    self._handler.handle_got_op(channel, user)
+                    self._state.operator_in.append(channel)
+                    self._handler.handle_got_op(channel, user, initiator)
                 else:
-                    self._state.operatorIn.remove(channel)
-                    self._handler.handle_lost_op(channel, user)
+                    self._state.operator_in.remove(channel)
+                    self._handler.handle_lost_op(channel, user, initiator)
             elif mode_change.mode == ChannelMode.VOICE:
                 user = mode_change.params[0]
                 if mode_change.added:
-                    self._handler.handle_got_voice(channel, user)
+                    self._state.has_voice_in.append(channel)
+                    self._handler.handle_got_voice(channel, user, initiator)
                 else:
-                    self._handler.handle_lost_voice(channel, user)
+                    self._state.has_voice_in.remove(channel)
+                    self._handler.handle_lost_voice(channel, user, initiator)
 
