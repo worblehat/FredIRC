@@ -207,6 +207,7 @@ The complete code from above in one listing:
 
         def handle_error(self, num, **params):
             if num == Err.NICKNAMEINUSE:
-                new_nick = params['nick'] + Random().randint(1, 9)
+                new_nick = params['nick'] + str(Random().randint(1, 9))
                 self.client.register(nick = new_nick)
+
 
