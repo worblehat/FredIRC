@@ -57,6 +57,9 @@ class IRCClient(asyncio.Protocol):
         self._handler = handler
         self._state = IRCClientState()
         self._buffer = []
+        # Variable to determine if we want to reconnect the transport and
+        # re-run the event loop automatically after it was stopped:
+        self._reconnect = False
         # Register customized decoding error handler
         codecs.register_error('log_and_replace', self._decoding_error_handler)
         # Configure logger
@@ -93,21 +96,32 @@ class IRCClient(asyncio.Protocol):
         """
         loop = asyncio.get_event_loop()
         if not loop.is_running():
-            task = asyncio.Task(loop.create_connection(
-                self, self._configured_server, self._configured_port))
             try:
-                loop.run_until_complete(task)
-            except TimeoutError:
-                message = ('Cannot connect to server {} on port {}.' + \
-                           'Connection timed out').format(
-                                  self._configured_server,
-                                  self._configured_port)
-                self._logger.error(message)
-                raise ConnectionTimeoutError(message)
-            try:
-                loop.run_forever()
+                while True:
+                    self._connect(loop)
+                    self._reconnect = False
+                    loop.run_forever()
+                    if not self._reconnect:
+                        break
             finally:
                 loop.close()
+
+    def _connect(self, loop):
+        """ TODO
+            TODO move method
+        """
+        task = asyncio.Task(loop.create_connection(
+            self, self._configured_server, self._configured_port))
+        try:
+            loop.run_until_complete(task)
+        except TimeoutError:
+            message = ('Cannot connect to server {} on port {}.' + \
+                       'Connection timed out').format(
+                self._configured_server,
+                self._configured_port)
+            self._logger.error(message)
+            raise ConnectionTimeoutError(message)
+
 
     def enable_logging(self, enable):
         """ Enable or disable logging.
@@ -138,6 +152,7 @@ class IRCClient(asyncio.Protocol):
         Control flow will continue after the call to :py:meth:`.run`.
         """
         self._logger.info('Event-Loop terminated.')
+        self._reconnect = False
         asyncio.get_event_loop().stop()
 
     # --- IRC related methods ---
