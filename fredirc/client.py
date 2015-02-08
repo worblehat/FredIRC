@@ -213,7 +213,7 @@ class IRCClient(asyncio.Protocol):
 
         If the client is no operator, the server will respond with an
         error message that can be handled via
-        :py:meth:`fredirc.handler.handle_error`.
+        :py:meth:`fredirc.IRCHandler.handle_error`.
 
         Args:
             channel (str): the channel
@@ -226,8 +226,8 @@ class IRCClient(asyncio.Protocol):
         """ Revoke operator rights from user on a channel.
 
         If the client is no operator, the server will respond with an
-            error message that can be handled via
-        :py:meth:`fredirc.handler.handle_error`.
+        error message that can be handled via
+        :py:meth:`fredirc.IRCHandler.handle_error`.
 
         Args:
             channel (str): the channel
@@ -240,8 +240,8 @@ class IRCClient(asyncio.Protocol):
         """ Grant voice rights to a user on a channel.
 
         If the client is no operator, the server will respond with an
-            error message that can be handled via
-        :py:meth:`fredirc.handler.handle_error`.
+        error message that can be handled via
+        :py:meth:`fredirc.IRCHandler.handle_error`.
 
         Args:
             channel (str): the channel
@@ -254,8 +254,8 @@ class IRCClient(asyncio.Protocol):
         """ Revoke voice rights from user on a channel.
 
         If the client is no operator, the server will respond with an
-            error message that can be handled via
-        :py:meth:`fredirc.handler.handle_error`.
+        error message that can be handled via
+        :py:meth:`fredirc.IRCHandler.handle_error`.
 
         Args:
             channel (str): the channel
