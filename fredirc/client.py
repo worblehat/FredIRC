@@ -88,11 +88,13 @@ class IRCClient(asyncio.Protocol):
         """ Start the client's event loop.
 
         An endless event loop which will call the ``handle_*`` methods from
-        :py:class:`.IRCHandler` is started. The client connects to the server
+        :py:class:`.IRCHandler`. The client connects to the server
         and calls :py:meth:`handle_connect()<.IRCHandler.handle_connect>` on
         its handler if this is successful.
-        To disconnect from the server and terminate the event loop call
-        :py:meth:`.quit`.
+        If the connection is closed the client can re-establish it without exiting the
+        event loop via :py:meth:`reconnect()<.reconnect>`.
+        To terminate the event loop use :py:meth:`terminate()<.terminate>`.
+        Afterwards run() will return.
         """
         loop = asyncio.get_event_loop()
         if not loop.is_running():
@@ -134,7 +136,7 @@ class IRCClient(asyncio.Protocol):
     def terminate(self):
         """ Shutdown the IRCClient by terminating the event loop.
 
-        Control flow will continue after the call to :py:meth:`.run`.
+        Control flow will continue after the call to :py:meth:`.IRCClient.run`.
         """
         self._logger.info('Event-Loop terminated.')
         self._reconnect = False
@@ -193,8 +195,9 @@ class IRCClient(asyncio.Protocol):
         self._send_message(messages.part((channel,) + channels, message))
 
     def quit(self, message=None):
-        """ Disconnect from the IRC server and terminate the client's
-        :py:meth:`event loop<.IRCClient.run>`.
+        """ Disconnect from the IRC server.
+
+        Also see :py:meth:`handle_disconnect()<.IRCHandler.handle_disconnect`.
 
         Args:
             message (str): optional message, send to the server
@@ -220,7 +223,7 @@ class IRCClient(asyncio.Protocol):
 
         If the client is no operator, the server will respond with an
         error message that can be handled via
-        :py:meth:`fredirc.IRCHandler.handle_error`.
+        :py:meth:`handle_error()<fredirc.IRCHandler.handle_error>`.
 
         Args:
             channel (str): the channel
@@ -234,7 +237,7 @@ class IRCClient(asyncio.Protocol):
 
         If the client is no operator, the server will respond with an
         error message that can be handled via
-        :py:meth:`fredirc.IRCHandler.handle_error`.
+        :py:meth:`handle_error()<fredirc.IRCHandler.handle_error>`.
 
         Args:
             channel (str): the channel
@@ -248,7 +251,7 @@ class IRCClient(asyncio.Protocol):
 
         If the client is no operator, the server will respond with an
         error message that can be handled via
-        :py:meth:`fredirc.IRCHandler.handle_error`.
+        :py:meth:`handle_error()<fredirc.IRCHandler.handle_error>`.
 
         Args:
             channel (str): the channel
@@ -262,7 +265,7 @@ class IRCClient(asyncio.Protocol):
 
         If the client is no operator, the server will respond with an
         error message that can be handled via
-        :py:meth:`fredirc.IRCHandler.handle_error`.
+        :py:meth:`handle_error()<fredirc.IRCHandler.handle_error>`.
 
         Args:
             channel (str): the channel
@@ -312,7 +315,7 @@ class IRCClient(asyncio.Protocol):
         try:
             loop.run_until_complete(task)
         except TimeoutError:
-            message = ('Cannot connect to server {} on port {}.' + \
+            message = ('Cannot connect to server {} on port {}.'
                        'Connection timed out').format(
                 self._configured_server,
                 self._configured_port)

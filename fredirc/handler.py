@@ -36,7 +36,7 @@ class IRCHandler(object):
     def handle_disconnect(self):
         """ The client lost connection to the server.
 
-        This might be the result of an network error but also occurs after
+        This might be the result of a network error but also occurs after
         a quit by the client or a forced disconnect by the server.
         """
         pass
@@ -213,10 +213,10 @@ class BaseIRCHandler(IRCHandler):
 
     What it does for you:
 
-    * store the :py:class:`.IRCClient` instance as attribute ``self.client`` \
-        on :py:meth:`.handle_client_init`
-    * register to the server on :py:meth:`.handle_connect`
-    * respond with pong on :py:meth:`.handle_ping`
+    * Store the :py:class:`.IRCClient` instance as attribute ``self.client`` \
+        on :py:meth:`.handle_client_init`.
+    * Register to the server on :py:meth:`.handle_connect`.
+    * Respond with pong on :py:meth:`.handle_ping`.
     """
 
     def handle_client_init(self, client):
