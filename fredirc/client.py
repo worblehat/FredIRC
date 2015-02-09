@@ -98,29 +98,14 @@ class IRCClient(asyncio.Protocol):
         if not loop.is_running():
             try:
                 while True:
-                    self._connect(loop)
                     self._reconnect = False
+                    self._connect()
                     loop.run_forever()
                     if not self._reconnect:
                         break
             finally:
                 loop.close()
 
-    def _connect(self, loop):
-        """ TODO
-            TODO move method
-        """
-        task = asyncio.Task(loop.create_connection(
-            self, self._configured_server, self._configured_port))
-        try:
-            loop.run_until_complete(task)
-        except TimeoutError:
-            message = ('Cannot connect to server {} on port {}.' + \
-                       'Connection timed out').format(
-                self._configured_server,
-                self._configured_port)
-            self._logger.error(message)
-            raise ConnectionTimeoutError(message)
 
 
     def enable_logging(self, enable):
@@ -316,6 +301,23 @@ class IRCClient(asyncio.Protocol):
         self._logger.debug('Sending message: {}'.format(message))
         message += '\r\n'
         self._transport.write(message.encode('utf-8'))
+
+    def _connect(self):
+        """ Create a connection to the configured server using asyncio's
+        event loop and this IRCClient instance as protocol.
+        """
+        loop = asyncio.get_event_loop()
+        task = asyncio.Task(loop.create_connection(
+            self, self._configured_server, self._configured_port))
+        try:
+            loop.run_until_complete(task)
+        except TimeoutError:
+            message = ('Cannot connect to server {} on port {}.' + \
+                       'Connection timed out').format(
+                self._configured_server,
+                self._configured_port)
+            self._logger.error(message)
+            raise ConnectionTimeoutError(message)
 
     def _disconnect(self):
         """ Tell the IRCClient that it lost its connection to the server. """
