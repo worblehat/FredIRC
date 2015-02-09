@@ -11,6 +11,7 @@ __all__ = ['IRCClient']
 import asyncio
 import codecs
 import logging
+import time
 
 from fredirc import messages
 from fredirc.errors import ConnectionTimeoutError
@@ -108,7 +109,27 @@ class IRCClient(asyncio.Protocol):
             finally:
                 loop.close()
 
+    def reconnect(self, delay=0.0):
+        """ Reconnect the client to the server.
 
+        This only reconnects a disconnected client. If the client is still
+        connected to the server, it will have no effects.
+        So reconnect() could be used to re-establish the connection on
+        :py:meth:`handle_disconnect()<.IRCHandler.handle_disconnect>`.
+
+        After successful reconnection
+        :py:meth:`handle_connect()<.IRCHandler.handle_connect>` gets called.
+
+        Args:
+            delay (float): Time to delay the reconnection attempt in seconds.
+                           Can be useful as servers might refuse a client
+                           that reconnects to fast.
+        """
+        if self._state.connected:
+            return
+        self._reconnect = True
+        time.sleep(delay)
+        asyncio.get_event_loop().stop()
 
     def enable_logging(self, enable):
         """ Enable or disable logging.
