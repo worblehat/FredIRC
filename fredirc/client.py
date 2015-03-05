@@ -34,6 +34,18 @@ class IRCClient(asyncio.Protocol):
     Nick, user name, real name and password are used by
     :py:meth:`.register` to register the client to the server.
 
+    Most methods and members that return some state of the client
+    (e.g. :py:meth:`.is_op_in` or :py:attr:`.channels`) do not need to interact
+    with the server to get the corresponding information. Instead it is cached
+    in the client.
+
+    It is also important to remember that the data in the client is only updated
+    on messages from the server.
+    For Example: :py:attr:`.channels` will
+    not contain a new channel instantly after joining it with
+    :py:meth:`.join` but only after
+    :py:meth:`handle_own_join()<.IRCHandler.handle_own_join>` was called.
+
     Args:
         handler (:py:class:`IRCHandler<fredirc.IRCHandler>`): \
             handler that handles events from this client
