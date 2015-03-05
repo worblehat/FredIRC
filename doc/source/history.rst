@@ -1,6 +1,17 @@
 Changelog
 =========
 
+v0.2.0 (2015-03-05)
+-------------------
+
+* handling disconnects
+* ability to reconnect to the server
+* IRCClient can be terminated manually
+* handling changes to channel modes operator and voice
+* changing channel modes operator and voice
+* sending private messages
+* handling kicks and kick other users from channels
+
 v0.1.0 (2014-12-30)
 -------------------
 

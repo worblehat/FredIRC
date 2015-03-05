@@ -14,9 +14,10 @@ Links:
 ------
 
 * Releases: https://github.com/worblehat/FredIRC/releases
+* Changelog: https://worblehat.github.io/FredIRC/history.html
 * Documentation: https://worblehat.github.io/FredIRC
-* Source code: https://github.com/worblehat/FredIRC
-* Issue tracker: https://github.com/worblehat/FredIRC/issues
+* Source Code: https://github.com/worblehat/FredIRC
+* Issue Tracker: https://github.com/worblehat/FredIRC/issues
 
 Contact:
 --------
