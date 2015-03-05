@@ -1,5 +1,5 @@
-Welcome to FredIRC's documentation!
-===================================
+Welcome to FredIRC's Homepage!
+==============================
 
 FredIRC is an event-driven Python framework for
 `IRC (Internet Relay Chat) <http://en.wikipedia.org/wiki/Internet_Relay_Chat>`_
