@@ -116,6 +116,24 @@ to respond to someone who sends 'Hello Fred' to the channel:
             if messsage.strip() == "Hello " + self.client.nick:
                 self.client.send_message(channel, "Hi " + sender + ". How are you?")
 
+Reconnect to the Server
+-----------------------
+
+Many IRC clients automatically reconnect to the server after unexpectedly
+loosing the connection. This behaviour is desirable for bots, too. To achieve
+this you can
+:py:meth:`handle disconnects <fredirc.IRCHandler.handle_disconnect()>` and call
+:py:meth:`reconnect()<fredirc.IRCClient.reconnect()>`.
+
+.. code-block:: python
+
+    class MyBot(BaseIRCHandler):
+
+        (...)
+
+        def handle_disconnect(self):
+            self.client.reconnect()
+
 .. _guide_handle-errors:
 
 Handle Errors
@@ -204,6 +222,9 @@ The complete code from above in one listing:
         def handle_channel_message(self, channel, message, sender):
             if messsage.strip() == "Hello " + self.client.nick:
                 self.client.send_message(channel, "Hi " + sender + ". How are you?")
+
+        def handle_disconnect(self):
+            self.client.reconnect()
 
         def handle_error(self, num, **params):
             if num == Err.NICKNAMEINUSE:
