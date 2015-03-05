@@ -6,7 +6,7 @@
   <head>
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
     
-    <title>Beginner’s Guide &mdash; FredIRC 0.1.0 documentation</title>
+    <title>Beginner’s Guide &mdash; FredIRC 0.2.0 documentation</title>
     
     <link rel="stylesheet" href="_static/nature.css" type="text/css" />
     <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
@@ -14,7 +14,7 @@
     <script type="text/javascript">
       var DOCUMENTATION_OPTIONS = {
         URL_ROOT:    './',
-        VERSION:     '0.1.0',
+        VERSION:     '0.2.0',
         COLLAPSE_INDEX: false,
         FILE_SUFFIX: '.html',
         HAS_SOURCE:  true
@@ -23,7 +23,7 @@
     <script type="text/javascript" src="_static/jquery.js"></script>
     <script type="text/javascript" src="_static/underscore.js"></script>
     <script type="text/javascript" src="_static/doctools.js"></script>
-    <link rel="top" title="FredIRC 0.1.0 documentation" href="index.html" />
+    <link rel="top" title="FredIRC 0.2.0 documentation" href="index.html" />
     <link rel="next" title="API Reference" href="api.html" />
     <link rel="prev" title="Installation" href="install.html" /> 
   </head>
@@ -40,7 +40,7 @@
         <li class="right" >
           <a href="install.html" title="Installation"
              accesskey="P">previous</a> |</li>
-        <li><a href="index.html">FredIRC 0.1.0 documentation</a> &raquo;</li> 
+        <li><a href="index.html">FredIRC 0.2.0 documentation</a> &raquo;</li> 
       </ul>
     </div>  
 
@@ -147,6 +147,22 @@ to respond to someone who sends &#8216;Hello Fred&#8217; to the channel:</p>
 </pre></div>
 </div>
 </div>
+<div class="section" id="reconnect-to-the-server">
+<h2>Reconnect to the Server<a class="headerlink" href="#reconnect-to-the-server" title="Permalink to this headline">¶</a></h2>
+<p>Many IRC clients automatically reconnect to the server after unexpectedly
+loosing the connection. This behaviour is desirable for bots, too. To achieve
+this you can
+<a class="reference internal" href="api.html#fredirc.IRCHandler.handle_disconnect" title="fredirc.IRCHandler.handle_disconnect"><tt class="xref py py-meth docutils literal"><span class="pre">handle</span> <span class="pre">disconnects</span></tt></a> and call
+<a class="reference internal" href="api.html#fredirc.IRCClient.reconnect" title="fredirc.IRCClient.reconnect"><tt class="xref py py-meth docutils literal"><span class="pre">reconnect()</span></tt></a>.</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="k">class</span> <span class="nc">MyBot</span><span class="p">(</span><span class="n">BaseIRCHandler</span><span class="p">):</span>
+
+    <span class="p">(</span><span class="o">...</span><span class="p">)</span>
+
+    <span class="k">def</span> <span class="nf">handle_disconnect</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">client</span><span class="o">.</span><span class="n">reconnect</span><span class="p">()</span>
+</pre></div>
+</div>
+</div>
 <div class="section" id="handle-errors">
 <span id="guide-handle-errors"></span><h2>Handle Errors<a class="headerlink" href="#handle-errors" title="Permalink to this headline">¶</a></h2>
 <p>In an IRC session a lot of unexpected situations or even errors can occur.
@@ -220,6 +236,9 @@ I recommend the <tt class="docutils literal"><span class="pre">nohup</span></tt>
         <span class="k">if</span> <span class="n">messsage</span><span class="o">.</span><span class="n">strip</span><span class="p">()</span> <span class="o">==</span> <span class="s">&quot;Hello &quot;</span> <span class="o">+</span> <span class="bp">self</span><span class="o">.</span><span class="n">client</span><span class="o">.</span><span class="n">nick</span><span class="p">:</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">client</span><span class="o">.</span><span class="n">send_message</span><span class="p">(</span><span class="n">channel</span><span class="p">,</span> <span class="s">&quot;Hi &quot;</span> <span class="o">+</span> <span class="n">sender</span> <span class="o">+</span> <span class="s">&quot;. How are you?&quot;</span><span class="p">)</span>
 
+    <span class="k">def</span> <span class="nf">handle_disconnect</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">client</span><span class="o">.</span><span class="n">reconnect</span><span class="p">()</span>
+
     <span class="k">def</span> <span class="nf">handle_error</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">num</span><span class="p">,</span> <span class="o">**</span><span class="n">params</span><span class="p">):</span>
         <span class="k">if</span> <span class="n">num</span> <span class="o">==</span> <span class="n">Err</span><span class="o">.</span><span class="n">NICKNAMEINUSE</span><span class="p">:</span>
             <span class="n">new_nick</span> <span class="o">=</span> <span class="n">params</span><span class="p">[</span><span class="s">&#39;nick&#39;</span><span class="p">]</span> <span class="o">+</span> <span class="nb">str</span><span class="p">(</span><span class="n">Random</span><span class="p">()</span><span class="o">.</span><span class="n">randint</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="mi">9</span><span class="p">))</span>
@@ -242,6 +261,7 @@ I recommend the <tt class="docutils literal"><span class="pre">nohup</span></tt>
 <li><a class="reference internal" href="#connect-to-a-server">Connect to a Server</a></li>
 <li><a class="reference internal" href="#join-a-channel">Join a Channel</a></li>
 <li><a class="reference internal" href="#communicate-with-the-channel">Communicate with the Channel</a></li>
+<li><a class="reference internal" href="#reconnect-to-the-server">Reconnect to the Server</a></li>
 <li><a class="reference internal" href="#handle-errors">Handle Errors</a></li>
 <li><a class="reference internal" href="#run-the-bot">Run the Bot</a></li>
 <li><a class="reference internal" href="#complete-example">Complete Example</a></li>
@@ -284,11 +304,11 @@ I recommend the <tt class="docutils literal"><span class="pre">nohup</span></tt>
         <li class="right" >
           <a href="install.html" title="Installation"
              >previous</a> |</li>
-        <li><a href="index.html">FredIRC 0.1.0 documentation</a> &raquo;</li> 
+        <li><a href="index.html">FredIRC 0.2.0 documentation</a> &raquo;</li> 
       </ul>
     </div>
     <div class="footer">
-        &copy; Copyright 2014, Tobias Marquardt.
+        &copy; Copyright 2014-2015, Tobias Marquardt.
       Created using <a href="http://sphinx-doc.org/">Sphinx</a> 1.2.3.
     </div>
   </body>

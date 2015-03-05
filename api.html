@@ -6,7 +6,7 @@
   <head>
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
     
-    <title>API Reference &mdash; FredIRC 0.1.0 documentation</title>
+    <title>API Reference &mdash; FredIRC 0.2.0 documentation</title>
     
     <link rel="stylesheet" href="_static/nature.css" type="text/css" />
     <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
@@ -14,7 +14,7 @@
     <script type="text/javascript">
       var DOCUMENTATION_OPTIONS = {
         URL_ROOT:    './',
-        VERSION:     '0.1.0',
+        VERSION:     '0.2.0',
         COLLAPSE_INDEX: false,
         FILE_SUFFIX: '.html',
         HAS_SOURCE:  true
@@ -23,7 +23,7 @@
     <script type="text/javascript" src="_static/jquery.js"></script>
     <script type="text/javascript" src="_static/underscore.js"></script>
     <script type="text/javascript" src="_static/doctools.js"></script>
-    <link rel="top" title="FredIRC 0.1.0 documentation" href="index.html" />
+    <link rel="top" title="FredIRC 0.2.0 documentation" href="index.html" />
     <link rel="next" title="Changelog" href="history.html" />
     <link rel="prev" title="Beginner’s Guide" href="guide.html" /> 
   </head>
@@ -40,7 +40,7 @@
         <li class="right" >
           <a href="guide.html" title="Beginner’s Guide"
              accesskey="P">previous</a> |</li>
-        <li><a href="index.html">FredIRC 0.1.0 documentation</a> &raquo;</li> 
+        <li><a href="index.html">FredIRC 0.2.0 documentation</a> &raquo;</li> 
       </ul>
     </div>  
 
@@ -92,7 +92,6 @@ Does not include messages from the client itself!</p>
 <li><strong>channel</strong> (<a class="reference external" href="http://docs.python.org/library/functions.html#str" title="(in Python v2.7)"><em>str</em></a>) &#8211; the channel name</li>
 <li><strong>message</strong> (<a class="reference external" href="http://docs.python.org/library/functions.html#str" title="(in Python v2.7)"><em>str</em></a>) &#8211; the received message</li>
 <li><strong>sender</strong> (<a class="reference external" href="http://docs.python.org/library/functions.html#str" title="(in Python v2.7)"><em>str</em></a>) &#8211; Sender of the message, usually a nickname.</li>
-<li><strong>be None.</strong> (<em>Might</em>) &#8211; </li>
 </ul>
 </td>
 </tr>
@@ -121,6 +120,14 @@ Does not include messages from the client itself!</p>
 </dd></dl>
 
 <dl class="method">
+<dt id="fredirc.IRCHandler.handle_disconnect">
+<tt class="descname">handle_disconnect</tt><big>(</big><big>)</big><a class="headerlink" href="#fredirc.IRCHandler.handle_disconnect" title="Permalink to this definition">¶</a></dt>
+<dd><p>The client lost connection to the server.</p>
+<p>This might be the result of a network error but also occurs after
+a quit by the client or a forced disconnect by the server.</p>
+</dd></dl>
+
+<dl class="method">
 <dt id="fredirc.IRCHandler.handle_error">
 <tt class="descname">handle_error</tt><big>(</big><em>error</em>, <em>**params</em><big>)</big><a class="headerlink" href="#fredirc.IRCHandler.handle_error" title="Permalink to this definition">¶</a></dt>
 <dd><p>An irc error message was received from the server.</p>
@@ -142,6 +149,44 @@ See the documentation of <a class="reference internal" href="#fredirc.Err" title
 </dd></dl>
 
 <dl class="method">
+<dt id="fredirc.IRCHandler.handle_got_op">
+<tt class="descname">handle_got_op</tt><big>(</big><em>channel</em>, <em>nick</em>, <em>initiator</em><big>)</big><a class="headerlink" href="#fredirc.IRCHandler.handle_got_op" title="Permalink to this definition">¶</a></dt>
+<dd><p>A user received operator status.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
+<li><strong>channel</strong> (<a class="reference external" href="http://docs.python.org/library/functions.html#str" title="(in Python v2.7)"><em>str</em></a>) &#8211; name of the channel</li>
+<li><strong>nick</strong> (<a class="reference external" href="http://docs.python.org/library/functions.html#str" title="(in Python v2.7)"><em>str</em></a>) &#8211; the user who became operator</li>
+<li><strong>initiator</strong> (<a class="reference external" href="http://docs.python.org/library/functions.html#str" title="(in Python v2.7)"><em>str</em></a>) &#8211; the user who granted the operator rights</li>
+</ul>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="fredirc.IRCHandler.handle_got_voice">
+<tt class="descname">handle_got_voice</tt><big>(</big><em>channel</em>, <em>nick</em>, <em>initiator</em><big>)</big><a class="headerlink" href="#fredirc.IRCHandler.handle_got_voice" title="Permalink to this definition">¶</a></dt>
+<dd><p>A user received voice rights.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
+<li><strong>channel</strong> (<a class="reference external" href="http://docs.python.org/library/functions.html#str" title="(in Python v2.7)"><em>str</em></a>) &#8211; name of the channel</li>
+<li><strong>nick</strong> (<a class="reference external" href="http://docs.python.org/library/functions.html#str" title="(in Python v2.7)"><em>str</em></a>) &#8211; the user who received voice</li>
+<li><strong>initiator</strong> (<a class="reference external" href="http://docs.python.org/library/functions.html#str" title="(in Python v2.7)"><em>str</em></a>) &#8211; the user who granted the voice rights</li>
+</ul>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
 <dt id="fredirc.IRCHandler.handle_join">
 <tt class="descname">handle_join</tt><big>(</big><em>channel</em>, <em>nick</em><big>)</big><a class="headerlink" href="#fredirc.IRCHandler.handle_join" title="Permalink to this definition">¶</a></dt>
 <dd><p>Called when a user joined the channel.</p>
@@ -154,6 +199,64 @@ See the documentation of <a class="reference internal" href="#fredirc.Err" title
 <tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
 <li><strong>channel</strong> (<a class="reference external" href="http://docs.python.org/library/functions.html#str" title="(in Python v2.7)"><em>str</em></a>) &#8211; a name of a channel, the client is currently in</li>
 <li><strong>nick</strong> (<a class="reference external" href="http://docs.python.org/library/functions.html#str" title="(in Python v2.7)"><em>str</em></a>) &#8211; nick of the member that joined the channel</li>
+</ul>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="fredirc.IRCHandler.handle_kick">
+<tt class="descname">handle_kick</tt><big>(</big><em>channel</em>, <em>nick</em>, <em>initiator</em>, <em>reason</em><big>)</big><a class="headerlink" href="#fredirc.IRCHandler.handle_kick" title="Permalink to this definition">¶</a></dt>
+<dd><p>A user got kicked from a channel.</p>
+<p>Might be the IRCClient itself.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
+<li><strong>channel</strong> (<a class="reference external" href="http://docs.python.org/library/functions.html#str" title="(in Python v2.7)"><em>str</em></a>) &#8211; the channel</li>
+<li><strong>nick</strong> (<a class="reference external" href="http://docs.python.org/library/functions.html#str" title="(in Python v2.7)"><em>str</em></a>) &#8211; the user who got kicked</li>
+<li><strong>reason</strong> (<a class="reference external" href="http://docs.python.org/library/functions.html#str" title="(in Python v2.7)"><em>str</em></a>) &#8211; reason for the kick (might be None)</li>
+</ul>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="fredirc.IRCHandler.handle_lost_op">
+<tt class="descname">handle_lost_op</tt><big>(</big><em>channel</em>, <em>nick</em>, <em>initiator</em><big>)</big><a class="headerlink" href="#fredirc.IRCHandler.handle_lost_op" title="Permalink to this definition">¶</a></dt>
+<dd><p>A user lost operator status.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
+<li><strong>channel</strong> (<a class="reference external" href="http://docs.python.org/library/functions.html#str" title="(in Python v2.7)"><em>str</em></a>) &#8211; name of the channel</li>
+<li><strong>nick</strong> (<a class="reference external" href="http://docs.python.org/library/functions.html#str" title="(in Python v2.7)"><em>str</em></a>) &#8211; the user who is no longer operator</li>
+<li><strong>initiator</strong> (<a class="reference external" href="http://docs.python.org/library/functions.html#str" title="(in Python v2.7)"><em>str</em></a>) &#8211; the user who initiated the mode change</li>
+</ul>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="fredirc.IRCHandler.handle_lost_voice">
+<tt class="descname">handle_lost_voice</tt><big>(</big><em>channel</em>, <em>nick</em>, <em>initiator</em><big>)</big><a class="headerlink" href="#fredirc.IRCHandler.handle_lost_voice" title="Permalink to this definition">¶</a></dt>
+<dd><p>A user lost voide rights.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
+<li><strong>channel</strong> (<a class="reference external" href="http://docs.python.org/library/functions.html#str" title="(in Python v2.7)"><em>str</em></a>) &#8211; name of the channel</li>
+<li><strong>nick</strong> (<a class="reference external" href="http://docs.python.org/library/functions.html#str" title="(in Python v2.7)"><em>str</em></a>) &#8211; the user who no longer has voice</li>
+<li><strong>initiator</strong> (<a class="reference external" href="http://docs.python.org/library/functions.html#str" title="(in Python v2.7)"><em>str</em></a>) &#8211; the user who initiated the mode change</li>
 </ul>
 </td>
 </tr>
@@ -305,9 +408,9 @@ need. It is recommended to subclass <a class="reference internal" href="#fredirc
 of <a class="reference internal" href="#fredirc.IRCHandler" title="fredirc.IRCHandler"><tt class="xref py py-class docutils literal"><span class="pre">IRCHandler</span></tt></a>.</p>
 <p>What it does for you:</p>
 <ul class="simple">
-<li>store the <a class="reference internal" href="#fredirc.IRCClient" title="fredirc.IRCClient"><tt class="xref py py-class docutils literal"><span class="pre">IRCClient</span></tt></a> instance as attribute <tt class="docutils literal"><span class="pre">self.client</span></tt>         on <a class="reference internal" href="#fredirc.IRCHandler.handle_client_init" title="fredirc.IRCHandler.handle_client_init"><tt class="xref py py-meth docutils literal"><span class="pre">handle_client_init()</span></tt></a></li>
-<li>register to the server on <a class="reference internal" href="#fredirc.IRCHandler.handle_connect" title="fredirc.IRCHandler.handle_connect"><tt class="xref py py-meth docutils literal"><span class="pre">handle_connect()</span></tt></a></li>
-<li>respond with pong on <a class="reference internal" href="#fredirc.IRCHandler.handle_ping" title="fredirc.IRCHandler.handle_ping"><tt class="xref py py-meth docutils literal"><span class="pre">handle_ping()</span></tt></a></li>
+<li>Store the <a class="reference internal" href="#fredirc.IRCClient" title="fredirc.IRCClient"><tt class="xref py py-class docutils literal"><span class="pre">IRCClient</span></tt></a> instance as attribute <tt class="docutils literal"><span class="pre">self.client</span></tt>         on <a class="reference internal" href="#fredirc.IRCHandler.handle_client_init" title="fredirc.IRCHandler.handle_client_init"><tt class="xref py py-meth docutils literal"><span class="pre">handle_client_init()</span></tt></a>.</li>
+<li>Register to the server on <a class="reference internal" href="#fredirc.IRCHandler.handle_connect" title="fredirc.IRCHandler.handle_connect"><tt class="xref py py-meth docutils literal"><span class="pre">handle_connect()</span></tt></a>.</li>
+<li>Respond with pong on <a class="reference internal" href="#fredirc.IRCHandler.handle_ping" title="fredirc.IRCHandler.handle_ping"><tt class="xref py py-meth docutils literal"><span class="pre">handle_ping()</span></tt></a>.</li>
 </ul>
 </dd></dl>
 
@@ -324,13 +427,24 @@ of <a class="reference internal" href="#fredirc.IRCHandler" title="fredirc.IRCHa
 <div class="admonition warning">
 <p class="first admonition-title">Warning</p>
 <p class="last">Currently only a single IRCClient instance is allowed! Don&#8217;t
-run multiple clients. This will result in undefined behaviour. This
-will probably be fixed in future releases.</p>
+run multiple clients. This will result in undefined behaviour. Also
+after <a class="reference internal" href="#fredirc.Task.run" title="fredirc.Task.run"><tt class="xref py py-meth docutils literal"><span class="pre">run()</span></tt></a> terminated you should not call it again!
+This will probably be fixed in future releases.</p>
 </div>
 <p>To connect to the server and start the processing event loop call
 <a class="reference internal" href="#fredirc.IRCClient.run" title="fredirc.IRCClient.run"><tt class="xref py py-meth docutils literal"><span class="pre">run()</span></tt></a> on your IRCClient instance.
 Nick, user name, real name and password are used by
 <a class="reference internal" href="#fredirc.IRCClient.register" title="fredirc.IRCClient.register"><tt class="xref py py-meth docutils literal"><span class="pre">register()</span></tt></a> to register the client to the server.</p>
+<p>Most methods and members that return some state of the client
+(e.g. <a class="reference internal" href="#fredirc.IRCClient.is_op_in" title="fredirc.IRCClient.is_op_in"><tt class="xref py py-meth docutils literal"><span class="pre">is_op_in()</span></tt></a> or <a class="reference internal" href="#fredirc.IRCClient.channels" title="fredirc.IRCClient.channels"><tt class="xref py py-attr docutils literal"><span class="pre">channels</span></tt></a>) do not need to interact
+with the server to get the corresponding information. Instead it is cached
+in the client.</p>
+<p>It is also important to remember that the data in the client is only updated
+on messages from the server.
+For Example: <a class="reference internal" href="#fredirc.IRCClient.channels" title="fredirc.IRCClient.channels"><tt class="xref py py-attr docutils literal"><span class="pre">channels</span></tt></a> will
+not contain a new channel instantly after joining it with
+<a class="reference internal" href="#fredirc.IRCClient.join" title="fredirc.IRCClient.join"><tt class="xref py py-meth docutils literal"><span class="pre">join()</span></tt></a> but only after
+<a class="reference internal" href="#fredirc.IRCHandler.handle_own_join" title="fredirc.IRCHandler.handle_own_join"><tt class="xref py py-meth docutils literal"><span class="pre">handle_own_join()</span></tt></a> was called.</p>
 <table class="docutils field-list" frame="void" rules="none">
 <col class="field-name" />
 <col class="field-body" />
@@ -383,6 +497,76 @@ authenticate to the server.</li>
 </dd></dl>
 
 <dl class="method">
+<dt id="fredirc.IRCClient.give_op">
+<tt class="descname">give_op</tt><big>(</big><em>user</em>, <em>channel</em><big>)</big><a class="headerlink" href="#fredirc.IRCClient.give_op" title="Permalink to this definition">¶</a></dt>
+<dd><p>Grant operator rights to a user on a channel.</p>
+<p>If the client is no operator, the server will respond with an
+error message that can be handled via
+<a class="reference internal" href="#fredirc.IRCHandler.handle_error" title="fredirc.IRCHandler.handle_error"><tt class="xref py py-meth docutils literal"><span class="pre">handle_error()</span></tt></a>.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
+<li><strong>user</strong> (<a class="reference external" href="http://docs.python.org/library/functions.html#str" title="(in Python v2.7)"><em>str</em></a>) &#8211; the affected user</li>
+<li><strong>channel</strong> (<a class="reference external" href="http://docs.python.org/library/functions.html#str" title="(in Python v2.7)"><em>str</em></a>) &#8211; the channel</li>
+</ul>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="fredirc.IRCClient.give_voice">
+<tt class="descname">give_voice</tt><big>(</big><em>user</em>, <em>channel</em><big>)</big><a class="headerlink" href="#fredirc.IRCClient.give_voice" title="Permalink to this definition">¶</a></dt>
+<dd><p>Grant voice rights to a user on a channel.</p>
+<p>If the client is no operator, the server will respond with an
+error message that can be handled via
+<a class="reference internal" href="#fredirc.IRCHandler.handle_error" title="fredirc.IRCHandler.handle_error"><tt class="xref py py-meth docutils literal"><span class="pre">handle_error()</span></tt></a>.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
+<li><strong>user</strong> (<a class="reference external" href="http://docs.python.org/library/functions.html#str" title="(in Python v2.7)"><em>str</em></a>) &#8211; the affected user</li>
+<li><strong>channel</strong> (<a class="reference external" href="http://docs.python.org/library/functions.html#str" title="(in Python v2.7)"><em>str</em></a>) &#8211; the channel</li>
+</ul>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="fredirc.IRCClient.has_voice_in">
+<tt class="descname">has_voice_in</tt><big>(</big><em>channel</em><big>)</big><a class="headerlink" href="#fredirc.IRCClient.has_voice_in" title="Permalink to this definition">¶</a></dt>
+<dd><p>Check if this client has voice rights in the given channel.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>channel</strong> (<a class="reference external" href="http://docs.python.org/library/functions.html#str" title="(in Python v2.7)"><em>str</em></a>) &#8211; the channel (case-insensitive)</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="fredirc.IRCClient.is_op_in">
+<tt class="descname">is_op_in</tt><big>(</big><em>channel</em><big>)</big><a class="headerlink" href="#fredirc.IRCClient.is_op_in" title="Permalink to this definition">¶</a></dt>
+<dd><p>Check if this client has operator rights in the given channel.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>channel</strong> (<a class="reference external" href="http://docs.python.org/library/functions.html#str" title="(in Python v2.7)"><em>str</em></a>) &#8211; the channel (case-insensitive)</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
 <dt id="fredirc.IRCClient.join">
 <tt class="descname">join</tt><big>(</big><em>channel</em>, <em>*channels</em><big>)</big><a class="headerlink" href="#fredirc.IRCClient.join" title="Permalink to this definition">¶</a></dt>
 <dd><p>Join the specified channel(s).</p>
@@ -394,6 +578,28 @@ probably always be lower case.</p>
 <col class="field-body" />
 <tbody valign="top">
 <tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>channel</strong> (<a class="reference external" href="http://docs.python.org/library/functions.html#str" title="(in Python v2.7)"><em>str</em></a>) &#8211; one or more channels</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="fredirc.IRCClient.kick">
+<tt class="descname">kick</tt><big>(</big><em>user</em>, <em>channel</em>, <em>reason=None</em><big>)</big><a class="headerlink" href="#fredirc.IRCClient.kick" title="Permalink to this definition">¶</a></dt>
+<dd><p>Forcefully remove a user from a channel.</p>
+<p>If the client is no operator, the server will respond with an
+error message that can be handled via
+<a class="reference internal" href="#fredirc.IRCHandler.handle_error" title="fredirc.IRCHandler.handle_error"><tt class="xref py py-meth docutils literal"><span class="pre">handle_error()</span></tt></a>.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
+<li><strong>user</strong> (<a class="reference external" href="http://docs.python.org/library/functions.html#str" title="(in Python v2.7)"><em>str</em></a>) &#8211; the affected user</li>
+<li><strong>channel</strong> (<a class="reference external" href="http://docs.python.org/library/functions.html#str" title="(in Python v2.7)"><em>str</em></a>) &#8211; the channel</li>
+<li><strong>reason</strong> (<a class="reference external" href="http://docs.python.org/library/functions.html#str" title="(in Python v2.7)"><em>str</em></a>) &#8211; optional message with the reason</li>
+</ul>
+</td>
 </tr>
 </tbody>
 </table>
@@ -442,13 +648,35 @@ probably always be lower case.</p>
 <dl class="method">
 <dt id="fredirc.IRCClient.quit">
 <tt class="descname">quit</tt><big>(</big><em>message=None</em><big>)</big><a class="headerlink" href="#fredirc.IRCClient.quit" title="Permalink to this definition">¶</a></dt>
-<dd><p>Disconnect from the IRC server and terminate the client&#8217;s
-<a class="reference internal" href="#fredirc.IRCClient.run" title="fredirc.IRCClient.run"><tt class="xref py py-meth docutils literal"><span class="pre">event</span> <span class="pre">loop</span></tt></a>.</p>
+<dd><p>Disconnect from the IRC server.</p>
+<p>Also see <tt class="xref py py-meth docutils literal"><span class="pre">handle_disconnect()&lt;.IRCHandler.handle_disconnect()</span></tt>.</p>
 <table class="docutils field-list" frame="void" rules="none">
 <col class="field-name" />
 <col class="field-body" />
 <tbody valign="top">
 <tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>message</strong> (<a class="reference external" href="http://docs.python.org/library/functions.html#str" title="(in Python v2.7)"><em>str</em></a>) &#8211; optional message, send to the server</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="fredirc.IRCClient.reconnect">
+<tt class="descname">reconnect</tt><big>(</big><em>delay=0.0</em><big>)</big><a class="headerlink" href="#fredirc.IRCClient.reconnect" title="Permalink to this definition">¶</a></dt>
+<dd><p>Reconnect the client to the server.</p>
+<p>This only reconnects a disconnected client. If the client is still
+connected to the server, it will have no effects.
+So reconnect() could be used to re-establish the connection on
+<a class="reference internal" href="#fredirc.IRCHandler.handle_disconnect" title="fredirc.IRCHandler.handle_disconnect"><tt class="xref py py-meth docutils literal"><span class="pre">handle_disconnect()</span></tt></a>.</p>
+<p>After successful reconnection
+<a class="reference internal" href="#fredirc.IRCHandler.handle_connect" title="fredirc.IRCHandler.handle_connect"><tt class="xref py py-meth docutils literal"><span class="pre">handle_connect()</span></tt></a> gets called.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>delay</strong> (<a class="reference external" href="http://docs.python.org/library/functions.html#float" title="(in Python v2.7)"><em>float</em></a>) &#8211; Time to delay the reconnection attempt in seconds.
+Can be useful as servers might refuse a client
+that reconnects to fast.</td>
 </tr>
 </tbody>
 </table>
@@ -478,15 +706,59 @@ authenticate to the server.</li>
 </dd></dl>
 
 <dl class="method">
+<dt id="fredirc.IRCClient.revoke_op">
+<tt class="descname">revoke_op</tt><big>(</big><em>user</em>, <em>channel</em><big>)</big><a class="headerlink" href="#fredirc.IRCClient.revoke_op" title="Permalink to this definition">¶</a></dt>
+<dd><p>Revoke operator rights from user on a channel.</p>
+<p>If the client is no operator, the server will respond with an
+error message that can be handled via
+<a class="reference internal" href="#fredirc.IRCHandler.handle_error" title="fredirc.IRCHandler.handle_error"><tt class="xref py py-meth docutils literal"><span class="pre">handle_error()</span></tt></a>.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
+<li><strong>user</strong> (<a class="reference external" href="http://docs.python.org/library/functions.html#str" title="(in Python v2.7)"><em>str</em></a>) &#8211; the affected user</li>
+<li><strong>channel</strong> (<a class="reference external" href="http://docs.python.org/library/functions.html#str" title="(in Python v2.7)"><em>str</em></a>) &#8211; the channel</li>
+</ul>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="fredirc.IRCClient.revoke_voice">
+<tt class="descname">revoke_voice</tt><big>(</big><em>user</em>, <em>channel</em><big>)</big><a class="headerlink" href="#fredirc.IRCClient.revoke_voice" title="Permalink to this definition">¶</a></dt>
+<dd><p>Revoke voice rights from user on a channel.</p>
+<p>If the client is no operator, the server will respond with an
+error message that can be handled via
+<a class="reference internal" href="#fredirc.IRCHandler.handle_error" title="fredirc.IRCHandler.handle_error"><tt class="xref py py-meth docutils literal"><span class="pre">handle_error()</span></tt></a>.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
+<li><strong>user</strong> (<a class="reference external" href="http://docs.python.org/library/functions.html#str" title="(in Python v2.7)"><em>str</em></a>) &#8211; the affected user</li>
+<li><strong>channel</strong> (<a class="reference external" href="http://docs.python.org/library/functions.html#str" title="(in Python v2.7)"><em>str</em></a>) &#8211; the channel</li>
+</ul>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
 <dt id="fredirc.IRCClient.run">
 <tt class="descname">run</tt><big>(</big><big>)</big><a class="headerlink" href="#fredirc.IRCClient.run" title="Permalink to this definition">¶</a></dt>
 <dd><p>Start the client&#8217;s event loop.</p>
 <p>An endless event loop which will call the <tt class="docutils literal"><span class="pre">handle_*</span></tt> methods from
-<a class="reference internal" href="#fredirc.IRCHandler" title="fredirc.IRCHandler"><tt class="xref py py-class docutils literal"><span class="pre">IRCHandler</span></tt></a> is started. The client connects to the server
+<a class="reference internal" href="#fredirc.IRCHandler" title="fredirc.IRCHandler"><tt class="xref py py-class docutils literal"><span class="pre">IRCHandler</span></tt></a>. The client connects to the server
 and calls <a class="reference internal" href="#fredirc.IRCHandler.handle_connect" title="fredirc.IRCHandler.handle_connect"><tt class="xref py py-meth docutils literal"><span class="pre">handle_connect()</span></tt></a> on
 its handler if this is successful.
-To disconnect from the server and terminate the event loop call
-<a class="reference internal" href="#fredirc.IRCClient.quit" title="fredirc.IRCClient.quit"><tt class="xref py py-meth docutils literal"><span class="pre">quit()</span></tt></a>.</p>
+If the connection is closed the client can re-establish it without
+exiting the event loop via <a class="reference internal" href="#fredirc.IRCClient.reconnect" title="fredirc.IRCClient.reconnect"><tt class="xref py py-meth docutils literal"><span class="pre">reconnect()</span></tt></a>.
+To terminate the event loop use <a class="reference internal" href="#fredirc.IRCClient.terminate" title="fredirc.IRCClient.terminate"><tt class="xref py py-meth docutils literal"><span class="pre">terminate()</span></tt></a>.
+Afterwards run() will return.</p>
 </dd></dl>
 
 <dl class="method">
@@ -500,6 +772,24 @@ To disconnect from the server and terminate the event loop call
 <tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
 <li><strong>channel</strong> (<a class="reference external" href="http://docs.python.org/library/functions.html#str" title="(in Python v2.7)"><em>str</em></a>) &#8211; the addressed channel</li>
 <li><strong>message</strong> (<a class="reference external" href="http://docs.python.org/library/functions.html#str" title="(in Python v2.7)"><em>str</em></a>) &#8211; the message to send</li>
+</ul>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="fredirc.IRCClient.send_private_message">
+<tt class="descname">send_private_message</tt><big>(</big><em>user</em>, <em>message</em><big>)</big><a class="headerlink" href="#fredirc.IRCClient.send_private_message" title="Permalink to this definition">¶</a></dt>
+<dd><p>Send a private message to a user.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
+<li><strong>user</strong> (<a class="reference external" href="http://docs.python.org/library/functions.html#str" title="(in Python v2.7)"><em>str</em></a>) &#8211; the addressed user</li>
+<li><strong>message</strong> (<a class="reference external" href="http://docs.python.org/library/functions.html#str" title="(in Python v2.7)"><em>str</em></a>) &#8211; the message tro send</li>
 </ul>
 </td>
 </tr>
@@ -535,6 +825,13 @@ To disconnect from the server and terminate the event loop call
 </tr>
 </tbody>
 </table>
+</dd></dl>
+
+<dl class="method">
+<dt id="fredirc.IRCClient.terminate">
+<tt class="descname">terminate</tt><big>(</big><big>)</big><a class="headerlink" href="#fredirc.IRCClient.terminate" title="Permalink to this definition">¶</a></dt>
+<dd><p>Shutdown the IRCClient by terminating the event loop.</p>
+<p>Control flow will continue after the call to <a class="reference internal" href="#fredirc.IRCClient.run" title="fredirc.IRCClient.run"><tt class="xref py py-meth docutils literal"><span class="pre">IRCClient.run()</span></tt></a>.</p>
 </dd></dl>
 
 </dd></dl>
@@ -976,11 +1273,11 @@ normal message handlers.</p>
         <li class="right" >
           <a href="guide.html" title="Beginner’s Guide"
              >previous</a> |</li>
-        <li><a href="index.html">FredIRC 0.1.0 documentation</a> &raquo;</li> 
+        <li><a href="index.html">FredIRC 0.2.0 documentation</a> &raquo;</li> 
       </ul>
     </div>
     <div class="footer">
-        &copy; Copyright 2014, Tobias Marquardt.
+        &copy; Copyright 2014-2015, Tobias Marquardt.
       Created using <a href="http://sphinx-doc.org/">Sphinx</a> 1.2.3.
     </div>
   </body>
