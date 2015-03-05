@@ -55,6 +55,7 @@ class IRCClient(asyncio.Protocol):
                  real_name=None,
                  password=None):
         asyncio.Protocol.__init__(self)
+        self._event_loop = None
         self._handler = handler
         self._state = IRCClientState()
         self._buffer = []
@@ -97,17 +98,18 @@ class IRCClient(asyncio.Protocol):
         To terminate the event loop use :py:meth:`terminate()<.terminate>`.
         Afterwards run() will return.
         """
-        loop = asyncio.get_event_loop()
-        if not loop.is_running():
+        self._event_loop = asyncio.new_event_loop()
+        if not self._event_loop.is_running():
             try:
                 while True:
                     self._reconnect = False
                     self._connect()
-                    loop.run_forever()
+                    self._event_loop.run_forever()
                     if not self._reconnect:
                         break
             finally:
-                loop.close()
+                self._event_loop.close()
+                self._event_loop = None
 
     def reconnect(self, delay=0.0):
         """ Reconnect the client to the server.
@@ -129,7 +131,7 @@ class IRCClient(asyncio.Protocol):
             return
         self._reconnect = True
         time.sleep(delay)
-        asyncio.get_event_loop().stop()
+        self._event_loop.stop()
 
     def enable_logging(self, enable):
         """ Enable or disable logging.
@@ -161,7 +163,7 @@ class IRCClient(asyncio.Protocol):
         """
         self._logger.info('Event-Loop terminated.')
         self._reconnect = False
-        asyncio.get_event_loop().stop()
+        self._event_loop.stop()
 
     # --- IRC related methods ---
 
@@ -330,11 +332,10 @@ class IRCClient(asyncio.Protocol):
         """ Create a connection to the configured server using asyncio's
         event loop and this IRCClient instance as protocol.
         """
-        loop = asyncio.get_event_loop()
-        task = asyncio.Task(loop.create_connection(
+        task = asyncio.Task(self._event_loop.create_connection(
             self, self._configured_server, self._configured_port))
         try:
-            loop.run_until_complete(task)
+            self._event_loop.run_until_complete(task)
         except TimeoutError:
             message = ('Cannot connect to server {} on port {}.'
                        'Connection timed out').format(
@@ -454,6 +455,19 @@ class IRCClient(asyncio.Protocol):
 
     Returns:
         tuple: channel names as strings, tuple might be empty
+    """
+
+    def _get_event_loop(self):
+        return self._event_loop
+
+    event_loop = property(_get_event_loop)
+    """ The event loop of this client (*read-only*).
+
+    You probably don't need to care about the event loop. Don't mess with it!
+
+    Returns:
+        BaseEventLoop: The event loop that runs this client.
+        Will be `None` if client is not running at the moment.
     """
 
 

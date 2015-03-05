@@ -14,9 +14,6 @@ class Task(object):
     """A Task can be used to schedule a function that will be executed by the
     event loop.
 
-    .. note:: A task will be scheduled only if there is a running(!)
-              :py:class:`.IRCClient` instance in the same process.
-
     There are two ways to use a Task:
 
     1. Subclass Task and overwrite its :py:meth:`run()<.Task.run>` method.
@@ -27,18 +24,21 @@ class Task(object):
     :py:meth:`.start()`.
 
     Args:
+        client (IRCClient): The :py:class:`IRCClient<.IRCClient>`-instance this
+                            Task belongs to. The Task will not be able to run
+                            unless the client is running.
         delay (float): Time (in seconds) to defer the execution of the task
-                       after it is started or the interval for its repeated
+                       after it was started or the interval for its repeated
                        execution if ``repeat=True``.
         repeat (bool): If ``True`` the task will run periodically until it is
                        stopped.
         func (function type): function that will be called (the actual task)
     """
 
-    def __init__(self, delay, repeat=False, func=None):
-        self._repeat = repeat
+    def __init__(self, client, delay, repeat=False, func=None):
+        self._client = client
         self._delay = delay
-        self._loop = asyncio.get_event_loop()
+        self._repeat = repeat
         self._handler = None
         if func:
             if isinstance(func, types.FunctionType):
@@ -67,7 +67,9 @@ class Task(object):
         """
         if self._handler:
             self._handler.cancel()
-        self._handler = self._loop.call_later(self._delay, self._run)
+        if self._client.event_loop:
+            self._handler = \
+                self._client.event_loop.call_later(self._delay, self._run)
 
     def stop(self):
         """ Stop the task.
