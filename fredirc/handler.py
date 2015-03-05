@@ -151,6 +151,18 @@ class IRCHandler(object):
         """
         pass
 
+    def handle_kick(self, channel, nick, initiator, reason):
+        """ A user got kicked from a channel.
+
+        Might be the IRCClient itself.
+
+        Args:
+            channel (str): The channel.
+            nick (str): The user who got kicked.
+            reason (str): Reason for the kick (might be None)
+        """
+        pass
+
     def handle_got_op(self, channel, nick, initiator):
         """ A user received operator status.
 

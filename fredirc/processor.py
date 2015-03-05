@@ -65,6 +65,8 @@ class MessageProcessor(object):
                 self._process_part(prefix, params)
             elif command == Cmd.MODE:
                 self._process_mode(prefix, params, message)
+            elif command == Cmd.KICK:
+                self._process_kick(prefix, params)
             else:
                 raise MessageHandlingError(message)
         except MessageHandlingError as e:
@@ -181,3 +183,10 @@ class MessageProcessor(object):
                     self._state.has_voice_in.remove(channel)
                     self._handler.handle_lost_voice(channel, user, initiator)
 
+    def _process_kick(self, prefix, params):
+        channel = params[0]
+        initiator = parsing.parse_user_prefix(prefix)[0]
+        reason = params[2] if len(params) > 2 else None
+        if channel in self._state.channels:
+            self._state.channels.remove(channel)
+        self._handler.handle_kick(channel, params[1], initiator, reason)

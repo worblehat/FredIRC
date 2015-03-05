@@ -23,6 +23,7 @@ class Cmd:
     # Channel Operations
     JOIN = 'JOIN'
     PART = 'PART'
+    KICK = 'KICK'
     # Sending Messages
     PRIVMSG = 'PRIVMSG'
     # Miscellaneous
