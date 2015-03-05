@@ -184,6 +184,8 @@ class MessageProcessor(object):
                     self._handler.handle_lost_voice(channel, user, initiator)
 
     def _process_kick(self, prefix, params):
+        if len(params) < 2:
+            return # TODO how to handle malformed messages in processor?
         channel = params[0]
         initiator = parsing.parse_user_prefix(prefix)[0]
         reason = params[2] if len(params) > 2 else None

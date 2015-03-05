@@ -157,9 +157,9 @@ class IRCHandler(object):
         Might be the IRCClient itself.
 
         Args:
-            channel (str): The channel.
-            nick (str): The user who got kicked.
-            reason (str): Reason for the kick (might be None)
+            channel (str): the channel
+            nick (str): the user who got kicked
+            reason (str): reason for the kick (might be None)
         """
         pass
 

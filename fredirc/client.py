@@ -25,8 +25,9 @@ class IRCClient(asyncio.Protocol):
         messages from the server.
 
     .. warning:: Currently only a single IRCClient instance is allowed! Don't
-        run multiple clients. This will result in undefined behaviour. This
-        will probably be fixed in future releases.
+        run multiple clients. This will result in undefined behaviour. Also
+        after :py:meth:`.run` terminated you should not call it again!
+        This will probably be fixed in future releases.
 
     To connect to the server and start the processing event loop call
     :py:meth:`run()<.IRCClient.run>` on your IRCClient instance.
@@ -129,7 +130,7 @@ class IRCClient(asyncio.Protocol):
             return
         self._reconnect = True
         time.sleep(delay)
-        asyncio.get_event_loop().stop()
+        asyncio.get_event_loop().stop() # TODO use terminate() here?
 
     def enable_logging(self, enable):
         """ Enable or disable logging.

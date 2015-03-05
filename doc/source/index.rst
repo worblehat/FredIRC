@@ -79,12 +79,11 @@ ircd-hybrid.
 Wishlist
 ++++++++
 
-* Implement more of the
-  `IRC client protocol <http://tools.ietf.org/search/rfc2812>`_, especially the
-  channel operation messages.
+* Implement more handler methods for messages of the
+  `IRC client protocol <http://tools.ietf.org/search/rfc2812>`_
+* Allow multiple IRCClient instances and/or to re-run a terminated IRCClient
 * Allow multiple server connections
 * Utility classes for general bot development
-* Allow multiple IRCClient instances at the same time
 * (X)DCC functionality
 * Port to Python 3.0/3.1/3.2 (maybe by using
   `Trollius <http://trollius.readthedocs.org/>`_)
