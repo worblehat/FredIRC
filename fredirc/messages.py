@@ -234,6 +234,12 @@ def part(channels, message):
     return '{part_cmd} {channels} :{message}'.format(
             part_cmd=Cmd.PART, channels=','.join(channels), message=message)
 
+def kick(channels, users, message=None):
+    if not message:
+        message = ''
+    return '{kick_cmd} {channels} {users} :{message}'.format(
+        kick_cmd=Cmd.KICK, channels=','.join(channels), users=','.join(users),
+        message=message)
 
 def channel_mode(channel, mode_change):
     """

@@ -250,6 +250,20 @@ class IRCClient(asyncio.Protocol):
         self._send_message(
             messages.privmsg(user, message, self._state.nick))
 
+    def kick(self, user, channel, reason=None):
+        """ Forcefully remove a user from a channel.
+
+        If the client is no operator, the server will respond with an
+        error message that can be handled via
+        :py:meth:`handle_error()<fredirc.IRCHandler.handle_error>`.
+
+        Args:
+            user (str): the affected user
+            channel (str): the channel
+            reason (str): optional message with the reason
+        """
+        self._send_message(messages.kick((channel,), (user,), reason))
+
     def pong(self):
         """ Send a pong message to the server. """
         self._send_message(messages.pong(self._state.server))
