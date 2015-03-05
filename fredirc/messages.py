@@ -190,19 +190,19 @@ def nick(name):
             nick_cmd=Cmd.NICK, name=name)
 
 
-def password(password=None):
-    if password:
+def password(pwd=None):
+    if pwd:
         return '{pass_cmd} :{password}'.format(
-                pass_cmd=Cmd.PASS, password=password)
+                pass_cmd=Cmd.PASS, password=pwd)
     else:
         return Cmd.PASS
 
 
-def user(user, real_name, invisible=False, receive_wallops=False):
+def user(user_name, real_name, invisible=False, receive_wallops=False):
     # TODO set mode correctly
     mode = 0
     return '{user_cmd} {user} {mode} * :{real_name}'.format(
-            user_cmd=Cmd.USER, user=user, mode=mode, real_name=real_name)
+            user_cmd=Cmd.USER, user=user_name, mode=mode, real_name=real_name)
 
 
 def quit(message=None):
@@ -234,12 +234,14 @@ def part(channels, message):
     return '{part_cmd} {channels} :{message}'.format(
             part_cmd=Cmd.PART, channels=','.join(channels), message=message)
 
+
 def kick(channels, users, message=None):
     if not message:
         message = ''
     return '{kick_cmd} {channels} {users} :{message}'.format(
         kick_cmd=Cmd.KICK, channels=','.join(channels), users=','.join(users),
         message=message)
+
 
 def channel_mode(channel, mode_change):
     """

@@ -161,7 +161,8 @@ def parse_channel_mode_params(params):
                 mode_changes[-1].params.append(param)
         else:   # param contains <modes>
             # Easy so far, as we are only looking for a 'o' or 'v' at the end of
-            # the modes (they must be at the end, because they expect a parameter)
+            # the modes (they must be at the end, because they expect a
+            # parameter)
             mode = param[-1:]
             if mode == ChannelMode.OPERATOR or \
                mode == ChannelMode.VOICE:

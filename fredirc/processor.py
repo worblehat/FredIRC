@@ -48,7 +48,7 @@ class MessageProcessor(object):
                 numeric_reply = int(command)
                 if 0 <= numeric_reply <= 399:
                     self._process_numeric_reply(
-                            numeric_reply, prefix, params, message)
+                        numeric_reply, prefix, params, message)
                 elif 400 <= numeric_reply <= 599:
                     self._process_numeric_error(numeric_reply, params, message)
                 else:
@@ -185,7 +185,7 @@ class MessageProcessor(object):
 
     def _process_kick(self, prefix, params):
         if len(params) < 2:
-            return # TODO how to handle malformed messages in processor?
+            return  # TODO how to handle malformed messages in processor?
         channel = params[0]
         initiator = parsing.parse_user_prefix(prefix)[0]
         reason = params[2] if len(params) > 2 else None

@@ -105,8 +105,8 @@ class IRCClient(asyncio.Protocol):
         :py:class:`.IRCHandler`. The client connects to the server
         and calls :py:meth:`handle_connect()<.IRCHandler.handle_connect>` on
         its handler if this is successful.
-        If the connection is closed the client can re-establish it without exiting the
-        event loop via :py:meth:`reconnect()<.reconnect>`.
+        If the connection is closed the client can re-establish it without
+        exiting the event loop via :py:meth:`reconnect()<.reconnect>`.
         To terminate the event loop use :py:meth:`terminate()<.terminate>`.
         Afterwards run() will return.
         """
