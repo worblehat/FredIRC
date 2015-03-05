@@ -235,6 +235,20 @@ class IRCClient(asyncio.Protocol):
         self._send_message(
             messages.privmsg(channel, message, self._state.nick))
 
+    def send_private_message(self, user, message):
+        """ Send a private message to a user.
+
+        Args:
+            user (str):  the addressed user
+            message (str): the message tro send
+        """
+        if user.startswith('#') or user.startswith('+') or user.startswith('&'):
+            self._logger.warn("Detained private message to {} which seems to be"
+                              "a channel instead of a user.".format(user))
+            return
+        self._send_message(
+            messages.privmsg(user, message, self._state.nick))
+
     def pong(self):
         """ Send a pong message to the server. """
         self._send_message(messages.pong(self._state.server))
