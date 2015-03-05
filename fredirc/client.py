@@ -268,7 +268,7 @@ class IRCClient(asyncio.Protocol):
         """ Send a pong message to the server. """
         self._send_message(messages.pong(self._state.server))
 
-    def give_op(self, channel, user):
+    def give_op(self, user, channel):
         """ Grant operator rights to a user on a channel.
 
         If the client is no operator, the server will respond with an
@@ -276,13 +276,13 @@ class IRCClient(asyncio.Protocol):
         :py:meth:`handle_error()<fredirc.IRCHandler.handle_error>`.
 
         Args:
-            channel (str): the channel
             user (str): the affected user
+            channel (str): the channel
         """
         mode_change = ChannelModeChange(True, ChannelMode.OPERATOR, (user,))
         self._send_message(messages.channel_mode(channel, mode_change))
 
-    def revoke_op(self, channel, user):
+    def revoke_op(self, user, channel):
         """ Revoke operator rights from user on a channel.
 
         If the client is no operator, the server will respond with an
@@ -290,13 +290,13 @@ class IRCClient(asyncio.Protocol):
         :py:meth:`handle_error()<fredirc.IRCHandler.handle_error>`.
 
         Args:
-            channel (str): the channel
             user (str): the affected user
+            channel (str): the channel
         """
         mode_change = ChannelModeChange(False, ChannelMode.OPERATOR, (user,))
         self._send_message(messages.channel_mode(channel, mode_change))
 
-    def give_voice(self, channel, user):
+    def give_voice(self, user, channel):
         """ Grant voice rights to a user on a channel.
 
         If the client is no operator, the server will respond with an
@@ -304,13 +304,13 @@ class IRCClient(asyncio.Protocol):
         :py:meth:`handle_error()<fredirc.IRCHandler.handle_error>`.
 
         Args:
-            channel (str): the channel
             user (str): the affected user
+            channel (str): the channel
         """
         mode_change = ChannelModeChange(True, ChannelMode.VOICE, (user,))
         self._send_message(messages.channel_mode(channel, mode_change))
 
-    def revoke_voice(self, channel, user):
+    def revoke_voice(self, user, channel):
         """ Revoke voice rights from user on a channel.
 
         If the client is no operator, the server will respond with an
@@ -318,8 +318,8 @@ class IRCClient(asyncio.Protocol):
         :py:meth:`handle_error()<fredirc.IRCHandler.handle_error>`.
 
         Args:
-            channel (str): the channel
             user (str): the affected user
+            channel (str): the channel
         """
         mode_change = ChannelModeChange(False, ChannelMode.VOICE, (user,))
         self._send_message(messages.channel_mode(channel, mode_change))
