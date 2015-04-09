@@ -276,10 +276,6 @@ class IRCClient(asyncio.Protocol):
         """
         self._send_message(messages.kick((channel,), (user,), reason))
 
-    def pong(self):
-        """ Send a pong message to the server. """
-        self._send_message(messages.pong(self._state.server))
-
     def give_op(self, user, channel):
         """ Grant operator rights to a user on a channel.
 
@@ -353,6 +349,10 @@ class IRCClient(asyncio.Protocol):
             channel (str): the channel (case-insensitive)
         """
         return channel.lower() in self._state.has_voice_in
+
+    def pong(self):
+        """ Send a pong message to the server. """
+        self._send_message(messages.pong(self._state.server))
 
     # --- Private methods ---
 

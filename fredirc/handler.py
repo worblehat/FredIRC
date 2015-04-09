@@ -45,41 +45,6 @@ class IRCHandler(object):
         """ The client successfully registered to the server. """
         pass
 
-    def handle_ping(self, server):
-        """ Received a ping message from the server.
-
-        Args:
-            server (str): name or ip of the server.
-        """
-        pass
-
-    def handle_response(self, response, message):
-        """ A numeric response was received from the server.
-
-        See the IRC client protocol specification for valid numeric response
-        codes and their meaning. There are extra handler methods for many
-        common responses, but this general handler is always called first.
-
-        Args:
-            response (int): 3-digit response code (between 0 and 399)
-            message (str): the whole, raw message
-        """
-        pass
-
-    def handle_error(self, error, **params):
-        """ An irc error message was received from the server.
-
-        The error codes are defined in :py:class:`Err<fredirc.Err>`.
-        The contents of the params dictionary depend on the specific error.
-        See the documentation of :py:class:`Err<fredirc.Err>` for details.
-
-        Args:
-            error (int): 3-digit error code (between 400 and 599)
-            params (dict): Parameters of the error message, each consisting of \
-                a parameter name and a value.
-        """
-        pass
-
     def handle_channel_message(self, channel, message, sender=None):
         """ Received a message to a channel.
 
@@ -200,6 +165,41 @@ class IRCHandler(object):
             channel (str): name of the channel
             nick (str): the user who no longer has voice
             initiator (str): the user who initiated the mode change
+        """
+        pass
+
+    def handle_response(self, response, message):
+        """ A numeric response was received from the server.
+
+        See the IRC client protocol specification for valid numeric response
+        codes and their meaning. There are extra handler methods for many
+        common responses, but this general handler is always called first.
+
+        Args:
+            response (int): 3-digit response code (between 0 and 399)
+            message (str): the whole, raw message
+        """
+        pass
+
+    def handle_error(self, error, **params):
+        """ An irc error message was received from the server.
+
+        The error codes are defined in :py:class:`Err<fredirc.Err>`.
+        The contents of the params dictionary depend on the specific error.
+        See the documentation of :py:class:`Err<fredirc.Err>` for details.
+
+        Args:
+            error (int): 3-digit error code (between 400 and 599)
+            params (dict): Parameters of the error message, each consisting of \
+                a parameter name and a value.
+        """
+        pass
+
+    def handle_ping(self, server):
+        """ Received a ping message from the server.
+
+        Args:
+            server (str): name or ip of the server.
         """
         pass
 
