@@ -169,18 +169,22 @@ class MessageProcessor(object):
             if mode_change.mode == ChannelMode.OPERATOR:
                 user = mode_change.params[0]
                 if mode_change.added:
-                    self._state.operator_in.append(channel)
+                    if user == self._state.nick:
+                        self._state.operator_in.append(channel)
                     self._handler.handle_got_op(channel, user, initiator)
                 else:
-                    self._state.operator_in.remove(channel)
+                    if user == self._state.nick:
+                        self._state.operator_in.remove(channel)
                     self._handler.handle_lost_op(channel, user, initiator)
             elif mode_change.mode == ChannelMode.VOICE:
                 user = mode_change.params[0]
                 if mode_change.added:
-                    self._state.has_voice_in.append(channel)
+                    if user == self._state.nick:
+                        self._state.has_voice_in.append(channel)
                     self._handler.handle_got_voice(channel, user, initiator)
                 else:
-                    self._state.has_voice_in.remove(channel)
+                    if user == self._state.nick:
+                        self._state.has_voice_in.remove(channel)
                     self._handler.handle_lost_voice(channel, user, initiator)
 
     def _process_kick(self, prefix, params):
