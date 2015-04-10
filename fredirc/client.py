@@ -72,6 +72,7 @@ class IRCClient(asyncio.Protocol):
         self._handler = handler
         self._state = IRCClientState()
         self._buffer = []
+        self._last_broken_message = None
         # Variable to determine if we want to reconnect the transport and
         # re-run the event loop automatically after it was stopped:
         self._reconnect = False
@@ -459,7 +460,19 @@ class IRCClient(asyncio.Protocol):
         """
         try:
             data = data.decode('utf-8', 'log_and_replace')
+            # The received data might break off in the middle of a message
+            # (i.e. there is no linebreak at the end).
+            # If so, that broken message is stored until we receive the rest of it.
+            if self._last_broken_message:
+                data = self._last_broken_message + data
+                self._last_broken_message = None
+            if data.endswith('\n'):
+                received_broken_message = False
+            else:
+                received_broken_message = True
             data = data.splitlines()
+            if received_broken_message:
+                self._last_broken_message = data.pop()
             self._buffer += data
             # ### TODO ###
             # Do we really need to create a copy here?
