@@ -187,8 +187,10 @@ class MessageProcessor(object):
         if len(params) < 2:
             return  # TODO how to handle malformed messages in processor?
         channel = params[0]
+        nick = params[1]
         initiator = parsing.parse_user_prefix(prefix)[0]
         reason = params[2] if len(params) > 2 else None
-        if channel in self._state.channels:
-            self._state.channels.remove(channel)
-        self._handler.handle_kick(channel, params[1], initiator, reason)
+        if nick == self._state.nick:
+            if channel in self._state.channels:
+                self._state.channels.remove(channel)
+        self._handler.handle_kick(channel, nick, initiator, reason)
