@@ -67,6 +67,8 @@ class MessageProcessor(object):
                 self._process_mode(prefix, params, message)
             elif command == Cmd.KICK:
                 self._process_kick(prefix, params)
+            elif command == Cmd.NICK:
+                self._process_nick(prefix, params)
             else:
                 raise MessageHandlingError(message)
         except MessageHandlingError as e:
@@ -149,6 +151,15 @@ class MessageProcessor(object):
             if len(params) > 1:
                 part_message = params[1]
             self._handler.handle_part(channel, nick, part_message)
+
+    def _process_nick(self, prefix, params):
+        old_nick = parsing.parse_user_prefix(prefix)[0]
+        new_nick = params[0]
+        if old_nick == self._state.nick:
+            self._state.nick = new_nick
+            self._handler.handle_own_nick_change(old_nick, new_nick)
+        else:
+            self._handler.handle_nick_change(old_nick, new_nick)
 
     def _process_mode(self, prefix, params, raw_msg):
         target = parsing.parse_message_target(params[0])[0]

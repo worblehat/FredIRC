@@ -168,6 +168,30 @@ class IRCHandler(object):
         """
         pass
 
+    def handle_nick_change(self, old_nick, new_nick):
+        """ A user's nick name changed.
+
+        To handle nick changes of the IRCClient itself, use
+        :py:meth:`.handle_own_nick_change`.
+
+        Args:
+            old_nick (str): The nick name of the user until now.
+            new_nick (str): The new nick name of the user.
+        """
+        pass
+
+    def handle_own_nick_change(self, old_nick, new_nick):
+        """ The IRCCLient's nick name changed.
+
+        The :py:attr:`nick<.IRCClient.nick>`-property will already hold
+        the new nick when this handler is called.
+
+        Args:
+            old_nick (str): The old nick name.
+            new_nick (str): The new nick name.
+        """
+        pass
+
     def handle_response(self, response, message):
         """ A numeric response was received from the server.
 

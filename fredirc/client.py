@@ -207,6 +207,17 @@ class IRCClient(asyncio.Protocol):
         self._send_message(messages.user(
             self._configured_user_name, self._configured_real_name))
 
+    def change_nick(self, nick):
+        """ Change the nick name of the client.
+
+        Note that the clients :py:attr:`.nick`-property will not change
+        directly, but only after the server acknowledged the new nick name.
+
+        Args:
+            nick (str): The new nick name.
+        """
+        self._send_message(messages.nick(nick))
+
     def join(self, channel, *channels):
         """ Join the specified channel(s).
 
