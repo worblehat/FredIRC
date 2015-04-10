@@ -72,7 +72,7 @@ class IRCHandler(object):
         pass
 
     def handle_join(self, channel, nick):
-        """ Called when a user joined the channel.
+        """ Called when another user joined the channel.
 
         To handle joins of the IRCClient itself, use
         :py:meth:`.handle_own_join`.
@@ -94,7 +94,7 @@ class IRCHandler(object):
         pass
 
     def handle_part(self, channel, nick, message=None):
-        """ Called when a user left the channel.
+        """ Called when another user left the channel.
 
         To handle partings of the IRCClient itself, use
         :py:meth:`.handle_own_part`.
@@ -117,9 +117,7 @@ class IRCHandler(object):
         pass
 
     def handle_kick(self, channel, nick, initiator, reason):
-        """ A user got kicked from a channel.
-
-        Might be the IRCClient itself.
+        """ Another user got kicked from a channel.
 
         Args:
             channel (str): the channel
@@ -128,8 +126,17 @@ class IRCHandler(object):
         """
         pass
 
+    def handle_own_kick(self, channel, initiator, reason):
+        """ The IRCClient got kicked from a channel.
+
+        Args:
+            channel (str): the channel
+            reason (str): reason for the kick (might be None)
+        """
+        pass
+
     def handle_got_op(self, channel, nick, initiator):
-        """ A user received operator status.
+        """ Another user received operator status.
 
         Args:
             channel (str): name of the channel
@@ -138,8 +145,17 @@ class IRCHandler(object):
         """
         pass
 
+    def handle_own_got_op(self, channel, initiator):
+        """ The IRCClient received operator status.
+
+        Args:
+            channel (str): name of the channel
+            initiator (str): the user who granted the operator rights
+        """
+        pass
+
     def handle_lost_op(self, channel, nick, initiator):
-        """ A user lost operator status.
+        """ Another user lost operator status.
 
         Args:
             channel (str): name of the channel
@@ -148,8 +164,17 @@ class IRCHandler(object):
         """
         pass
 
+    def handle_own_lost_op(self, channel, initiator):
+        """ The IRCClient lost operator status.
+
+        Args:
+            channel (str): name of the channel
+            initiator (str): the user who initiated the mode change
+        """
+        pass
+
     def handle_got_voice(self, channel, nick, initiator):
-        """ A user received voice rights.
+        """ Another user received voice rights.
 
         Args:
             channel (str): name of the channel
@@ -158,12 +183,30 @@ class IRCHandler(object):
         """
         pass
 
+    def handle_own_got_voice(self, channel, initiator):
+        """ The IRCClient received voice rights.
+
+        Args:
+            channel (str): name of the channel
+            initiator (str): the user who granted the voice rights
+        """
+        pass
+
     def handle_lost_voice(self, channel, nick, initiator):
-        """ A user lost voide rights.
+        """ Another user lost voice rights.
 
         Args:
             channel (str): name of the channel
             nick (str): the user who no longer has voice
+            initiator (str): the user who initiated the mode change
+        """
+        pass
+
+    def handle_own_lost_voice(self, channel, initiator):
+        """ The IRCClient lost voice rights.
+
+        Args:
+            channel (str): name of the channel
             initiator (str): the user who initiated the mode change
         """
         pass

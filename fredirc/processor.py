@@ -180,26 +180,42 @@ class MessageProcessor(object):
             if mode_change.mode == ChannelMode.OPERATOR:
                 user = mode_change.params[0]
                 if mode_change.added:
-                    self._state.operator_in.append(channel)
-                    self._handler.handle_got_op(channel, user, initiator)
+                    if user == self._state.nick:
+                        self._state.operator_in.append(channel)
+                        self._handler.handle_own_got_op(channel, initiator)
+                    else:
+                        self._handler.handle_got_op(channel, user, initiator)
                 else:
-                    self._state.operator_in.remove(channel)
-                    self._handler.handle_lost_op(channel, user, initiator)
+                    if user == self._state.nick:
+                        self._state.operator_in.remove(channel)
+                        self._handler.handle_own_lost_op(channel, initiator)
+                    else:
+                        self._handler.handle_lost_op(channel, user, initiator)
             elif mode_change.mode == ChannelMode.VOICE:
                 user = mode_change.params[0]
                 if mode_change.added:
-                    self._state.has_voice_in.append(channel)
-                    self._handler.handle_got_voice(channel, user, initiator)
+                    if user == self._state.nick:
+                        self._state.has_voice_in.append(channel)
+                        self._handler.handle_own_got_voice(channel, initiator)
+                    else:
+                        self._handler.handle_got_voice(channel, user, initiator)
                 else:
-                    self._state.has_voice_in.remove(channel)
-                    self._handler.handle_lost_voice(channel, user, initiator)
+                    if user == self._state.nick:
+                        self._state.has_voice_in.remove(channel)
+                        self._handler.handle_own_lost_voice(channel, initiator)
+                    else:
+                        self._handler.handle_lost_voice(channel, user, initiator)
 
     def _process_kick(self, prefix, params):
         if len(params) < 2:
             return  # TODO how to handle malformed messages in processor?
         channel = params[0]
+        nick = params[1]
         initiator = parsing.parse_user_prefix(prefix)[0]
         reason = params[2] if len(params) > 2 else None
-        if channel in self._state.channels:
-            self._state.channels.remove(channel)
-        self._handler.handle_kick(channel, params[1], initiator, reason)
+        if nick == self._state.nick:
+            if channel in self._state.channels:
+                self._state.channels.remove(channel)
+            self._handler.handle_own_kick(channel, initiator, reason)
+        else:
+            self._handler.handle_kick(channel, nick, initiator, reason)
