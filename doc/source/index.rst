@@ -12,6 +12,10 @@ least version 3.3. It only depends on
 `asyncio <https://pypi.python.org/pypi/asyncio>`_ which is part of the
 standard library since Python 3.4 anyway.
 
+.. warning:: While fully usable, FredIRC is still pre-1.0 software and has no backwards
+   compatibility guarantees until the 1.0 release occurs. Please make sure to
+   read the :doc:`history` carefully anytime you upgrade!
+
 Features
 --------
 
@@ -20,12 +24,6 @@ The main features are:
 * Easy-to-use interface for IRC bots
 * Internal event-loop that dispatches high-level IRC events
 * Different kinds of tasks which can be scheduled by the user
-
-.. note:: FredIRC is **already usable** but the project is still in an early
-          stage of development. So far only the very basics needed to write
-          simple IRC bots are implemented. As long as FredIRC has a 0.x.x
-          version number, backward-incompatible API changes might be
-          introduced (but mentioned in the change log).
 
 For a more detailed list of features see the :doc:`history`.
 
