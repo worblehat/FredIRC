@@ -25,7 +25,7 @@ def read(file):
 
 setup(
     name='FredIRC',
-    version='0.2.1',
+    version='0.2.2',
     author='Tobias Marquardt',
     author_email='tm@tobix.eu',
     description=('An easy-to-use, event driven framework for IRC bots.'),
@@ -34,7 +34,7 @@ setup(
     license='BSD',
     keywords='irc client library bot framework',
     url='https://worblehat.github.io/FredIRC',
-    download_url='https://github.com/worblehat/FredIRC/archive/v0.2.1.tar.gz',
+    download_url='https://github.com/worblehat/FredIRC/archive/v0.2.2.tar.gz',
     long_description=read('README.rst'),
     classifiers=[
         'Development Status :: 4 - Beta',
