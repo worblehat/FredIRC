@@ -45,11 +45,193 @@ class IRCHandler(object):
         """ The client successfully registered to the server. """
         pass
 
-    def handle_ping(self, server):
-        """ Received a ping message from the server.
+    def handle_channel_message(self, channel, message, sender=None):
+        """ Received a message to a channel.
+
+        A message was sent to a channel the client currently belongs to.
+        Does not include messages from the client itself!
 
         Args:
-            server (str): name or ip of the server.
+            channel (str): the channel name
+
+            message (str): the received message
+
+            sender (str): Sender of the message, usually a nickname.
+            Might be None.
+        """
+        pass
+
+    def handle_private_message(self, message, sender=None):
+        """ Received private message (query).
+
+        Args:
+            message (str): the received message
+            sender (str): Sender of the message, usually a nickname.
+                          Might be None.
+        """
+        pass
+
+    def handle_join(self, channel, nick):
+        """ Called when another user joined the channel.
+
+        To handle joins of the IRCClient itself, use
+        :py:meth:`.handle_own_join`.
+
+        Args:
+            channel (str): a name of a channel, the client is currently in
+            nick (str): nick of the member that joined the channel
+        """
+        pass
+
+    def handle_own_join(self, channel):
+        """ Called when the IRCClient joined a channel.
+
+        To handle joins of other members, use :py:meth:`.handle_join`.
+
+        Args:
+            channel (str): name of the channel
+        """
+        pass
+
+    def handle_part(self, channel, nick, message=None):
+        """ Called when another user left the channel.
+
+        To handle partings of the IRCClient itself, use
+        :py:meth:`.handle_own_part`.
+
+        Args:
+            channel (str): a name of a channel, the client is currently in
+            nick (str): nick of the member that left the channel
+            message (str): part message of the parting member (might be None)
+        """
+        pass
+
+    def handle_own_part(self, channel):
+        """ Called when the IRCClient left a channel.
+
+        To handle parting of other members, use :py:meth:`.handle_part`.
+
+        Args:
+            channel (str): name of the channel
+        """
+        pass
+
+    def handle_kick(self, channel, nick, initiator, reason):
+        """ Another user got kicked from a channel.
+
+        Args:
+            channel (str): the channel
+            nick (str): the user who got kicked
+            reason (str): reason for the kick (might be None)
+        """
+        pass
+
+    def handle_own_kick(self, channel, initiator, reason):
+        """ The IRCClient got kicked from a channel.
+
+        Args:
+            channel (str): the channel
+            reason (str): reason for the kick (might be None)
+        """
+        pass
+
+    def handle_got_op(self, channel, nick, initiator):
+        """ Another user received operator status.
+
+        Args:
+            channel (str): name of the channel
+            nick (str): the user who became operator
+            initiator (str): the user who granted the operator rights
+        """
+        pass
+
+    def handle_own_got_op(self, channel, initiator):
+        """ The IRCClient received operator status.
+
+        Args:
+            channel (str): name of the channel
+            initiator (str): the user who granted the operator rights
+        """
+        pass
+
+    def handle_lost_op(self, channel, nick, initiator):
+        """ Another user lost operator status.
+
+        Args:
+            channel (str): name of the channel
+            nick (str): the user who is no longer operator
+            initiator (str): the user who initiated the mode change
+        """
+        pass
+
+    def handle_own_lost_op(self, channel, initiator):
+        """ The IRCClient lost operator status.
+
+        Args:
+            channel (str): name of the channel
+            initiator (str): the user who initiated the mode change
+        """
+        pass
+
+    def handle_got_voice(self, channel, nick, initiator):
+        """ Another user received voice rights.
+
+        Args:
+            channel (str): name of the channel
+            nick (str): the user who received voice
+            initiator (str): the user who granted the voice rights
+        """
+        pass
+
+    def handle_own_got_voice(self, channel, initiator):
+        """ The IRCClient received voice rights.
+
+        Args:
+            channel (str): name of the channel
+            initiator (str): the user who granted the voice rights
+        """
+        pass
+
+    def handle_lost_voice(self, channel, nick, initiator):
+        """ Another user lost voice rights.
+
+        Args:
+            channel (str): name of the channel
+            nick (str): the user who no longer has voice
+            initiator (str): the user who initiated the mode change
+        """
+        pass
+
+    def handle_own_lost_voice(self, channel, initiator):
+        """ The IRCClient lost voice rights.
+
+        Args:
+            channel (str): name of the channel
+            initiator (str): the user who initiated the mode change
+        """
+        pass
+
+    def handle_nick_change(self, old_nick, new_nick):
+        """ A user's nick name changed.
+
+        To handle nick changes of the IRCClient itself, use
+        :py:meth:`.handle_own_nick_change`.
+
+        Args:
+            old_nick (str): The nick name of the user until now.
+            new_nick (str): The new nick name of the user.
+        """
+        pass
+
+    def handle_own_nick_change(self, old_nick, new_nick):
+        """ The IRCCLient's nick name changed.
+
+        The :py:attr:`nick<.IRCClient.nick>`-property will already hold
+        the new nick when this handler is called.
+
+        Args:
+            old_nick (str): The old nick name.
+            new_nick (str): The new nick name.
         """
         pass
 
@@ -80,126 +262,11 @@ class IRCHandler(object):
         """
         pass
 
-    def handle_channel_message(self, channel, message, sender=None):
-        """ Received a message to a channel.
-
-        A message was sent to a channel the client currently belongs to.
-        Does not include messages from the client itself!
+    def handle_ping(self, server):
+        """ Received a ping message from the server.
 
         Args:
-            channel (str): the channel name
-
-            message (str): the received message
-
-            sender (str): Sender of the message, usually a nickname.
-            Might be None.
-        """
-        pass
-
-    def handle_private_message(self, message, sender=None):
-        """ Received private message (query).
-
-        Args:
-            message (str): the received message
-            sender (str): Sender of the message, usually a nickname.
-                          Might be None.
-        """
-        pass
-
-    def handle_join(self, channel, nick):
-        """ Called when a user joined the channel.
-
-        To handle joins of the IRCClient itself, use
-        :py:meth:`.handle_own_join`.
-
-        Args:
-            channel (str): a name of a channel, the client is currently in
-            nick (str): nick of the member that joined the channel
-        """
-        pass
-
-    def handle_own_join(self, channel):
-        """ Called when the IRCClient joined a channel.
-
-        To handle joins of other members, use :py:meth:`.handle_join`.
-
-        Args:
-            channel (str): name of the channel
-        """
-        pass
-
-    def handle_part(self, channel, nick, message=None):
-        """ Called when a user left the channel.
-
-        To handle partings of the IRCClient itself, use
-        :py:meth:`.handle_own_part`.
-
-        Args:
-            channel (str): a name of a channel, the client is currently in
-            nick (str): nick of the member that left the channel
-            message (str): part message of the parting member (might be None)
-        """
-        pass
-
-    def handle_own_part(self, channel):
-        """ Called when the IRCClient left a channel.
-
-        To handle parting of other members, use :py:meth:`.handle_part`.
-
-        Args:
-            channel (str): name of the channel
-        """
-        pass
-
-    def handle_kick(self, channel, nick, initiator, reason):
-        """ A user got kicked from a channel.
-
-        Might be the IRCClient itself.
-
-        Args:
-            channel (str): the channel
-            nick (str): the user who got kicked
-            reason (str): reason for the kick (might be None)
-        """
-        pass
-
-    def handle_got_op(self, channel, nick, initiator):
-        """ A user received operator status.
-
-        Args:
-            channel (str): name of the channel
-            nick (str): the user who became operator
-            initiator (str): the user who granted the operator rights
-        """
-        pass
-
-    def handle_lost_op(self, channel, nick, initiator):
-        """ A user lost operator status.
-
-        Args:
-            channel (str): name of the channel
-            nick (str): the user who is no longer operator
-            initiator (str): the user who initiated the mode change
-        """
-        pass
-
-    def handle_got_voice(self, channel, nick, initiator):
-        """ A user received voice rights.
-
-        Args:
-            channel (str): name of the channel
-            nick (str): the user who received voice
-            initiator (str): the user who granted the voice rights
-        """
-        pass
-
-    def handle_lost_voice(self, channel, nick, initiator):
-        """ A user lost voide rights.
-
-        Args:
-            channel (str): name of the channel
-            nick (str): the user who no longer has voice
-            initiator (str): the user who initiated the mode change
+            server (str): name or ip of the server.
         """
         pass
 

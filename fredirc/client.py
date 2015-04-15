@@ -207,6 +207,17 @@ class IRCClient(asyncio.Protocol):
         self._send_message(messages.user(
             self._configured_user_name, self._configured_real_name))
 
+    def change_nick(self, nick):
+        """ Change the nick name of the client.
+
+        Note that the clients :py:attr:`.nick`-property will not change
+        directly, but only after the server acknowledged the new nick name.
+
+        Args:
+            nick (str): The new nick name.
+        """
+        self._send_message(messages.nick(nick))
+
     def join(self, channel, *channels):
         """ Join the specified channel(s).
 
@@ -277,10 +288,6 @@ class IRCClient(asyncio.Protocol):
             reason (str): optional message with the reason
         """
         self._send_message(messages.kick((channel,), (user,), reason))
-
-    def pong(self):
-        """ Send a pong message to the server. """
-        self._send_message(messages.pong(self._state.server))
 
     def give_op(self, user, channel):
         """ Grant operator rights to a user on a channel.
@@ -355,6 +362,10 @@ class IRCClient(asyncio.Protocol):
             channel (str): the channel (case-insensitive)
         """
         return channel.lower() in self._state.has_voice_in
+
+    def pong(self):
+        """ Send a pong message to the server. """
+        self._send_message(messages.pong(self._state.server))
 
     # --- Private methods ---
 

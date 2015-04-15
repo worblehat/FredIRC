@@ -1,6 +1,17 @@
 Changelog
 =========
 
+v0.2.2 (2015-04-11)
+-------------------
+
+* bug fix: client tried to process partially received messages
+* bug fix: processing of operator- and voice-mode changes resulted in inconsistent data structures
+
+v0.2.1 (2015-04-10)
+-------------------
+
+* bug fix: the bot no longer received messages from a channel after another user got kicked from it
+
 v0.2.0 (2015-03-05)
 -------------------
 

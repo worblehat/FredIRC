@@ -37,6 +37,16 @@ can be installed by:
 
     $ pip install dist/FredIRC-X.X.X.tar.gz
 
+**Alternative:**
+
+If you really want to avoid using
+pip and miss `all its benefits <https://pip.pypa.io/en/stable/user_guide.html>`_
+you can just use the `setup.py`-script of course:
+
+.. code-block:: bash
+
+    $ python setup.py install
+
 Build the Documentation
 -----------------------
 
