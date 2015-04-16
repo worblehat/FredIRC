@@ -249,13 +249,15 @@ class IRCClient(asyncio.Protocol):
         """
         self._send_message(messages.quit(message))
 
-    def send_message(self, channel, message):
+    def send_message(self, channel, message, delay=0.0):
         """ Send a message to a channel.
 
         Args:
             channel (str): the addressed channel
             message (str): the message to send
+            delay (float): the delay in second before sending message
         """
+        time.sleep(delay)
         self._send_message(
             messages.privmsg(channel, message, self._state.nick))
 
