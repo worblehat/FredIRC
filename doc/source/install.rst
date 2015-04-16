@@ -4,6 +4,10 @@ Installation
 **Prerequisites**: Make sure you have **Python 3.3 or above** as well as
 `pip <https://pip.pypa.io>`_ installed on your system.
 
+FredIRC depends on `asyncio <https://pypi.python.org/pypi/asyncio>`_ which
+is part of the standard library since Python 3.4. For Python 3.3 asyncio must be
+installed separately (``pip install`` will take care of this automatically).
+
 Installation via PyPI
 ----------------------
 
