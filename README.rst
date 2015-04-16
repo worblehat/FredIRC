@@ -10,10 +10,9 @@ and convenient utilities related to bot development.
 | **Requires:** Python 3.3+
 | **License:** `2-clause BSD <http://opensource.org/licenses/BSD-2-Clause>`_
 
-.. warning::
-   While fully usable, FredIRC is still pre-1.0 software and has no backwards
-   compatibility guarantees until the 1.0 release occurs. Please make sure to
-   read the :doc:`history` carefully anytime you upgrade!
+.. warning:: While fully usable, FredIRC is still pre-1.0 software and has no
+   backwards compatibility guarantees until the 1.0 release occurs. Please make
+   sure to read the :doc:`history` carefully anytime you upgrade!
 
 Features
 --------
