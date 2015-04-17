@@ -12,7 +12,9 @@ and convenient utilities related to bot development.
 
 .. warning:: While fully usable, FredIRC is still pre-1.0 software and has no
    backwards compatibility guarantees until the 1.0 release occurs. Please make
-   sure to read the :doc:`history` carefully anytime you upgrade!
+   sure to read the
+   `Changelog <http://worblehat.github.io/FredIRC/history.html>`_ carefully
+   anytime you upgrade!
 
 Features
 --------
@@ -22,8 +24,6 @@ The main features are:
 * Easy-to-use interface for IRC bots
 * Internal event-loop that dispatches high-level IRC events
 * Different kinds of tasks which can be scheduled by the user
-
-For a more detailed list of features see the :doc:`history`.
 
 Links
 -----
