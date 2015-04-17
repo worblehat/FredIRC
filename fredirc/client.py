@@ -18,6 +18,7 @@ from fredirc.errors import ConnectionTimeoutError
 from fredirc.messages import ChannelMode
 from fredirc.parsing import ChannelModeChange
 from fredirc.processor import MessageProcessor
+from fredirc.task import Task
 
 
 class IRCClient(asyncio.Protocol):
@@ -256,10 +257,15 @@ class IRCClient(asyncio.Protocol):
             channel (str): the addressed channel
             message (str): the message to send
             delay (float): the delay in second before sending message
+                           the bot is not blocked during delay
         """
-        time.sleep(delay)
-        self._send_message(
-            messages.privmsg(channel, message, self._state.nick))
+        def send():
+            self._send_message(messages.privmsg(channel, message, self._state.nick))
+        if delay > 0.0:
+            task = Task(delay, False, send)
+            task.start()
+        else:
+            send()
 
     def send_private_message(self, user, message):
         """ Send a private message to a user.
