@@ -1,39 +1,5 @@
-Welcome to FredIRC's Homepage!
-==============================
 
-FredIRC is an event-driven Python framework for
-`IRC (Internet Relay Chat) <http://en.wikipedia.org/wiki/Internet_Relay_Chat>`_
-bots. It aims to provide a high-level abstraction of
-`IRC's internals <http://tools.ietf.org/search/rfc2812>`_, an easy-to-use API
-and convinient utilities related to bot development.
-
-FredIRC is developed in `Python <http://www.python.org/>`_ and requires at
-least version 3.3. It only depends on
-`asyncio <https://pypi.python.org/pypi/asyncio>`_ which is part of the
-standard library since Python 3.4 anyway.
-
-.. warning:: While fully usable, FredIRC is still pre-1.0 software and has no backwards
-   compatibility guarantees until the 1.0 release occurs. Please make sure to
-   read the :doc:`history` carefully anytime you upgrade!
-
-Features
---------
-
-The main features are:
-
-* Easy-to-use interface for IRC bots
-* Internal event-loop that dispatches high-level IRC events
-* Different kinds of tasks which can be scheduled by the user
-
-For a more detailed list of features see the :doc:`history`.
-
-Links
------
-
-* `Source Code Repository <https://github.com/worblehat/FredIRC>`_
-* `PyPi-Site <https://pypi.python.org/pypi/FredIRC>`_
-* `Issue Tracker <https://github.com/worblehat/FredIRC/issues>`_
-* `Releases <https://github.com/worblehat/FredIRC/releases>`_
+.. include:: ../../README.rst
 
 Documentation
 -------------
@@ -46,11 +12,17 @@ Documentation
     api
     history
 
+Contact
+-------
+
+Please use the `issue tracker <https://github.com/worblehat/FredIRC/issues>`_
+or contact me via mail (tm[at]tobix[dot]eu).
+
 Development
 -----------
 
 FredIRC is **open source** and distributed under terms of the
-`BSD 2-Clause license <http://opensource.org/licenses/BSD-2-Clause>`_.
+`2-clause BSD license <http://opensource.org/licenses/BSD-2-Clause>`_.
 Contributions (code, docs, ...) are always welcome!
 
 Resources
