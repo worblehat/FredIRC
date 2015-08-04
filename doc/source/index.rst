@@ -23,7 +23,7 @@ Development
 
 FredIRC is **open source** and distributed under terms of the
 `2-clause BSD license <http://opensource.org/licenses/BSD-2-Clause>`_.
-Contributions (code, docs, ...) are always welcome!
+Contributions (code, documentation, ideas,...) are always welcome!
 
 Resources
 +++++++++
@@ -35,9 +35,6 @@ Resources
   please use the Github
   `issue tracker <https://github.com/worblehat/FredIRC/issues>`_ or
   contact me directly via tm[at]tobix[dot].eu
-* Besides the :doc:`public API reference <api>` there is a reference that
-  also includes the internal modules and classes not intended for use by the
-  end user: :doc:`Internal API reference <api_internal>`
 
 IRC Protocol
 ++++++++++++
