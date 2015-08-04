@@ -507,13 +507,13 @@ class IRCClient(asyncio.Protocol):
     """
 
     def _get_channels(self):
-        return tuple(self._state.channels)
+        return iter(self._state.channels)
 
     channels = property(_get_channels)
     """ Names of channels this client is currently in (*read-only*).
 
     Returns:
-        tuple: channel names as strings, tuple might be empty
+        iterator: over channel names as strings
     """
 
 
