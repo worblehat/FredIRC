@@ -13,6 +13,7 @@ import re
 from fredirc import parsing
 from fredirc.errors import MessageHandlingError
 from fredirc.errors import ParserError
+from fredirc.info import ChannelInfo
 from fredirc.messages import ChannelMode
 from fredirc.messages import Cmd
 from fredirc.messages import Rpl
@@ -30,6 +31,9 @@ class MessageProcessor(object):
         self._handler = handler
         self._state = state
         self._logger = logger
+        # Channels whose information (like nick names) hasn't been received completely yet.
+        # key: channel name, value: ChannelInfo
+        self._pending_channel_info = {}
 
     def process(self, message):
         """ Main message processing method.
@@ -97,7 +101,7 @@ class MessageProcessor(object):
                 if target.nick and target.nick == self._state.nick:
                     self._handler.handle_private_message(msg, sender)
                 elif target.channel and \
-                     target.channel in self._state.channels:
+                     target.channel in self._state.channels.keys():
                     self._handler.handle_channel_message(
                             target.channel, msg, sender)
 
@@ -133,9 +137,8 @@ class MessageProcessor(object):
         nick = parsing.parse_user_prefix(prefix)[0]
         channel = params[0]
         if self._state.nick == nick:
-            if channel not in self._state.channels:
-                self._state.channels.append(channel)
-            self._handler.handle_own_join(channel)
+            if channel not in self._state.channels.keys():
+                self._pending_channel_info[channel] = ChannelInfo(channel)
         else:
             self._handler.handle_join(channel, nick)
 
@@ -143,8 +146,8 @@ class MessageProcessor(object):
         nick = parsing.parse_user_prefix(prefix)[0]
         channel = params[0]
         if self._state.nick == nick:
-            if channel in self._state.channels:
-                self._state.channels.remove(channel)
+            if channel in self._state.channels.keys():
+                del self._state.channels[channel]
             self._handler.handle_own_part(channel)
         else:
             part_message = None
@@ -214,8 +217,8 @@ class MessageProcessor(object):
         initiator = parsing.parse_user_prefix(prefix)[0]
         reason = params[2] if len(params) > 2 else None
         if nick == self._state.nick:
-            if channel in self._state.channels:
-                self._state.channels.remove(channel)
+            if channel in self._state.channels.keys():
+                del self._state.channels[channel]
             self._handler.handle_own_kick(channel, initiator, reason)
         else:
             self._handler.handle_kick(channel, nick, initiator, reason)

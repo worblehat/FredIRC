@@ -520,7 +520,7 @@ class IRCClient(asyncio.Protocol):
     """
 
     def _get_channels(self):
-        return iter(self._state.channels)
+        return iter(self._state.channels.keys())
 
     channels = property(_get_channels)
     """ Names of channels this client is currently in (*read-only*).
@@ -576,8 +576,9 @@ class IRCClientState(object):
         # Note: Nicks in server messages always have the case in which they
         #       were registered.
         self.nick = None
+        # keys: channel name, values: ChannelInfo
         # Note: Channel names will always be saved lower case
-        self.channels = []
+        self.channels = {}
         # Channels, where the client is channel operator in:
         self.operator_in = []
         # Channels, where the client has voice rights in:
@@ -614,7 +615,7 @@ class IRCClientState(object):
     def _unregister(self):
         """ Reset all attributes that require registration to a server. """
         self.nick = None
-        self.channels = []
+        self.channels = {}
         self.operator_in = []
         self.has_voice_in = []
 
