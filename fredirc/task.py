@@ -49,10 +49,10 @@ class Task(object):
             else:
                 raise TypeError('func is not a function type.')
 
-    def change_delay(self, delay=0.0):
-        """ Change Task delay
+    def change_delay(self, delay):
+        """ Change Task delay.
 
-        Change will be applied to the next repeat of the tasK
+        The new delay will be applied to the next repeat of the tasK
         """
         if delay >= 0.0:
             self._delay = delay
@@ -75,7 +75,7 @@ class Task(object):
     def start(self):
         """ Start the task.
 
-        It will be executed in ``delay`` seconds (as specified in the constructor).
+        It will be executed after the configured delay.
         A started task can be stopped by calling :py:meth:`.stop()`.
         """
         if self._handler:
