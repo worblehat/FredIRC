@@ -58,6 +58,7 @@ class ChannelMode:
 class Rpl:
     """ Command Replies """
     WELCOME = 1
+    NAMREPLY = 353
 
 
 class Err:

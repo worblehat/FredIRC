@@ -171,6 +171,41 @@ def parse_channel_mode_params(params):
     return tuple(mode_changes)
 
 
+def parse_name_list(params):
+    """
+    Parses: [<target>] ( "=" / "*" / "@" ) <channel> :[ "@" / "+" ] <nick>
+            *( " " [ "@" / "+" ] <nick> )
+
+    The target (usually the nick of the user who initiated the NAMES-command)
+    and the channel type identifier (=/*/+) are ignored at the moment.
+
+    Returns:
+        ChannelNickList
+    """
+    # look for channel name
+    nick_list_index = None
+    for param in params:
+        if param.startswith('#') or \
+           param.startswith('+') or \
+           param.startswith('&'):
+            channel = param
+            nick_list_index = params.index(param) + 1
+            break
+    if not nick_list_index:
+        #TODO log error
+        return ChannelNickList("", [])
+    nicks = (nick for nick in params[nick_list_index:])
+    return ChannelNickList(channel, nicks)
+
+
+class ChannelNickList(object):
+    """ Object that contains a list of nick names in a channel. """
+
+    def __init__(self, channel, nicks):
+        self.channel = channel
+        self.nicks = nicks
+
+
 class ChannelModeChange(object):
     """ Object that contains information about a changed channel mode.
 

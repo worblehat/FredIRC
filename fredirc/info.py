@@ -23,8 +23,8 @@ class ChannelInfo(object):
         self._name = name
         self._nicks = set()
 
-    def _add_nick(self, nick):
-        self._nicks.add(nick)
+    def _add_nicks(self, *nicks):
+        self._nicks += list(nicks)
 
     def _remove_nick(self, nick):
         try:

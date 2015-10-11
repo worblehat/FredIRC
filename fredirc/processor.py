@@ -115,6 +115,10 @@ class MessageProcessor(object):
             self._state.server = prefix
             self._state.nick = params[0]
             self._handler.handle_register()
+        elif num == Rpl.NAMREPLY:
+            channel = parsing.parse_name_list(params)
+            if channel.name in self._pending_channel_info.keys():
+                self._pending_channel_info[channel]._add_nicks(channel.nicks)
 
     def _process_numeric_error(self, num, params, raw_msg):
         # Remove the first parameter which is always the message target
