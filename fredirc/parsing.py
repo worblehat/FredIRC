@@ -183,26 +183,20 @@ def parse_name_list(params):
         ChannelNickList
     """
     # look for channel name
-    nick_list_index = None
     for param in params:
         if param.startswith('#') or \
            param.startswith('+') or \
            param.startswith('&'):
             channel = param
-            nick_list_index = params.index(param) + 1
             break
-    if not nick_list_index:
-        #TODO log error
-        return ChannelNickList("", [])
-    nicks = (nick for nick in params[nick_list_index:])
-    return ChannelNickList(channel, nicks)
-
+    nicks = [nick for nick in params[-1].split()]
+    return ChannelNickList(channel, tuple(nicks))
 
 class ChannelNickList(object):
-    """ Object that contains a list of nick names in a channel. """
+    """ Object that contains a tuple of nick names in a channel. """
 
-    def __init__(self, channel, nicks):
-        self.channel = channel
+    def __init__(self, channel_name, nicks):
+        self.channel_name = channel_name
         self.nicks = nicks
 
 

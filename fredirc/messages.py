@@ -59,6 +59,8 @@ class Rpl:
     """ Command Replies """
     WELCOME = 1
     NAMREPLY = 353
+    ENDOFNAMES = 366
+    TOPIC = 332
 
 
 class Err:

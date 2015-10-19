@@ -21,16 +21,23 @@ class ChannelInfo(object):
 
     def __init__(self, name):
         self._name = name
+        self._topic = ""
         self._nicks = set()
 
     def _add_nicks(self, *nicks):
-        self._nicks += list(nicks)
+        self._nicks.update(nicks)
 
     def _remove_nick(self, nick):
         try:
             self._nicks.remove(nick)
         except KeyError:
             pass
+
+    def _set_topic(self, topic):
+        self._topic = topic
+
+    def _get_topic(self):
+        return self._topic
 
     def _get_name(self):
         return self._name
@@ -43,6 +50,13 @@ class ChannelInfo(object):
 
     Returns:
         str: name
+    """
+
+    topic = property(_get_topic)
+    """ Topic of the channel (*read-only*).
+
+    Returns:
+        str: topic, might be empty
     """
 
     nicks = property(_get_nicks)

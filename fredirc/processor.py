@@ -115,10 +115,26 @@ class MessageProcessor(object):
             self._state.server = prefix
             self._state.nick = params[0]
             self._handler.handle_register()
+        elif num == Rpl.TOPIC:
+            channel = params[1]
+            if channel.startswith('#') or \
+               channel.startswith('+') or \
+               channel.startswith('&'):
+                if channel in self._pending_channel_info:
+                    self._pending_channel_info[channel]._set_topic(params[2])
         elif num == Rpl.NAMREPLY:
             channel = parsing.parse_name_list(params)
-            if channel.name in self._pending_channel_info.keys():
-                self._pending_channel_info[channel]._add_nicks(channel.nicks)
+            if channel.channel_name in self._pending_channel_info:
+                self._pending_channel_info[channel.channel_name]._add_nicks(*channel.nicks)
+        elif num == Rpl.ENDOFNAMES:
+            channel = params[1]
+            if channel.startswith('#') or \
+               channel.startswith('+') or \
+               channel.startswith('&'):
+                if channel in self._pending_channel_info:
+                    channel_info = self._pending_channel_info.pop(channel)
+                    self._state.channels[channel] = channel_info
+                    self._handler.handle_own_join(channel)
 
     def _process_numeric_error(self, num, params, raw_msg):
         # Remove the first parameter which is always the message target
