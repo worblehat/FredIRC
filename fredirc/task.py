@@ -37,7 +37,10 @@ class Task(object):
 
     def __init__(self, delay, repeat=False, func=None):
         self._repeat = repeat
-        self._delay = delay
+        if delay >= 0.0:
+            self._delay = delay
+        else:
+            raise ValueError('delay must not be negative.')
         self._loop = asyncio.get_event_loop()
         self._handler = None
         if func:
@@ -45,6 +48,16 @@ class Task(object):
                 self.run = func
             else:
                 raise TypeError('func is not a function type.')
+
+    def change_delay(self, delay):
+        """ Change Task delay.
+
+        The new delay will be applied to the next repeat of the tasK
+        """
+        if delay >= 0.0:
+            self._delay = delay
+        else:
+            raise ValueError('delay must not be negative.')
 
     def run(self):
         """ Method that is called on execution of the Task.
@@ -62,7 +75,7 @@ class Task(object):
     def start(self):
         """ Start the task.
 
-        It will be executed in ``delay`` seconds (as specified in the constructor).
+        It will be executed after the configured delay.
         A started task can be stopped by calling :py:meth:`.stop()`.
         """
         if self._handler:
