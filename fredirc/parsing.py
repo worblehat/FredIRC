@@ -31,7 +31,7 @@ def parse(message):
 
     Args:
         message (str): Raw irc message (without the CRLF)
-    Retval:
+    Returns:
         3-element tuple: two strings (prefix and command) and a tuple of
         strings (params)
     """
@@ -63,7 +63,7 @@ def parse_user_prefix(prefix):
     """
     Parses:
         prefix = nickname [ [ "!" user ] "@" host ]
-    Retval:
+    Returns:
         triple (nick, user, host), user and host might be None
     """
     user = None
@@ -90,7 +90,7 @@ def parse_message_target(msg_target):
       msgto      =/ nickname / ( nickname "!" user "@" host )
       channel    =  ( "#" / "+" / ( "!" channelid ) / "&" ) chanstring
                     [ ":" chanstring ]
-    Retval:
+    Returns:
         Tuple of :py:class:`.MessageTarget`s, where each MessageTarget
         represents one 'msgto' from the grammar rule
     """
@@ -139,7 +139,7 @@ def parse_channel_mode_params(params):
 
     Parses: *( ( "-" / "+" ) *<modes> *<modeparams> )
 
-    Retval:
+    Returns:
         tuple of ChannelModeChange
     """
     if not params[0].startswith('+') and not params[0].startswith('-'):
