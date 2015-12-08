@@ -24,6 +24,7 @@ class Cmd:
     JOIN = 'JOIN'
     PART = 'PART'
     KICK = 'KICK'
+    TOPIC = 'TOPIC'
     # Sending Messages
     PRIVMSG = 'PRIVMSG'
     # Miscellaneous

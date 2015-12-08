@@ -73,6 +73,8 @@ class MessageProcessor(object):
                 self._process_kick(prefix, params)
             elif command == Cmd.NICK:
                 self._process_nick(prefix, params)
+            elif command == Cmd.TOPIC:
+                self._process_topic(prefix, params)
             else:
                 raise MessageHandlingError(message)
         except MessageHandlingError as e:
@@ -116,12 +118,7 @@ class MessageProcessor(object):
             self._state.nick = params[0]
             self._handler.handle_register()
         elif num == Rpl.TOPIC:
-            channel = params[1]
-            if channel.startswith('#') or \
-               channel.startswith('+') or \
-               channel.startswith('&'):
-                if channel in self._pending_channel_info:
-                    self._pending_channel_info[channel]._set_topic(params[2])
+            self._set_topic(params[1], params[2])
         elif num == Rpl.NAMREPLY:
             channel = parsing.parse_name_list(params)
             if channel.channel_name in self._pending_channel_info:
@@ -242,3 +239,15 @@ class MessageProcessor(object):
             self._handler.handle_own_kick(channel, initiator, reason)
         else:
             self._handler.handle_kick(channel, nick, initiator, reason)
+
+    def _process_topic(self, prefix, params):
+        self._set_topic(params[0], params[1])
+
+    def _set_topic(self, channel, topic):
+        if channel.startswith('#') or \
+           channel.startswith('+') or \
+           channel.startswith('&'):
+            if channel in self._pending_channel_info:
+                self._pending_channel_info[channel]._set_topic(topic)
+            elif channel in self._state.channels:
+                self._state.channels[channel]._set_topic(topic)
