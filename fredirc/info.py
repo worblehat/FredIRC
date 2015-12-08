@@ -68,8 +68,7 @@ class ChannelInfo(object):
 
 
 class _ReadOnlyDict(collections.Mapping):
-    """ A mapping that serves as a read-only view on a dict.
-    """
+    """ A mapping that serves as a read-only view on a dict. """
 
     def __init__(self, data):
         self._data = data
@@ -84,12 +83,12 @@ class _ReadOnlyDict(collections.Mapping):
         return iter(self._data)
 
     def items(self):
-        return self.data.items()
+        return self._data.items()
 
     def keys(self):
-        return self.data.keys()
+        return self._data.keys()
 
     def values(self):
-        return self.data.values()
+        return self._data.values()
 
 
