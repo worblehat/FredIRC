@@ -15,6 +15,7 @@ import time
 
 from fredirc import messages
 from fredirc.errors import ConnectionTimeoutError
+from fredirc.info import _ReadOnlyDict
 from fredirc.messages import ChannelMode
 from fredirc.parsing import ChannelModeChange
 from fredirc.processor import MessageProcessor
@@ -499,6 +500,17 @@ class IRCClient(asyncio.Protocol):
             self._logger.critical('Shutting down the client, due to an ' +
                                   'unhandled exception!')
             self.terminate()
+
+    def _get_channel_info(self):
+        return _ReadOnlyDict(self._state.channels)
+
+    channel_info = property(_get_channel_info)
+    """ Get information about channels.
+
+    Returns:
+        dict: A read-only(!) mapping of channel names to
+        :py:class:`ChannelInfo<fredirc.ChannelInfo>` objects.
+    """
 
     def _get_nick(self):
         return self._state.nick
