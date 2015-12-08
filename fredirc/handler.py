@@ -93,11 +93,24 @@ class IRCHandler(object):
         """
         pass
 
+    def handle_quit(self, nick, message=None):
+        """ A user disconnected from the server.
+
+        Also see: :py:meth:`.handle_part`
+
+        Args:
+            nick (str): nick of the user
+            message (str): quit message (might be None)
+        """
+        pass
+
     def handle_part(self, channel, nick, message=None):
         """ Called when another user left the channel.
 
         To handle partings of the IRCClient itself, use
         :py:meth:`.handle_own_part`.
+
+        Also see: :py:meth:`.handle_quit`
 
         Args:
             channel (str): a name of a channel, the client is currently in

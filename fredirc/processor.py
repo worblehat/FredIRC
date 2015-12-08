@@ -75,6 +75,8 @@ class MessageProcessor(object):
                 self._process_nick(prefix, params)
             elif command == Cmd.TOPIC:
                 self._process_topic(prefix, params)
+            elif command == Cmd.QUIT:
+                self._process_quit(prefix, params)
             else:
                 raise MessageHandlingError(message)
         except MessageHandlingError as e:
@@ -254,3 +256,10 @@ class MessageProcessor(object):
                 self._pending_channel_info[channel]._set_topic(topic)
             elif channel in self._state.channels:
                 self._state.channels[channel]._set_topic(topic)
+
+    def _process_quit(self, prefix, params):
+        nick = parsing.parse_user_prefix(prefix)[0]
+        quit_message = None
+        if len(params) > 0:
+            quit_message = params[0]
+        self._handler.handle_quit(nick, quit_message)
