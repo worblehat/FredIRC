@@ -179,6 +179,10 @@ class MessageProcessor(object):
     def _process_nick(self, prefix, params):
         old_nick = parsing.parse_user_prefix(prefix)[0]
         new_nick = params[0]
+        for channel_info in self._state.channels.values():
+            if old_nick in channel_info.nicks:
+                channel_info._remove_nick(old_nick)
+                channel_info._add_nicks(new_nick)
         if old_nick == self._state.nick:
             self._state.nick = new_nick
             self._handler.handle_own_nick_change(old_nick, new_nick)
@@ -262,4 +266,7 @@ class MessageProcessor(object):
         quit_message = None
         if len(params) > 0:
             quit_message = params[0]
+        for channel_info in self._state.channels.values():
+            if nick in channel_info.nicks:
+                channel_info._remove_nick(nick)
         self._handler.handle_quit(nick, quit_message)
