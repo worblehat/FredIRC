@@ -157,6 +157,7 @@ class MessageProcessor(object):
             if channel not in self._state.channels.keys():
                 self._pending_channel_info[channel] = ChannelInfo(channel)
         else:
+            self._state.channels[channel]._add_nicks(nick)
             self._handler.handle_join(channel, nick)
 
     def _process_part(self, prefix, params):
@@ -167,6 +168,7 @@ class MessageProcessor(object):
                 del self._state.channels[channel]
             self._handler.handle_own_part(channel)
         else:
+            self._state.channels[channel]._remove_nick(nick)
             part_message = None
             if len(params) > 1:
                 part_message = params[1]
@@ -238,6 +240,7 @@ class MessageProcessor(object):
                 del self._state.channels[channel]
             self._handler.handle_own_kick(channel, initiator, reason)
         else:
+            self._state.channels[channel]._remove_nick(nick)
             self._handler.handle_kick(channel, nick, initiator, reason)
 
     def _process_topic(self, prefix, params):
