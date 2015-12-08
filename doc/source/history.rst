@@ -1,10 +1,14 @@
 Changelog
 =========
 
-v0.3.0 (2015-08-XX)
+v0.3.0 (2015-12-XX)
 -------------------
 
 **Attention**: This release contains some backward-incompatible changes (marked with (!) below).
+
+* ChannelInfo-class with information about a channel like current topic and members
+
+  * access via IRCClient.channel_info
 
 * changing the nick name of the client
 * handle nick changes
