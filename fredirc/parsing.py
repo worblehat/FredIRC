@@ -176,8 +176,10 @@ def parse_name_list(params):
     Parses: [<target>] ( "=" / "*" / "@" ) <channel> :[ "@" / "+" ] <nick>
             *( " " [ "@" / "+" ] <nick> )
 
-    The target (usually the nick of the user who initiated the NAMES-command)
-    and the channel type identifier (=/*/+) are ignored at the moment.
+    TODO:
+    The target (usually the nick of the user who initiated the NAMES-command),
+    the channel type identifier (=/*/+) and the user mode (@/+) are ignored at
+    the moment.
 
     Returns:
         ChannelNickList
@@ -189,7 +191,7 @@ def parse_name_list(params):
            param.startswith('&'):
             channel = param
             break
-    nicks = [nick for nick in params[-1].split()]
+    nicks = [nick.lstrip("@+") for nick in params[-1].split()]
     return ChannelNickList(channel, tuple(nicks))
 
 class ChannelNickList(object):
