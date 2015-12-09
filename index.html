@@ -6,7 +6,7 @@
   <head>
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
     
-    <title>Welcome to FredIRC’s Homepage! &mdash; FredIRC 0.2.2 documentation</title>
+    <title>FredIRC &mdash; FredIRC 0.3.0 documentation</title>
     
     <link rel="stylesheet" href="_static/nature.css" type="text/css" />
     <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
@@ -14,7 +14,7 @@
     <script type="text/javascript">
       var DOCUMENTATION_OPTIONS = {
         URL_ROOT:    './',
-        VERSION:     '0.2.2',
+        VERSION:     '0.3.0',
         COLLAPSE_INDEX: false,
         FILE_SUFFIX: '.html',
         HAS_SOURCE:  true
@@ -23,11 +23,11 @@
     <script type="text/javascript" src="_static/jquery.js"></script>
     <script type="text/javascript" src="_static/underscore.js"></script>
     <script type="text/javascript" src="_static/doctools.js"></script>
-    <link rel="top" title="FredIRC 0.2.2 documentation" href="#" />
+    <link rel="top" title="FredIRC 0.3.0 documentation" href="#" />
     <link rel="next" title="Installation" href="install.html" /> 
   </head>
-  <body>
-    <div class="related">
+  <body role="document">
+    <div class="related" role="navigation" aria-label="related navigation">
       <h3>Navigation</h3>
       <ul>
         <li class="right" style="margin-right: 10px">
@@ -36,31 +36,33 @@
         <li class="right" >
           <a href="install.html" title="Installation"
              accesskey="N">next</a> |</li>
-        <li><a href="#">FredIRC 0.2.2 documentation</a> &raquo;</li> 
+        <li class="nav-item nav-item-0"><a href="#">FredIRC 0.3.0 documentation</a> &raquo;</li> 
       </ul>
     </div>  
 
     <div class="document">
       <div class="documentwrapper">
         <div class="bodywrapper">
-          <div class="body">
+          <div class="body" role="main">
             
-  <div class="section" id="welcome-to-fredirc-s-homepage">
-<h1>Welcome to FredIRC&#8217;s Homepage!<a class="headerlink" href="#welcome-to-fredirc-s-homepage" title="Permalink to this headline">¶</a></h1>
+  <div class="section" id="fredirc">
+<h1>FredIRC<a class="headerlink" href="#fredirc" title="Permalink to this headline">¶</a></h1>
 <p>FredIRC is an event-driven Python framework for
 <a class="reference external" href="http://en.wikipedia.org/wiki/Internet_Relay_Chat">IRC (Internet Relay Chat)</a>
-bots. It aims to provide a high-level abstraction of
+bots. It provides a high-level abstraction of
 <a class="reference external" href="http://tools.ietf.org/search/rfc2812">IRC&#8217;s internals</a>, an easy-to-use API
-and convinient utilities related to bot development.</p>
-<p>FredIRC is developed in <a class="reference external" href="http://www.python.org/">Python</a> and requires at
-least version 3.3. It only depends on
-<a class="reference external" href="https://pypi.python.org/pypi/asyncio">asyncio</a> which is part of the
-standard library since Python 3.4 anyway.</p>
+and convenient utilities related to bot development.</p>
+<div class="line-block">
+<div class="line"><strong>Requires:</strong> Python 3.3+</div>
+<div class="line"><strong>License:</strong> <a class="reference external" href="http://opensource.org/licenses/BSD-2-Clause">2-clause BSD</a></div>
+</div>
 <div class="admonition warning">
 <p class="first admonition-title">Warning</p>
-<p class="last">While fully usable, FredIRC is still pre-1.0 software and has no backwards
-compatibility guarantees until the 1.0 release occurs. Please make sure to
-read the <a class="reference internal" href="history.html"><em>Changelog</em></a> carefully anytime you upgrade!</p>
+<p class="last">While fully usable, FredIRC is still pre-1.0 software and has no
+backwards compatibility guarantees until the 1.0 release occurs. Please make
+sure to read the
+<a class="reference external" href="http://worblehat.github.io/FredIRC/history.html">Changelog</a> carefully
+anytime you upgrade!</p>
 </div>
 <div class="section" id="features">
 <h2>Features<a class="headerlink" href="#features" title="Permalink to this headline">¶</a></h2>
@@ -70,15 +72,15 @@ read the <a class="reference internal" href="history.html"><em>Changelog</em></a
 <li>Internal event-loop that dispatches high-level IRC events</li>
 <li>Different kinds of tasks which can be scheduled by the user</li>
 </ul>
-<p>For a more detailed list of features see the <a class="reference internal" href="history.html"><em>Changelog</em></a>.</p>
 </div>
 <div class="section" id="links">
 <h2>Links<a class="headerlink" href="#links" title="Permalink to this headline">¶</a></h2>
 <ul class="simple">
-<li><a class="reference external" href="https://github.com/worblehat/FredIRC">Source Code Repository</a></li>
-<li><a class="reference external" href="https://pypi.python.org/pypi/FredIRC">PyPi-Site</a></li>
+<li><a class="reference external" href="https://worblehat.github.io/FredIRC">Homepage</a></li>
+<li><a class="reference external" href="https://pypi.python.org/pypi/FredIRC">PyPI</a></li>
+<li><a class="reference external" href="https://worblehat.github.io/FredIRC/history.html">Changelog</a></li>
+<li><a class="reference external" href="https://github.com/worblehat/FredIRC">Source Code</a></li>
 <li><a class="reference external" href="https://github.com/worblehat/FredIRC/issues">Issue Tracker</a></li>
-<li><a class="reference external" href="https://github.com/worblehat/FredIRC/releases">Releases</a></li>
 </ul>
 </div>
 <div class="section" id="documentation">
@@ -92,41 +94,30 @@ read the <a class="reference internal" href="history.html"><em>Changelog</em></a
 </ul>
 </div>
 </div>
+<div class="section" id="contact">
+<h2>Contact<a class="headerlink" href="#contact" title="Permalink to this headline">¶</a></h2>
+<p>If you have problems, questions or ideas for improvement, please use the Github
+<a class="reference external" href="https://github.com/worblehat/FredIRC/issues">issue tracker</a>
+or contact me directly via tm[at]tobix[dot].eu.</p>
+</div>
 <div class="section" id="development">
 <h2>Development<a class="headerlink" href="#development" title="Permalink to this headline">¶</a></h2>
 <p>FredIRC is <strong>open source</strong> and distributed under terms of the
-<a class="reference external" href="http://opensource.org/licenses/BSD-2-Clause">BSD 2-Clause license</a>.
-Contributions (code, docs, ...) are always welcome!</p>
-<div class="section" id="resources">
-<h3>Resources<a class="headerlink" href="#resources" title="Permalink to this headline">¶</a></h3>
-<ul class="simple">
-<li>The source code repository is hosted at
-<a class="reference external" href="https://github.com/worblehat/FredIRC">Github</a></li>
-<li>See the <a class="reference internal" href="history.html"><em>Changelog</em></a> for the history of FredIRC</li>
-<li>For problems, questions and suggested improvements regarding FredIRC,
-please use the Github
-<a class="reference external" href="https://github.com/worblehat/FredIRC/issues">issue tracker</a> or
-contact me directly via tm[at]tobix[dot].eu</li>
-<li>Besides the <a class="reference internal" href="api.html"><em>public API reference</em></a> there is a reference that
-also includes the internal modules and classes not intended for use by the
-end user: <a class="reference internal" href="api_internal.html"><em>Internal API reference</em></a></li>
-</ul>
-</div>
-<div class="section" id="irc-protocol">
-<h3>IRC Protocol<a class="headerlink" href="#irc-protocol" title="Permalink to this headline">¶</a></h3>
-<p>FredIRC tries to implement RFC2812. But as this is no strict standard,
-there might be problems with specific IRC Deamons. It was mostly tested with
-ircd-hybrid.</p>
-</div>
+<a class="reference external" href="http://opensource.org/licenses/BSD-2-Clause">2-clause BSD license</a>.
+Contributions (code, documentation, ideas,...) are always welcome!</p>
+<p>The source code repository is hosted at <a class="reference external" href="https://github.com/worblehat/FredIRC">Github</a></p>
 <div class="section" id="wishlist">
 <h3>Wishlist<a class="headerlink" href="#wishlist" title="Permalink to this headline">¶</a></h3>
 <ul class="simple">
-<li>Implement more handler methods for messages of the
-<a class="reference external" href="http://tools.ietf.org/search/rfc2812">IRC client protocol</a></li>
+<li>More commands (e.g. KICK, TOPIC,...)</li>
+<li>Querying user modes for other users</li>
+<li>Advanced logging of chat histories</li>
 <li>Allow multiple IRCClient instances and/or to re-run a terminated IRCClient</li>
-<li>Allow multiple server connections</li>
+<li>SSL-support</li>
+<li>Some kind of plugin system for more flexibility und reusability</li>
 <li>Utility classes for general bot development</li>
-<li>(X)DCC functionality</li>
+<li>Multiple server connections</li>
+<li>(X)DCC-support</li>
 <li>Port to Python 3.0/3.1/3.2 (maybe by using
 <a class="reference external" href="http://trollius.readthedocs.org/">Trollius</a>)</li>
 </ul>
@@ -138,17 +129,16 @@ ircd-hybrid.</p>
           </div>
         </div>
       </div>
-      <div class="sphinxsidebar">
+      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
         <div class="sphinxsidebarwrapper">
   <h3><a href="#">Table Of Contents</a></h3>
   <ul>
-<li><a class="reference internal" href="#">Welcome to FredIRC&#8217;s Homepage!</a><ul>
+<li><a class="reference internal" href="#">FredIRC</a><ul>
 <li><a class="reference internal" href="#features">Features</a></li>
 <li><a class="reference internal" href="#links">Links</a></li>
 <li><a class="reference internal" href="#documentation">Documentation</a></li>
+<li><a class="reference internal" href="#contact">Contact</a></li>
 <li><a class="reference internal" href="#development">Development</a><ul>
-<li><a class="reference internal" href="#resources">Resources</a></li>
-<li><a class="reference internal" href="#irc-protocol">IRC Protocol</a></li>
 <li><a class="reference internal" href="#wishlist">Wishlist</a></li>
 </ul>
 </li>
@@ -159,7 +149,7 @@ ircd-hybrid.</p>
   <h4>Next topic</h4>
   <p class="topless"><a href="install.html"
                         title="next chapter">Installation</a></p>
-<div id="searchbox" style="display: none">
+<div id="searchbox" style="display: none" role="search">
   <h3>Quick search</h3>
     <form class="search" action="search.html" method="get">
       <input type="text" name="q" />
@@ -176,7 +166,7 @@ ircd-hybrid.</p>
       </div>
       <div class="clearer"></div>
     </div>
-    <div class="related">
+    <div class="related" role="navigation" aria-label="related navigation">
       <h3>Navigation</h3>
       <ul>
         <li class="right" style="margin-right: 10px">
@@ -185,12 +175,12 @@ ircd-hybrid.</p>
         <li class="right" >
           <a href="install.html" title="Installation"
              >next</a> |</li>
-        <li><a href="#">FredIRC 0.2.2 documentation</a> &raquo;</li> 
+        <li class="nav-item nav-item-0"><a href="#">FredIRC 0.3.0 documentation</a> &raquo;</li> 
       </ul>
     </div>
-    <div class="footer">
+    <div class="footer" role="contentinfo">
         &copy; Copyright 2014-2015, Tobias Marquardt.
-      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 1.2.3.
+      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 1.3.3.
     </div>
   </body>
 </html>

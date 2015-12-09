@@ -1,0 +1,344 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    
+    <title>fredirc.messages &mdash; FredIRC 0.3.0 documentation</title>
+    
+    <link rel="stylesheet" href="../../_static/nature.css" type="text/css" />
+    <link rel="stylesheet" href="../../_static/pygments.css" type="text/css" />
+    
+    <script type="text/javascript">
+      var DOCUMENTATION_OPTIONS = {
+        URL_ROOT:    '../../',
+        VERSION:     '0.3.0',
+        COLLAPSE_INDEX: false,
+        FILE_SUFFIX: '.html',
+        HAS_SOURCE:  true
+      };
+    </script>
+    <script type="text/javascript" src="../../_static/jquery.js"></script>
+    <script type="text/javascript" src="../../_static/underscore.js"></script>
+    <script type="text/javascript" src="../../_static/doctools.js"></script>
+    <link rel="top" title="FredIRC 0.3.0 documentation" href="../../index.html" />
+    <link rel="up" title="Module code" href="../index.html" /> 
+  </head>
+  <body role="document">
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../../genindex.html" title="General Index"
+             accesskey="I">index</a></li>
+        <li class="nav-item nav-item-0"><a href="../../index.html">FredIRC 0.3.0 documentation</a> &raquo;</li>
+          <li class="nav-item nav-item-1"><a href="../index.html" accesskey="U">Module code</a> &raquo;</li> 
+      </ul>
+    </div>  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body" role="main">
+            
+  <h1>Source code for fredirc.messages</h1><div class="highlight"><pre>
+<span class="c"># Copyright (c) 2014 Tobias Marquardt</span>
+<span class="c">#</span>
+<span class="c"># Distributed under terms of the (2-clause) BSD license.</span>
+
+<span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">Low level functions for creation of irc client messages, as well as classes</span>
+<span class="sd">with constants for string commands, numeric commands and error responses.</span>
+<span class="sd">Specification: RFC 2812 &#39;IRC: Client Protocol&#39;.</span>
+<span class="sd">&quot;&quot;&quot;</span>
+
+<span class="n">__all__</span> <span class="o">=</span> <span class="p">[</span><span class="s">&#39;Err&#39;</span><span class="p">]</span>
+
+
+<span class="k">class</span> <span class="nc">Cmd</span><span class="p">:</span>
+    <span class="sd">&quot;&quot;&quot; Commands &quot;&quot;&quot;</span>
+
+    <span class="c"># Message Registration</span>
+    <span class="n">PASS</span> <span class="o">=</span> <span class="s">&#39;PASS&#39;</span>
+    <span class="n">NICK</span> <span class="o">=</span> <span class="s">&#39;NICK&#39;</span>
+    <span class="n">USER</span> <span class="o">=</span> <span class="s">&#39;USER&#39;</span>
+    <span class="n">QUIT</span> <span class="o">=</span> <span class="s">&#39;QUIT&#39;</span>
+    <span class="n">MODE</span> <span class="o">=</span> <span class="s">&#39;MODE&#39;</span>
+    <span class="c"># Channel Operations</span>
+    <span class="n">JOIN</span> <span class="o">=</span> <span class="s">&#39;JOIN&#39;</span>
+    <span class="n">PART</span> <span class="o">=</span> <span class="s">&#39;PART&#39;</span>
+    <span class="n">KICK</span> <span class="o">=</span> <span class="s">&#39;KICK&#39;</span>
+    <span class="n">TOPIC</span> <span class="o">=</span> <span class="s">&#39;TOPIC&#39;</span>
+    <span class="c"># Sending Messages</span>
+    <span class="n">PRIVMSG</span> <span class="o">=</span> <span class="s">&#39;PRIVMSG&#39;</span>
+    <span class="c"># Miscellaneous</span>
+    <span class="n">PING</span> <span class="o">=</span> <span class="s">&#39;PING&#39;</span>
+    <span class="n">PONG</span> <span class="o">=</span> <span class="s">&#39;PONG&#39;</span>
+
+
+<span class="k">class</span> <span class="nc">UserMode</span><span class="p">:</span>
+    <span class="sd">&quot;&quot;&quot; User Modes</span>
+
+<span class="sd">    User modes apply server-wide. So user mode &#39;o&#39; should not be confused</span>
+<span class="sd">    with channel mode &#39;o&#39;.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">AWAY</span> <span class="o">=</span> <span class="s">&#39;a&#39;</span>
+    <span class="n">INVISIBLE</span> <span class="o">=</span> <span class="s">&#39;i&#39;</span>
+    <span class="n">WALLOPS_RECEIVER</span> <span class="o">=</span> <span class="s">&#39;w&#39;</span>
+    <span class="n">RESTRICTED</span> <span class="o">=</span> <span class="s">&#39;r&#39;</span>
+    <span class="n">OPERATOR</span> <span class="o">=</span> <span class="s">&#39;o&#39;</span>
+    <span class="n">LOCAL_OPERATOR</span> <span class="o">=</span> <span class="s">&#39;O&#39;</span>
+    <span class="n">NOTICES_RECEIVER</span> <span class="o">=</span> <span class="s">&#39;s&#39;</span>
+
+
+<span class="k">class</span> <span class="nc">ChannelMode</span><span class="p">:</span>
+    <span class="sd">&quot;&quot;&quot; Channel Modes &quot;&quot;&quot;</span>
+    <span class="c"># Channel modes affecting a single user</span>
+    <span class="n">OPERATOR</span> <span class="o">=</span> <span class="s">&#39;o&#39;</span>
+    <span class="n">VOICE</span> <span class="o">=</span> <span class="s">&#39;v&#39;</span>
+    <span class="c"># Channel modes affecting the channel itself</span>
+    <span class="c"># Not yet implemented...</span>
+
+
+<span class="k">class</span> <span class="nc">Rpl</span><span class="p">:</span>
+    <span class="sd">&quot;&quot;&quot; Command Replies &quot;&quot;&quot;</span>
+    <span class="n">WELCOME</span> <span class="o">=</span> <span class="mi">1</span>
+    <span class="n">NAMREPLY</span> <span class="o">=</span> <span class="mi">353</span>
+    <span class="n">ENDOFNAMES</span> <span class="o">=</span> <span class="mi">366</span>
+    <span class="n">TOPIC</span> <span class="o">=</span> <span class="mi">332</span>
+
+
+<div class="viewcode-block" id="Err"><a class="viewcode-back" href="../../api.html#fredirc.Err">[docs]</a><span class="k">class</span> <span class="nc">Err</span><span class="p">:</span>
+    <span class="sd">&quot;&quot;&quot; Error Replies</span>
+
+<span class="sd">    Contains numerical constants for errors as defined by the irc client</span>
+<span class="sd">    protocol as well as the keywords of error specific parameters.</span>
+<span class="sd">    Error numbers and parameters are passed to</span>
+<span class="sd">    :py:meth:`handle_error(self, error, **params)&lt;fredirc.IRCHandler.handle_error()&gt;`.</span>
+<span class="sd">    You can take a look at :py:attr:`.ERROR_PARAMETERS` to find out the</span>
+<span class="sd">    parameter keywords for a particular error.</span>
+
+<span class="sd">    See the :ref:`beginner&#39;s guide&lt;guide_handle-errors&gt;` for an example on how</span>
+<span class="sd">    to use this class to handle errors.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="n">NOSUCHNICK</span> <span class="o">=</span> <span class="mi">401</span>
+    <span class="n">NOSUCHSERVER</span> <span class="o">=</span> <span class="mi">402</span>
+    <span class="n">NOSUCHCHANNEL</span> <span class="o">=</span> <span class="mi">403</span>
+    <span class="n">CANNOTSENDTOCHAN</span> <span class="o">=</span> <span class="mi">404</span>
+    <span class="n">TOOMANYCHANNELS</span> <span class="o">=</span> <span class="mi">405</span>
+    <span class="n">WASNOSUCHNICK</span> <span class="o">=</span> <span class="mi">406</span>
+    <span class="n">TOOMANYTARGETS</span> <span class="o">=</span> <span class="mi">407</span>
+    <span class="n">NOSUCHSERVICE</span> <span class="o">=</span> <span class="mi">408</span>
+    <span class="n">NOORIGIN</span> <span class="o">=</span> <span class="mi">409</span>
+    <span class="n">NORECIPIENT</span> <span class="o">=</span> <span class="mi">411</span>
+    <span class="n">NOTEXTTOSEND</span> <span class="o">=</span> <span class="mi">412</span>
+    <span class="n">NOTOPLEVEL</span> <span class="o">=</span> <span class="mi">413</span>
+    <span class="n">WILDTOPLEVEL</span> <span class="o">=</span> <span class="mi">414</span>
+    <span class="n">BADMASK</span> <span class="o">=</span> <span class="mi">415</span>
+    <span class="n">UNKNOWNCOMMAND</span> <span class="o">=</span> <span class="mi">421</span>
+    <span class="n">NOMOTD</span> <span class="o">=</span> <span class="mi">422</span>
+    <span class="n">NOADMININFO</span> <span class="o">=</span> <span class="mi">423</span>
+    <span class="n">FILEERROR</span> <span class="o">=</span> <span class="mi">424</span>
+    <span class="n">NONICKNAMEGIVEN</span> <span class="o">=</span> <span class="mi">431</span>
+    <span class="n">ERRONEUSNICKNAME</span> <span class="o">=</span> <span class="mi">432</span>
+    <span class="n">NICKNAMEINUSE</span> <span class="o">=</span> <span class="mi">433</span>
+    <span class="n">NICKCOLLISION</span> <span class="o">=</span> <span class="mi">436</span>
+    <span class="n">UNAVAILRESOURCE</span> <span class="o">=</span> <span class="mi">437</span>
+    <span class="n">USERNOTINCHANNEL</span> <span class="o">=</span> <span class="mi">441</span>
+    <span class="n">NOTONCHANNEL</span> <span class="o">=</span> <span class="mi">442</span>
+    <span class="n">USERONCHANNEL</span> <span class="o">=</span> <span class="mi">443</span>
+    <span class="n">NOLOGIN</span> <span class="o">=</span> <span class="mi">444</span>
+    <span class="n">SUMMONDISABLED</span> <span class="o">=</span> <span class="mi">445</span>
+    <span class="n">USERSDISABLED</span> <span class="o">=</span> <span class="mi">446</span>
+    <span class="n">NOTREGISTERED</span> <span class="o">=</span> <span class="mi">451</span>
+    <span class="n">NEEDMOREPARAMS</span> <span class="o">=</span> <span class="mi">461</span>
+    <span class="n">ALREADYREGISTRED</span> <span class="o">=</span> <span class="mi">462</span>
+    <span class="n">NOPERMFORHOST</span> <span class="o">=</span> <span class="mi">463</span>
+    <span class="n">PASSWDMISMATCH</span> <span class="o">=</span> <span class="mi">464</span>
+    <span class="n">YOUREBANNEDCREEP</span> <span class="o">=</span> <span class="mi">465</span>
+    <span class="n">KEYSET</span> <span class="o">=</span> <span class="mi">467</span>
+    <span class="n">YOUWILLBEBANNED</span> <span class="o">=</span> <span class="mi">466</span>
+    <span class="n">CHANNELISFULL</span> <span class="o">=</span> <span class="mi">471</span>
+    <span class="n">UNKNOWNMODE</span> <span class="o">=</span> <span class="mi">472</span>
+    <span class="n">INVITEONLYCHAN</span> <span class="o">=</span> <span class="mi">473</span>
+    <span class="n">BANNEDFROMCHAN</span> <span class="o">=</span> <span class="mi">474</span>
+    <span class="n">BADCHANNELKEY</span> <span class="o">=</span> <span class="mi">475</span>
+    <span class="n">BADCHANMASK</span> <span class="o">=</span> <span class="mi">476</span>
+    <span class="n">NOCHANMODES</span> <span class="o">=</span> <span class="mi">477</span>
+    <span class="n">BANLISTFULL</span> <span class="o">=</span> <span class="mi">478</span>
+    <span class="n">NOPRIVILEGES</span> <span class="o">=</span> <span class="mi">481</span>
+    <span class="n">CHANOPRIVSNEEDED</span> <span class="o">=</span> <span class="mi">482</span>
+    <span class="n">CANTKILLSERVER</span> <span class="o">=</span> <span class="mi">483</span>
+    <span class="n">RESTRICTED</span> <span class="o">=</span> <span class="mi">484</span>
+    <span class="n">UNIQOPPRIVSNEEDED</span> <span class="o">=</span> <span class="mi">485</span>
+    <span class="n">NOOPERHOST</span> <span class="o">=</span> <span class="mi">491</span>
+    <span class="n">UMODEUNKNOWNFLAG</span> <span class="o">=</span> <span class="mi">501</span>
+    <span class="n">USERSDONTMATCH</span> <span class="o">=</span> <span class="mi">502</span>
+
+    <span class="n">ERROR_PARAMETERS</span> <span class="o">=</span> <span class="p">{</span>
+        <span class="n">NOSUCHNICK</span><span class="p">:</span> <span class="p">[</span><span class="s">&#39;nick&#39;</span><span class="p">,</span> <span class="s">&#39;message&#39;</span><span class="p">],</span>
+        <span class="n">NOSUCHSERVER</span><span class="p">:</span> <span class="p">[</span><span class="s">&#39;server_name&#39;</span><span class="p">,</span> <span class="s">&#39;message&#39;</span><span class="p">],</span>
+        <span class="n">NOSUCHCHANNEL</span><span class="p">:</span> <span class="p">[</span><span class="s">&#39;channel_name&#39;</span><span class="p">,</span> <span class="s">&#39;message&#39;</span><span class="p">],</span>
+        <span class="n">CANNOTSENDTOCHAN</span><span class="p">:</span> <span class="p">[</span><span class="s">&#39;channel_name&#39;</span><span class="p">,</span> <span class="s">&#39;message&#39;</span><span class="p">],</span>
+        <span class="n">TOOMANYCHANNELS</span><span class="p">:</span> <span class="p">[</span><span class="s">&#39;channel_name&#39;</span><span class="p">,</span> <span class="s">&#39;message&#39;</span><span class="p">],</span>
+        <span class="n">WASNOSUCHNICK</span><span class="p">:</span> <span class="p">[</span><span class="s">&#39;nick&#39;</span><span class="p">,</span> <span class="s">&#39;message&#39;</span><span class="p">],</span>
+        <span class="n">TOOMANYTARGETS</span><span class="p">:</span> <span class="p">[</span><span class="s">&#39;target&#39;</span><span class="p">,</span> <span class="s">&#39;message&#39;</span><span class="p">],</span>
+        <span class="n">NOSUCHSERVICE</span><span class="p">:</span> <span class="p">[</span><span class="s">&#39;service_name&#39;</span><span class="p">,</span> <span class="s">&#39;message&#39;</span><span class="p">],</span>
+        <span class="n">NOORIGIN</span><span class="p">:</span> <span class="p">[</span><span class="s">&#39;message&#39;</span><span class="p">],</span>
+        <span class="n">NORECIPIENT</span><span class="p">:</span> <span class="p">[</span><span class="s">&#39;message&#39;</span><span class="p">],</span>
+        <span class="n">NOTEXTTOSEND</span><span class="p">:</span> <span class="p">[</span><span class="s">&#39;message&#39;</span><span class="p">],</span>
+        <span class="n">NOTOPLEVEL</span><span class="p">:</span> <span class="p">[</span><span class="s">&#39;mask&#39;</span><span class="p">,</span> <span class="s">&#39;message&#39;</span><span class="p">],</span>
+        <span class="n">WILDTOPLEVEL</span><span class="p">:</span> <span class="p">[</span><span class="s">&#39;mask&#39;</span><span class="p">,</span> <span class="s">&#39;message&#39;</span><span class="p">],</span>
+        <span class="n">BADMASK</span><span class="p">:</span> <span class="p">[</span><span class="s">&#39;mask&#39;</span><span class="p">,</span> <span class="s">&#39;message&#39;</span><span class="p">],</span>
+        <span class="n">UNKNOWNCOMMAND</span><span class="p">:</span> <span class="p">[</span><span class="s">&#39;command&#39;</span><span class="p">,</span> <span class="s">&#39;message&#39;</span><span class="p">],</span>
+        <span class="n">NOMOTD</span><span class="p">:</span> <span class="p">[</span><span class="s">&#39;message&#39;</span><span class="p">],</span>
+        <span class="n">NOADMININFO</span><span class="p">:</span> <span class="p">[</span><span class="s">&#39;server&#39;</span><span class="p">,</span> <span class="s">&#39;message&#39;</span><span class="p">],</span>
+        <span class="n">FILEERROR</span><span class="p">:</span> <span class="p">[</span><span class="s">&#39;message&#39;</span><span class="p">],</span>
+        <span class="n">NONICKNAMEGIVEN</span><span class="p">:</span> <span class="p">[</span><span class="s">&#39;message&#39;</span><span class="p">],</span>
+        <span class="n">ERRONEUSNICKNAME</span><span class="p">:</span> <span class="p">[</span><span class="s">&#39;nick&#39;</span><span class="p">,</span> <span class="s">&#39;message&#39;</span><span class="p">],</span>
+        <span class="n">NICKNAMEINUSE</span><span class="p">:</span> <span class="p">[</span><span class="s">&#39;nick&#39;</span><span class="p">,</span> <span class="s">&#39;message&#39;</span><span class="p">],</span>
+        <span class="n">NICKCOLLISION</span><span class="p">:</span> <span class="p">[</span><span class="s">&#39;nick&#39;</span><span class="p">,</span> <span class="s">&#39;message&#39;</span><span class="p">],</span>
+        <span class="n">UNAVAILRESOURCE</span><span class="p">:</span> <span class="p">[</span><span class="s">&#39;nick&#39;</span><span class="p">,</span> <span class="s">&#39;message&#39;</span><span class="p">],</span>
+        <span class="n">USERNOTINCHANNEL</span><span class="p">:</span> <span class="p">[</span><span class="s">&#39;nick&#39;</span><span class="p">,</span> <span class="s">&#39;channel&#39;</span><span class="p">,</span> <span class="s">&#39;message&#39;</span><span class="p">],</span>
+        <span class="n">NOTONCHANNEL</span><span class="p">:</span> <span class="p">[</span><span class="s">&#39;channel&#39;</span><span class="p">,</span> <span class="s">&#39;message&#39;</span><span class="p">],</span>
+        <span class="n">USERONCHANNEL</span><span class="p">:</span> <span class="p">[</span><span class="s">&#39;user&#39;</span><span class="p">,</span> <span class="s">&#39;channel&#39;</span><span class="p">,</span> <span class="s">&#39;message&#39;</span><span class="p">],</span>
+        <span class="n">NOLOGIN</span><span class="p">:</span> <span class="p">[</span><span class="s">&#39;user&#39;</span><span class="p">,</span> <span class="s">&#39;channel&#39;</span><span class="p">,</span> <span class="s">&#39;message&#39;</span><span class="p">],</span>
+        <span class="n">SUMMONDISABLED</span><span class="p">:</span> <span class="p">[</span><span class="s">&#39;message&#39;</span><span class="p">],</span>
+        <span class="n">USERSDISABLED</span><span class="p">:</span> <span class="p">[</span><span class="s">&#39;message&#39;</span><span class="p">],</span>
+        <span class="n">NOTREGISTERED</span><span class="p">:</span> <span class="p">[</span><span class="s">&#39;message&#39;</span><span class="p">],</span>
+        <span class="n">NEEDMOREPARAMS</span><span class="p">:</span> <span class="p">[</span><span class="s">&#39;command&#39;</span><span class="p">,</span> <span class="s">&#39;message&#39;</span><span class="p">],</span>
+        <span class="n">ALREADYREGISTRED</span><span class="p">:</span> <span class="p">[</span><span class="s">&#39;message&#39;</span><span class="p">],</span>
+        <span class="n">NOPERMFORHOST</span><span class="p">:</span> <span class="p">[</span><span class="s">&#39;message&#39;</span><span class="p">],</span>
+        <span class="n">PASSWDMISMATCH</span><span class="p">:</span> <span class="p">[</span><span class="s">&#39;message&#39;</span><span class="p">],</span>
+        <span class="n">YOUREBANNEDCREEP</span><span class="p">:</span> <span class="p">[</span><span class="s">&#39;message&#39;</span><span class="p">],</span>
+        <span class="n">YOUWILLBEBANNED</span><span class="p">:</span> <span class="p">[],</span>
+        <span class="n">KEYSET</span><span class="p">:</span> <span class="p">[</span><span class="s">&#39;channel&#39;</span><span class="p">,</span> <span class="s">&#39;message&#39;</span><span class="p">],</span>
+        <span class="n">CHANNELISFULL</span><span class="p">:</span> <span class="p">[</span><span class="s">&#39;channel&#39;</span><span class="p">,</span> <span class="s">&#39;message&#39;</span><span class="p">],</span>
+        <span class="n">UNKNOWNMODE</span><span class="p">:</span> <span class="p">[</span><span class="s">&#39;mode&#39;</span><span class="p">,</span> <span class="s">&#39;message&#39;</span><span class="p">],</span>
+        <span class="n">INVITEONLYCHAN</span><span class="p">:</span> <span class="p">[</span><span class="s">&#39;channel&#39;</span><span class="p">,</span> <span class="s">&#39;message&#39;</span><span class="p">],</span>
+        <span class="n">BANNEDFROMCHAN</span><span class="p">:</span> <span class="p">[</span><span class="s">&#39;channel&#39;</span><span class="p">,</span> <span class="s">&#39;message&#39;</span><span class="p">],</span>
+        <span class="n">BADCHANNELKEY</span><span class="p">:</span> <span class="p">[</span><span class="s">&#39;channel&#39;</span><span class="p">,</span> <span class="s">&#39;message&#39;</span><span class="p">],</span>
+        <span class="n">BADCHANMASK</span><span class="p">:</span> <span class="p">[</span><span class="s">&#39;channel&#39;</span><span class="p">,</span> <span class="s">&#39;message&#39;</span><span class="p">],</span>
+        <span class="n">NOCHANMODES</span><span class="p">:</span> <span class="p">[</span><span class="s">&#39;channel&#39;</span><span class="p">,</span> <span class="s">&#39;message&#39;</span><span class="p">],</span>
+        <span class="n">BANLISTFULL</span><span class="p">:</span> <span class="p">[</span><span class="s">&#39;channel&#39;</span><span class="p">,</span> <span class="s">&#39;message&#39;</span><span class="p">],</span>
+        <span class="n">NOPRIVILEGES</span><span class="p">:</span> <span class="p">[</span><span class="s">&#39;message&#39;</span><span class="p">],</span>
+        <span class="n">CHANOPRIVSNEEDED</span><span class="p">:</span> <span class="p">[</span><span class="s">&#39;channel&#39;</span><span class="p">,</span> <span class="s">&#39;message&#39;</span><span class="p">],</span>
+        <span class="n">CANTKILLSERVER</span><span class="p">:</span> <span class="p">[</span><span class="s">&#39;message&#39;</span><span class="p">],</span>
+        <span class="n">RESTRICTED</span><span class="p">:</span> <span class="p">[</span><span class="s">&#39;message&#39;</span><span class="p">],</span>
+        <span class="n">UNIQOPPRIVSNEEDED</span><span class="p">:</span> <span class="p">[</span><span class="s">&#39;message&#39;</span><span class="p">],</span>
+        <span class="n">NOOPERHOST</span><span class="p">:</span> <span class="p">[</span><span class="s">&#39;message&#39;</span><span class="p">],</span>
+        <span class="n">UMODEUNKNOWNFLAG</span><span class="p">:</span> <span class="p">[</span><span class="s">&#39;message&#39;</span><span class="p">],</span>
+        <span class="n">USERSDONTMATCH</span><span class="p">:</span> <span class="p">[</span><span class="s">&#39;message&#39;</span><span class="p">],</span>
+    <span class="p">}</span></div>
+
+
+<span class="k">def</span> <span class="nf">nick</span><span class="p">(</span><span class="n">name</span><span class="p">):</span>
+    <span class="k">return</span> <span class="s">&#39;{nick_cmd} {name}&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span>
+            <span class="n">nick_cmd</span><span class="o">=</span><span class="n">Cmd</span><span class="o">.</span><span class="n">NICK</span><span class="p">,</span> <span class="n">name</span><span class="o">=</span><span class="n">name</span><span class="p">)</span>
+
+
+<span class="k">def</span> <span class="nf">password</span><span class="p">(</span><span class="n">pwd</span><span class="o">=</span><span class="bp">None</span><span class="p">):</span>
+    <span class="k">if</span> <span class="n">pwd</span><span class="p">:</span>
+        <span class="k">return</span> <span class="s">&#39;{pass_cmd} :{password}&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span>
+                <span class="n">pass_cmd</span><span class="o">=</span><span class="n">Cmd</span><span class="o">.</span><span class="n">PASS</span><span class="p">,</span> <span class="n">password</span><span class="o">=</span><span class="n">pwd</span><span class="p">)</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="k">return</span> <span class="n">Cmd</span><span class="o">.</span><span class="n">PASS</span>
+
+
+<span class="k">def</span> <span class="nf">user</span><span class="p">(</span><span class="n">user_name</span><span class="p">,</span> <span class="n">real_name</span><span class="p">,</span> <span class="n">invisible</span><span class="o">=</span><span class="bp">False</span><span class="p">,</span> <span class="n">receive_wallops</span><span class="o">=</span><span class="bp">False</span><span class="p">):</span>
+    <span class="c"># TODO set mode correctly</span>
+    <span class="n">mode</span> <span class="o">=</span> <span class="mi">0</span>
+    <span class="k">return</span> <span class="s">&#39;{user_cmd} {user} {mode} * :{real_name}&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span>
+            <span class="n">user_cmd</span><span class="o">=</span><span class="n">Cmd</span><span class="o">.</span><span class="n">USER</span><span class="p">,</span> <span class="n">user</span><span class="o">=</span><span class="n">user_name</span><span class="p">,</span> <span class="n">mode</span><span class="o">=</span><span class="n">mode</span><span class="p">,</span> <span class="n">real_name</span><span class="o">=</span><span class="n">real_name</span><span class="p">)</span>
+
+
+<span class="k">def</span> <span class="nf">quit</span><span class="p">(</span><span class="n">message</span><span class="o">=</span><span class="bp">None</span><span class="p">):</span>
+    <span class="k">if</span> <span class="n">message</span><span class="p">:</span>
+        <span class="k">return</span> <span class="s">&#39;{quit_cmd} :{message}&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span>
+                <span class="n">quit_cmd</span><span class="o">=</span><span class="n">Cmd</span><span class="o">.</span><span class="n">QUIT</span><span class="p">,</span> <span class="n">message</span><span class="o">=</span><span class="n">message</span><span class="p">)</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="k">return</span> <span class="n">Cmd</span><span class="o">.</span><span class="n">QUIT</span>
+
+
+<span class="k">def</span> <span class="nf">join</span><span class="p">(</span><span class="n">channels</span><span class="p">):</span>
+    <span class="k">return</span> <span class="s">&#39;{join_cmd} {channels}&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span>
+            <span class="n">join_cmd</span><span class="o">=</span><span class="n">Cmd</span><span class="o">.</span><span class="n">JOIN</span><span class="p">,</span> <span class="n">channels</span><span class="o">=</span><span class="s">&#39;,&#39;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">channels</span><span class="p">))</span>
+
+
+<span class="k">def</span> <span class="nf">pong</span><span class="p">(</span><span class="n">server</span><span class="p">):</span>
+    <span class="k">return</span> <span class="s">&#39;{pong_cmd} :{server}&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span>
+            <span class="n">pong_cmd</span><span class="o">=</span><span class="n">Cmd</span><span class="o">.</span><span class="n">PONG</span><span class="p">,</span> <span class="n">server</span><span class="o">=</span><span class="n">server</span><span class="p">)</span>
+
+
+<span class="k">def</span> <span class="nf">privmsg</span><span class="p">(</span><span class="n">target</span><span class="p">,</span> <span class="n">message</span><span class="p">,</span> <span class="n">sender</span><span class="o">=</span><span class="bp">None</span><span class="p">):</span>
+    <span class="k">if</span> <span class="ow">not</span> <span class="n">sender</span><span class="p">:</span>
+        <span class="n">sender</span> <span class="o">=</span> <span class="s">&#39;&#39;</span>
+    <span class="k">return</span> <span class="s">&#39;:{sender} {msg_cmd} {target} :{message}&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span>
+            <span class="n">sender</span><span class="o">=</span><span class="n">sender</span><span class="p">,</span> <span class="n">msg_cmd</span><span class="o">=</span><span class="n">Cmd</span><span class="o">.</span><span class="n">PRIVMSG</span><span class="p">,</span> <span class="n">target</span><span class="o">=</span><span class="n">target</span><span class="p">,</span> <span class="n">message</span><span class="o">=</span><span class="n">message</span><span class="p">)</span>
+
+
+<span class="k">def</span> <span class="nf">part</span><span class="p">(</span><span class="n">channels</span><span class="p">,</span> <span class="n">message</span><span class="p">):</span>
+    <span class="k">return</span> <span class="s">&#39;{part_cmd} {channels} :{message}&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span>
+            <span class="n">part_cmd</span><span class="o">=</span><span class="n">Cmd</span><span class="o">.</span><span class="n">PART</span><span class="p">,</span> <span class="n">channels</span><span class="o">=</span><span class="s">&#39;,&#39;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">channels</span><span class="p">),</span> <span class="n">message</span><span class="o">=</span><span class="n">message</span><span class="p">)</span>
+
+
+<span class="k">def</span> <span class="nf">kick</span><span class="p">(</span><span class="n">channels</span><span class="p">,</span> <span class="n">users</span><span class="p">,</span> <span class="n">message</span><span class="o">=</span><span class="bp">None</span><span class="p">):</span>
+    <span class="k">if</span> <span class="ow">not</span> <span class="n">message</span><span class="p">:</span>
+        <span class="n">message</span> <span class="o">=</span> <span class="s">&#39;&#39;</span>
+    <span class="k">return</span> <span class="s">&#39;{kick_cmd} {channels} {users} :{message}&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span>
+        <span class="n">kick_cmd</span><span class="o">=</span><span class="n">Cmd</span><span class="o">.</span><span class="n">KICK</span><span class="p">,</span> <span class="n">channels</span><span class="o">=</span><span class="s">&#39;,&#39;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">channels</span><span class="p">),</span> <span class="n">users</span><span class="o">=</span><span class="s">&#39;,&#39;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">users</span><span class="p">),</span>
+        <span class="n">message</span><span class="o">=</span><span class="n">message</span><span class="p">)</span>
+
+
+<span class="k">def</span> <span class="nf">channel_mode</span><span class="p">(</span><span class="n">channel</span><span class="p">,</span> <span class="n">mode_change</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Args:</span>
+<span class="sd">        mode_change (ChannelModelChange)</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">change</span> <span class="o">=</span> <span class="s">&#39;+&#39;</span> <span class="k">if</span> <span class="n">mode_change</span><span class="o">.</span><span class="n">added</span> <span class="k">else</span> <span class="s">&#39;-&#39;</span>
+    <span class="k">return</span> <span class="s">&#39;{mode_cmd} {channel} {change}{mode} {params}&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span>
+            <span class="n">mode_cmd</span><span class="o">=</span><span class="n">Cmd</span><span class="o">.</span><span class="n">MODE</span><span class="p">,</span> <span class="n">channel</span><span class="o">=</span><span class="n">channel</span><span class="p">,</span> <span class="n">change</span><span class="o">=</span><span class="n">change</span><span class="p">,</span>
+            <span class="n">mode</span><span class="o">=</span><span class="n">mode_change</span><span class="o">.</span><span class="n">mode</span><span class="p">,</span> <span class="n">params</span><span class="o">=</span><span class="s">&#39; &#39;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">mode_change</span><span class="o">.</span><span class="n">params</span><span class="p">))</span>
+</pre></div>
+
+          </div>
+        </div>
+      </div>
+      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+        <div class="sphinxsidebarwrapper">
+<div id="searchbox" style="display: none" role="search">
+  <h3>Quick search</h3>
+    <form class="search" action="../../search.html" method="get">
+      <input type="text" name="q" />
+      <input type="submit" value="Go" />
+      <input type="hidden" name="check_keywords" value="yes" />
+      <input type="hidden" name="area" value="default" />
+    </form>
+    <p class="searchtip" style="font-size: 90%">
+    Enter search terms or a module, class or function name.
+    </p>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../../genindex.html" title="General Index"
+             >index</a></li>
+        <li class="nav-item nav-item-0"><a href="../../index.html">FredIRC 0.3.0 documentation</a> &raquo;</li>
+          <li class="nav-item nav-item-1"><a href="../index.html" >Module code</a> &raquo;</li> 
+      </ul>
+    </div>
+    <div class="footer" role="contentinfo">
+        &copy; Copyright 2014-2015, Tobias Marquardt.
+      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 1.3.3.
+    </div>
+  </body>
+</html>

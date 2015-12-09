@@ -6,7 +6,7 @@
   <head>
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
     
-    <title>Installation &mdash; FredIRC 0.2.2 documentation</title>
+    <title>Installation &mdash; FredIRC 0.3.0 documentation</title>
     
     <link rel="stylesheet" href="_static/nature.css" type="text/css" />
     <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
@@ -14,7 +14,7 @@
     <script type="text/javascript">
       var DOCUMENTATION_OPTIONS = {
         URL_ROOT:    './',
-        VERSION:     '0.2.2',
+        VERSION:     '0.3.0',
         COLLAPSE_INDEX: false,
         FILE_SUFFIX: '.html',
         HAS_SOURCE:  true
@@ -23,12 +23,12 @@
     <script type="text/javascript" src="_static/jquery.js"></script>
     <script type="text/javascript" src="_static/underscore.js"></script>
     <script type="text/javascript" src="_static/doctools.js"></script>
-    <link rel="top" title="FredIRC 0.2.2 documentation" href="index.html" />
+    <link rel="top" title="FredIRC 0.3.0 documentation" href="index.html" />
     <link rel="next" title="Beginner’s Guide" href="guide.html" />
-    <link rel="prev" title="Welcome to FredIRC’s Homepage!" href="index.html" /> 
+    <link rel="prev" title="FredIRC" href="index.html" /> 
   </head>
-  <body>
-    <div class="related">
+  <body role="document">
+    <div class="related" role="navigation" aria-label="related navigation">
       <h3>Navigation</h3>
       <ul>
         <li class="right" style="margin-right: 10px">
@@ -38,21 +38,24 @@
           <a href="guide.html" title="Beginner’s Guide"
              accesskey="N">next</a> |</li>
         <li class="right" >
-          <a href="index.html" title="Welcome to FredIRC’s Homepage!"
+          <a href="index.html" title="FredIRC"
              accesskey="P">previous</a> |</li>
-        <li><a href="index.html">FredIRC 0.2.2 documentation</a> &raquo;</li> 
+        <li class="nav-item nav-item-0"><a href="index.html">FredIRC 0.3.0 documentation</a> &raquo;</li> 
       </ul>
     </div>  
 
     <div class="document">
       <div class="documentwrapper">
         <div class="bodywrapper">
-          <div class="body">
+          <div class="body" role="main">
             
   <div class="section" id="installation">
 <h1>Installation<a class="headerlink" href="#installation" title="Permalink to this headline">¶</a></h1>
 <p><strong>Prerequisites</strong>: Make sure you have <strong>Python 3.3 or above</strong> as well as
 <a class="reference external" href="https://pip.pypa.io">pip</a> installed on your system.</p>
+<p>FredIRC depends on <a class="reference external" href="https://pypi.python.org/pypi/asyncio">asyncio</a> which
+is part of the standard library since Python 3.4. For Python 3.3 asyncio must be
+installed separately (<code class="docutils literal"><span class="pre">pip</span> <span class="pre">install</span></code> will take care of this automatically).</p>
 <div class="section" id="installation-via-pypi">
 <h2>Installation via PyPI<a class="headerlink" href="#installation-via-pypi" title="Permalink to this headline">¶</a></h2>
 <p>The <strong>recommended way</strong> to install FredIRC is to use the
@@ -72,9 +75,16 @@ that version you need to create a distribution tarball first:</p>
 <div class="highlight-bash"><div class="highlight"><pre><span class="nv">$ </span>python setup.py sdist
 </pre></div>
 </div>
-<p>This will create a <tt class="docutils literal"><span class="pre">dist/</span></tt>-directory with a gzip compressed tar archive, that
+<p>This will create a <code class="docutils literal"><span class="pre">dist/</span></code>-directory with a gzip compressed tar archive, that
 can be installed by:</p>
 <div class="highlight-bash"><div class="highlight"><pre><span class="nv">$ </span>pip install dist/FredIRC-X.X.X.tar.gz
+</pre></div>
+</div>
+<p><strong>Alternative:</strong></p>
+<p>If you really want to avoid using
+pip and miss <a class="reference external" href="https://pip.pypa.io/en/stable/user_guide.html">all its benefits</a>
+you can just use the <cite>setup.py</cite>-script of course:</p>
+<div class="highlight-bash"><div class="highlight"><pre><span class="nv">$ </span>python setup.py install
 </pre></div>
 </div>
 </div>
@@ -88,7 +98,7 @@ installed.</p>
 <div class="highlight-bash"><div class="highlight"><pre><span class="nv">$ </span>python setup.py build_sphinx
 </pre></div>
 </div>
-<p>Afterwards you can open <tt class="docutils literal"><span class="pre">doc/build/html/index.html</span></tt> in your web browser.</p>
+<p>Afterwards you can open <code class="docutils literal"><span class="pre">doc/build/html/index.html</span></code> in your web browser.</p>
 </div>
 <div class="section" id="uninstall">
 <h2>Uninstall<a class="headerlink" href="#uninstall" title="Permalink to this headline">¶</a></h2>
@@ -103,7 +113,7 @@ installed.</p>
           </div>
         </div>
       </div>
-      <div class="sphinxsidebar">
+      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
         <div class="sphinxsidebarwrapper">
   <h3><a href="index.html">Table Of Contents</a></h3>
   <ul>
@@ -118,11 +128,11 @@ installed.</p>
 
   <h4>Previous topic</h4>
   <p class="topless"><a href="index.html"
-                        title="previous chapter">Welcome to FredIRC&#8217;s Homepage!</a></p>
+                        title="previous chapter">FredIRC</a></p>
   <h4>Next topic</h4>
   <p class="topless"><a href="guide.html"
                         title="next chapter">Beginner&#8217;s Guide</a></p>
-<div id="searchbox" style="display: none">
+<div id="searchbox" style="display: none" role="search">
   <h3>Quick search</h3>
     <form class="search" action="search.html" method="get">
       <input type="text" name="q" />
@@ -139,7 +149,7 @@ installed.</p>
       </div>
       <div class="clearer"></div>
     </div>
-    <div class="related">
+    <div class="related" role="navigation" aria-label="related navigation">
       <h3>Navigation</h3>
       <ul>
         <li class="right" style="margin-right: 10px">
@@ -149,14 +159,14 @@ installed.</p>
           <a href="guide.html" title="Beginner’s Guide"
              >next</a> |</li>
         <li class="right" >
-          <a href="index.html" title="Welcome to FredIRC’s Homepage!"
+          <a href="index.html" title="FredIRC"
              >previous</a> |</li>
-        <li><a href="index.html">FredIRC 0.2.2 documentation</a> &raquo;</li> 
+        <li class="nav-item nav-item-0"><a href="index.html">FredIRC 0.3.0 documentation</a> &raquo;</li> 
       </ul>
     </div>
-    <div class="footer">
+    <div class="footer" role="contentinfo">
         &copy; Copyright 2014-2015, Tobias Marquardt.
-      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 1.2.3.
+      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 1.3.3.
     </div>
   </body>
 </html>

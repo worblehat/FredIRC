@@ -42,6 +42,12 @@ interest to anyone who uses FredIRC:
 .. no idea why we have to exclude __call__ although :special-members:
    is not specified
 
+``ChannelInfo`` Class
+---------------------
+.. autoclass:: fredirc.ChannelInfo
+    :members:
+    :undoc-members:
+
 ``Task`` Class
 --------------
 

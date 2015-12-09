@@ -1,0 +1,407 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    
+    <title>fredirc.handler &mdash; FredIRC 0.3.0 documentation</title>
+    
+    <link rel="stylesheet" href="../../_static/nature.css" type="text/css" />
+    <link rel="stylesheet" href="../../_static/pygments.css" type="text/css" />
+    
+    <script type="text/javascript">
+      var DOCUMENTATION_OPTIONS = {
+        URL_ROOT:    '../../',
+        VERSION:     '0.3.0',
+        COLLAPSE_INDEX: false,
+        FILE_SUFFIX: '.html',
+        HAS_SOURCE:  true
+      };
+    </script>
+    <script type="text/javascript" src="../../_static/jquery.js"></script>
+    <script type="text/javascript" src="../../_static/underscore.js"></script>
+    <script type="text/javascript" src="../../_static/doctools.js"></script>
+    <link rel="top" title="FredIRC 0.3.0 documentation" href="../../index.html" />
+    <link rel="up" title="Module code" href="../index.html" /> 
+  </head>
+  <body role="document">
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../../genindex.html" title="General Index"
+             accesskey="I">index</a></li>
+        <li class="nav-item nav-item-0"><a href="../../index.html">FredIRC 0.3.0 documentation</a> &raquo;</li>
+          <li class="nav-item nav-item-1"><a href="../index.html" accesskey="U">Module code</a> &raquo;</li> 
+      </ul>
+    </div>  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body" role="main">
+            
+  <h1>Source code for fredirc.handler</h1><div class="highlight"><pre>
+<span class="c"># Copyright (c) 2014 Tobias Marquardt</span>
+<span class="c">#</span>
+<span class="c"># Distributed under terms of the (2-clause) BSD license.</span>
+
+<span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">Abstract IRC-Handler classes that handle IRC related events from a client.</span>
+<span class="sd">You probably want to subclass :py:class:`.BaseIRCHandler` to implement a bot.</span>
+<span class="sd">&quot;&quot;&quot;</span>
+
+<span class="n">__all__</span> <span class="o">=</span> <span class="p">[</span><span class="s">&#39;BaseIRCHandler&#39;</span><span class="p">,</span>
+           <span class="s">&#39;IRCHandler&#39;</span><span class="p">]</span>
+
+
+<div class="viewcode-block" id="IRCHandler"><a class="viewcode-back" href="../../api.html#fredirc.IRCHandler">[docs]</a><span class="k">class</span> <span class="nc">IRCHandler</span><span class="p">(</span><span class="nb">object</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot; Abstract base class for IRC handler classes.</span>
+
+<span class="sd">    This abstract base class contains handler functions for IRC related events</span>
+<span class="sd">    (mostly messages from a server) a client might be interested in. It just</span>
+<span class="sd">    defines an interface and all method bodies are empty.</span>
+<span class="sd">    You probably want to subclass :py:class:`.BaseIRCHandler` instead of</span>
+<span class="sd">    inheriting directly from this class.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+<div class="viewcode-block" id="IRCHandler.handle_client_init"><a class="viewcode-back" href="../../api.html#fredirc.IRCHandler.handle_client_init">[docs]</a>    <span class="k">def</span> <span class="nf">handle_client_init</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">client</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot; This handler was attached to a client.</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            client (:py:class:`.IRCClient`): The client.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">pass</span></div>
+
+<div class="viewcode-block" id="IRCHandler.handle_connect"><a class="viewcode-back" href="../../api.html#fredirc.IRCHandler.handle_connect">[docs]</a>    <span class="k">def</span> <span class="nf">handle_connect</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot; The client established a connection to the server. &quot;&quot;&quot;</span>
+        <span class="k">pass</span></div>
+
+<div class="viewcode-block" id="IRCHandler.handle_disconnect"><a class="viewcode-back" href="../../api.html#fredirc.IRCHandler.handle_disconnect">[docs]</a>    <span class="k">def</span> <span class="nf">handle_disconnect</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot; The client lost connection to the server.</span>
+
+<span class="sd">        This might be the result of a network error but also occurs after</span>
+<span class="sd">        a quit by the client or a forced disconnect by the server.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">pass</span></div>
+
+<div class="viewcode-block" id="IRCHandler.handle_register"><a class="viewcode-back" href="../../api.html#fredirc.IRCHandler.handle_register">[docs]</a>    <span class="k">def</span> <span class="nf">handle_register</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot; The client successfully registered to the server. &quot;&quot;&quot;</span>
+        <span class="k">pass</span></div>
+
+<div class="viewcode-block" id="IRCHandler.handle_channel_message"><a class="viewcode-back" href="../../api.html#fredirc.IRCHandler.handle_channel_message">[docs]</a>    <span class="k">def</span> <span class="nf">handle_channel_message</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">channel</span><span class="p">,</span> <span class="n">message</span><span class="p">,</span> <span class="n">sender</span><span class="o">=</span><span class="bp">None</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot; Received a message to a channel.</span>
+
+<span class="sd">        A message was sent to a channel the client currently belongs to.</span>
+<span class="sd">        Does not include messages from the client itself!</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            channel (str): the channel name</span>
+
+<span class="sd">            message (str): the received message</span>
+
+<span class="sd">            sender (str): Sender of the message, usually a nickname.</span>
+<span class="sd">            Might be None.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">pass</span></div>
+
+<div class="viewcode-block" id="IRCHandler.handle_private_message"><a class="viewcode-back" href="../../api.html#fredirc.IRCHandler.handle_private_message">[docs]</a>    <span class="k">def</span> <span class="nf">handle_private_message</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">message</span><span class="p">,</span> <span class="n">sender</span><span class="o">=</span><span class="bp">None</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot; Received private message (query).</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            message (str): the received message</span>
+<span class="sd">            sender (str): Sender of the message, usually a nickname.</span>
+<span class="sd">                          Might be None.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">pass</span></div>
+
+<div class="viewcode-block" id="IRCHandler.handle_join"><a class="viewcode-back" href="../../api.html#fredirc.IRCHandler.handle_join">[docs]</a>    <span class="k">def</span> <span class="nf">handle_join</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">channel</span><span class="p">,</span> <span class="n">nick</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot; Called when another user joined the channel.</span>
+
+<span class="sd">        To handle joins of the IRCClient itself, use</span>
+<span class="sd">        :py:meth:`.handle_own_join`.</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            channel (str): a name of a channel, the client is currently in</span>
+<span class="sd">            nick (str): nick of the member that joined the channel</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">pass</span></div>
+
+<div class="viewcode-block" id="IRCHandler.handle_own_join"><a class="viewcode-back" href="../../api.html#fredirc.IRCHandler.handle_own_join">[docs]</a>    <span class="k">def</span> <span class="nf">handle_own_join</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">channel</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot; Called when the IRCClient joined a channel.</span>
+
+<span class="sd">        To handle joins of other members, use :py:meth:`.handle_join`.</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            channel (str): name of the channel</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">pass</span></div>
+
+<div class="viewcode-block" id="IRCHandler.handle_quit"><a class="viewcode-back" href="../../api.html#fredirc.IRCHandler.handle_quit">[docs]</a>    <span class="k">def</span> <span class="nf">handle_quit</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">nick</span><span class="p">,</span> <span class="n">message</span><span class="o">=</span><span class="bp">None</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot; A user disconnected from the server.</span>
+
+<span class="sd">        Also see: :py:meth:`.handle_part`</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            nick (str): nick of the user</span>
+<span class="sd">            message (str): quit message (might be None)</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">pass</span></div>
+
+<div class="viewcode-block" id="IRCHandler.handle_part"><a class="viewcode-back" href="../../api.html#fredirc.IRCHandler.handle_part">[docs]</a>    <span class="k">def</span> <span class="nf">handle_part</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">channel</span><span class="p">,</span> <span class="n">nick</span><span class="p">,</span> <span class="n">message</span><span class="o">=</span><span class="bp">None</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot; Called when another user left the channel.</span>
+
+<span class="sd">        To handle partings of the IRCClient itself, use</span>
+<span class="sd">        :py:meth:`.handle_own_part`.</span>
+
+<span class="sd">        Also see: :py:meth:`.handle_quit`</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            channel (str): a name of a channel, the client is currently in</span>
+<span class="sd">            nick (str): nick of the member that left the channel</span>
+<span class="sd">            message (str): part message of the parting member (might be None)</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">pass</span></div>
+
+<div class="viewcode-block" id="IRCHandler.handle_own_part"><a class="viewcode-back" href="../../api.html#fredirc.IRCHandler.handle_own_part">[docs]</a>    <span class="k">def</span> <span class="nf">handle_own_part</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">channel</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot; Called when the IRCClient left a channel.</span>
+
+<span class="sd">        To handle parting of other members, use :py:meth:`.handle_part`.</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            channel (str): name of the channel</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">pass</span></div>
+
+<div class="viewcode-block" id="IRCHandler.handle_kick"><a class="viewcode-back" href="../../api.html#fredirc.IRCHandler.handle_kick">[docs]</a>    <span class="k">def</span> <span class="nf">handle_kick</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">channel</span><span class="p">,</span> <span class="n">nick</span><span class="p">,</span> <span class="n">initiator</span><span class="p">,</span> <span class="n">reason</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot; Another user got kicked from a channel.</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            channel (str): the channel</span>
+<span class="sd">            nick (str): the user who got kicked</span>
+<span class="sd">            reason (str): reason for the kick (might be None)</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">pass</span></div>
+
+<div class="viewcode-block" id="IRCHandler.handle_own_kick"><a class="viewcode-back" href="../../api.html#fredirc.IRCHandler.handle_own_kick">[docs]</a>    <span class="k">def</span> <span class="nf">handle_own_kick</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">channel</span><span class="p">,</span> <span class="n">initiator</span><span class="p">,</span> <span class="n">reason</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot; The IRCClient got kicked from a channel.</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            channel (str): the channel</span>
+<span class="sd">            reason (str): reason for the kick (might be None)</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">pass</span></div>
+
+<div class="viewcode-block" id="IRCHandler.handle_got_op"><a class="viewcode-back" href="../../api.html#fredirc.IRCHandler.handle_got_op">[docs]</a>    <span class="k">def</span> <span class="nf">handle_got_op</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">channel</span><span class="p">,</span> <span class="n">nick</span><span class="p">,</span> <span class="n">initiator</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot; Another user received operator status.</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            channel (str): name of the channel</span>
+<span class="sd">            nick (str): the user who became operator</span>
+<span class="sd">            initiator (str): the user who granted the operator rights</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">pass</span></div>
+
+<div class="viewcode-block" id="IRCHandler.handle_own_got_op"><a class="viewcode-back" href="../../api.html#fredirc.IRCHandler.handle_own_got_op">[docs]</a>    <span class="k">def</span> <span class="nf">handle_own_got_op</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">channel</span><span class="p">,</span> <span class="n">initiator</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot; The IRCClient received operator status.</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            channel (str): name of the channel</span>
+<span class="sd">            initiator (str): the user who granted the operator rights</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">pass</span></div>
+
+<div class="viewcode-block" id="IRCHandler.handle_lost_op"><a class="viewcode-back" href="../../api.html#fredirc.IRCHandler.handle_lost_op">[docs]</a>    <span class="k">def</span> <span class="nf">handle_lost_op</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">channel</span><span class="p">,</span> <span class="n">nick</span><span class="p">,</span> <span class="n">initiator</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot; Another user lost operator status.</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            channel (str): name of the channel</span>
+<span class="sd">            nick (str): the user who is no longer operator</span>
+<span class="sd">            initiator (str): the user who initiated the mode change</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">pass</span></div>
+
+<div class="viewcode-block" id="IRCHandler.handle_own_lost_op"><a class="viewcode-back" href="../../api.html#fredirc.IRCHandler.handle_own_lost_op">[docs]</a>    <span class="k">def</span> <span class="nf">handle_own_lost_op</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">channel</span><span class="p">,</span> <span class="n">initiator</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot; The IRCClient lost operator status.</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            channel (str): name of the channel</span>
+<span class="sd">            initiator (str): the user who initiated the mode change</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">pass</span></div>
+
+<div class="viewcode-block" id="IRCHandler.handle_got_voice"><a class="viewcode-back" href="../../api.html#fredirc.IRCHandler.handle_got_voice">[docs]</a>    <span class="k">def</span> <span class="nf">handle_got_voice</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">channel</span><span class="p">,</span> <span class="n">nick</span><span class="p">,</span> <span class="n">initiator</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot; Another user received voice rights.</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            channel (str): name of the channel</span>
+<span class="sd">            nick (str): the user who received voice</span>
+<span class="sd">            initiator (str): the user who granted the voice rights</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">pass</span></div>
+
+<div class="viewcode-block" id="IRCHandler.handle_own_got_voice"><a class="viewcode-back" href="../../api.html#fredirc.IRCHandler.handle_own_got_voice">[docs]</a>    <span class="k">def</span> <span class="nf">handle_own_got_voice</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">channel</span><span class="p">,</span> <span class="n">initiator</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot; The IRCClient received voice rights.</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            channel (str): name of the channel</span>
+<span class="sd">            initiator (str): the user who granted the voice rights</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">pass</span></div>
+
+<div class="viewcode-block" id="IRCHandler.handle_lost_voice"><a class="viewcode-back" href="../../api.html#fredirc.IRCHandler.handle_lost_voice">[docs]</a>    <span class="k">def</span> <span class="nf">handle_lost_voice</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">channel</span><span class="p">,</span> <span class="n">nick</span><span class="p">,</span> <span class="n">initiator</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot; Another user lost voice rights.</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            channel (str): name of the channel</span>
+<span class="sd">            nick (str): the user who no longer has voice</span>
+<span class="sd">            initiator (str): the user who initiated the mode change</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">pass</span></div>
+
+<div class="viewcode-block" id="IRCHandler.handle_own_lost_voice"><a class="viewcode-back" href="../../api.html#fredirc.IRCHandler.handle_own_lost_voice">[docs]</a>    <span class="k">def</span> <span class="nf">handle_own_lost_voice</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">channel</span><span class="p">,</span> <span class="n">initiator</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot; The IRCClient lost voice rights.</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            channel (str): name of the channel</span>
+<span class="sd">            initiator (str): the user who initiated the mode change</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">pass</span></div>
+
+<div class="viewcode-block" id="IRCHandler.handle_nick_change"><a class="viewcode-back" href="../../api.html#fredirc.IRCHandler.handle_nick_change">[docs]</a>    <span class="k">def</span> <span class="nf">handle_nick_change</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">old_nick</span><span class="p">,</span> <span class="n">new_nick</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot; A user&#39;s nick name changed.</span>
+
+<span class="sd">        To handle nick changes of the IRCClient itself, use</span>
+<span class="sd">        :py:meth:`.handle_own_nick_change`.</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            old_nick (str): The nick name of the user until now.</span>
+<span class="sd">            new_nick (str): The new nick name of the user.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">pass</span></div>
+
+<div class="viewcode-block" id="IRCHandler.handle_own_nick_change"><a class="viewcode-back" href="../../api.html#fredirc.IRCHandler.handle_own_nick_change">[docs]</a>    <span class="k">def</span> <span class="nf">handle_own_nick_change</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">old_nick</span><span class="p">,</span> <span class="n">new_nick</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot; The IRCCLient&#39;s nick name changed.</span>
+
+<span class="sd">        The :py:attr:`nick&lt;.IRCClient.nick&gt;`-property will already hold</span>
+<span class="sd">        the new nick when this handler is called.</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            old_nick (str): The old nick name.</span>
+<span class="sd">            new_nick (str): The new nick name.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">pass</span></div>
+
+<div class="viewcode-block" id="IRCHandler.handle_response"><a class="viewcode-back" href="../../api.html#fredirc.IRCHandler.handle_response">[docs]</a>    <span class="k">def</span> <span class="nf">handle_response</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">response</span><span class="p">,</span> <span class="n">message</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot; A numeric response was received from the server.</span>
+
+<span class="sd">        See the IRC client protocol specification for valid numeric response</span>
+<span class="sd">        codes and their meaning. There are extra handler methods for many</span>
+<span class="sd">        common responses, but this general handler is always called first.</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            response (int): 3-digit response code (between 0 and 399)</span>
+<span class="sd">            message (str): the whole, raw message</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">pass</span></div>
+
+<div class="viewcode-block" id="IRCHandler.handle_error"><a class="viewcode-back" href="../../api.html#fredirc.IRCHandler.handle_error">[docs]</a>    <span class="k">def</span> <span class="nf">handle_error</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">error</span><span class="p">,</span> <span class="o">**</span><span class="n">params</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot; An irc error message was received from the server.</span>
+
+<span class="sd">        The error codes are defined in :py:class:`Err&lt;fredirc.Err&gt;`.</span>
+<span class="sd">        The contents of the params dictionary depend on the specific error.</span>
+<span class="sd">        See the documentation of :py:class:`Err&lt;fredirc.Err&gt;` for details.</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            error (int): 3-digit error code (between 400 and 599)</span>
+<span class="sd">            params (dict): Parameters of the error message, each consisting of \</span>
+<span class="sd">                a parameter name and a value.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">pass</span></div>
+
+<div class="viewcode-block" id="IRCHandler.handle_ping"><a class="viewcode-back" href="../../api.html#fredirc.IRCHandler.handle_ping">[docs]</a>    <span class="k">def</span> <span class="nf">handle_ping</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">server</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot; Received a ping message from the server.</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            server (str): name or ip of the server.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">pass</span></div>
+
+<div class="viewcode-block" id="IRCHandler.handle_unhandled_message"><a class="viewcode-back" href="../../api.html#fredirc.IRCHandler.handle_unhandled_message">[docs]</a>    <span class="k">def</span> <span class="nf">handle_unhandled_message</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">message</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot; This handler is called whenever a message is not handled by any</span>
+<span class="sd">            other handler.</span>
+
+<span class="sd">        A message is not handled if either the message is not yet supported by</span>
+<span class="sd">        FredIRC or it is invalid/malformed.</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            message (str): The raw message as received by the client.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">pass</span></div></div>
+
+
+<div class="viewcode-block" id="BaseIRCHandler"><a class="viewcode-back" href="../../api.html#fredirc.BaseIRCHandler">[docs]</a><span class="k">class</span> <span class="nc">BaseIRCHandler</span><span class="p">(</span><span class="n">IRCHandler</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot; Minimal :py:class:`.IRCHandler` implementation.</span>
+
+<span class="sd">    Implements the most basic handler functionality that probably every bot will</span>
+<span class="sd">    need. It is recommended to subclass :py:class:`.BaseIRCHandler` instead</span>
+<span class="sd">    of :py:class:`.IRCHandler`.</span>
+
+<span class="sd">    What it does for you:</span>
+
+<span class="sd">    * Store the :py:class:`.IRCClient` instance as attribute ``self.client`` \</span>
+<span class="sd">        on :py:meth:`.handle_client_init`.</span>
+<span class="sd">    * Register to the server on :py:meth:`.handle_connect`.</span>
+<span class="sd">    * Respond with pong on :py:meth:`.handle_ping`.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="k">def</span> <span class="nf">handle_client_init</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">client</span><span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">client</span> <span class="o">=</span> <span class="n">client</span>
+
+    <span class="k">def</span> <span class="nf">handle_connect</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">client</span><span class="o">.</span><span class="n">register</span><span class="p">()</span>
+
+    <span class="k">def</span> <span class="nf">handle_ping</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">server</span><span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">client</span><span class="o">.</span><span class="n">pong</span><span class="p">()</span></div>
+</pre></div>
+
+          </div>
+        </div>
+      </div>
+      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+        <div class="sphinxsidebarwrapper">
+<div id="searchbox" style="display: none" role="search">
+  <h3>Quick search</h3>
+    <form class="search" action="../../search.html" method="get">
+      <input type="text" name="q" />
+      <input type="submit" value="Go" />
+      <input type="hidden" name="check_keywords" value="yes" />
+      <input type="hidden" name="area" value="default" />
+    </form>
+    <p class="searchtip" style="font-size: 90%">
+    Enter search terms or a module, class or function name.
+    </p>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../../genindex.html" title="General Index"
+             >index</a></li>
+        <li class="nav-item nav-item-0"><a href="../../index.html">FredIRC 0.3.0 documentation</a> &raquo;</li>
+          <li class="nav-item nav-item-1"><a href="../index.html" >Module code</a> &raquo;</li> 
+      </ul>
+    </div>
+    <div class="footer" role="contentinfo">
+        &copy; Copyright 2014-2015, Tobias Marquardt.
+      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 1.3.3.
+    </div>
+  </body>
+</html>

@@ -1,0 +1,732 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    
+    <title>fredirc.client &mdash; FredIRC 0.3.0 documentation</title>
+    
+    <link rel="stylesheet" href="../../_static/nature.css" type="text/css" />
+    <link rel="stylesheet" href="../../_static/pygments.css" type="text/css" />
+    
+    <script type="text/javascript">
+      var DOCUMENTATION_OPTIONS = {
+        URL_ROOT:    '../../',
+        VERSION:     '0.3.0',
+        COLLAPSE_INDEX: false,
+        FILE_SUFFIX: '.html',
+        HAS_SOURCE:  true
+      };
+    </script>
+    <script type="text/javascript" src="../../_static/jquery.js"></script>
+    <script type="text/javascript" src="../../_static/underscore.js"></script>
+    <script type="text/javascript" src="../../_static/doctools.js"></script>
+    <link rel="top" title="FredIRC 0.3.0 documentation" href="../../index.html" />
+    <link rel="up" title="Module code" href="../index.html" /> 
+  </head>
+  <body role="document">
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../../genindex.html" title="General Index"
+             accesskey="I">index</a></li>
+        <li class="nav-item nav-item-0"><a href="../../index.html">FredIRC 0.3.0 documentation</a> &raquo;</li>
+          <li class="nav-item nav-item-1"><a href="../index.html" accesskey="U">Module code</a> &raquo;</li> 
+      </ul>
+    </div>  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body" role="main">
+            
+  <h1>Source code for fredirc.client</h1><div class="highlight"><pre>
+<span class="c"># Copyright (c) 2014 Tobias Marquardt</span>
+<span class="c">#</span>
+<span class="c"># Distributed under terms of the (2-clause) BSD license.</span>
+
+<span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">Classes related to the basic IRC-client implementation of FredIRC.</span>
+<span class="sd">&quot;&quot;&quot;</span>
+
+<span class="n">__all__</span> <span class="o">=</span> <span class="p">[</span><span class="s">&#39;IRCClient&#39;</span><span class="p">]</span>
+
+<span class="kn">import</span> <span class="nn">asyncio</span>
+<span class="kn">import</span> <span class="nn">codecs</span>
+<span class="kn">import</span> <span class="nn">logging</span>
+<span class="kn">import</span> <span class="nn">time</span>
+
+<span class="kn">from</span> <span class="nn">fredirc</span> <span class="kn">import</span> <span class="n">messages</span>
+<span class="kn">from</span> <span class="nn">fredirc.errors</span> <span class="kn">import</span> <span class="n">ConnectionTimeoutError</span>
+<span class="kn">from</span> <span class="nn">fredirc.info</span> <span class="kn">import</span> <span class="n">_ReadOnlyDict</span>
+<span class="kn">from</span> <span class="nn">fredirc.messages</span> <span class="kn">import</span> <span class="n">ChannelMode</span>
+<span class="kn">from</span> <span class="nn">fredirc.parsing</span> <span class="kn">import</span> <span class="n">ChannelModeChange</span>
+<span class="kn">from</span> <span class="nn">fredirc.processor</span> <span class="kn">import</span> <span class="n">MessageProcessor</span>
+<span class="kn">from</span> <span class="nn">fredirc.task</span> <span class="kn">import</span> <span class="n">Task</span>
+
+
+<div class="viewcode-block" id="IRCClient"><a class="viewcode-back" href="../../api.html#fredirc.IRCClient">[docs]</a><span class="k">class</span> <span class="nc">IRCClient</span><span class="p">(</span><span class="n">asyncio</span><span class="o">.</span><span class="n">Protocol</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot; IRC client class managing the network connection and dispatching</span>
+<span class="sd">        messages from the server.</span>
+
+<span class="sd">    .. warning:: Currently only a single IRCClient instance is allowed! Don&#39;t</span>
+<span class="sd">        run multiple clients. This will result in undefined behaviour. Also</span>
+<span class="sd">        after :py:meth:`.run` terminated you should not call it again!</span>
+<span class="sd">        This will probably be fixed in future releases.</span>
+
+<span class="sd">    To connect to the server and start the processing event loop call</span>
+<span class="sd">    :py:meth:`run()&lt;.IRCClient.run&gt;` on your IRCClient instance.</span>
+<span class="sd">    Nick, user name, real name and password are used by</span>
+<span class="sd">    :py:meth:`.register` to register the client to the server.</span>
+
+<span class="sd">    Most methods and members that return some state of the client</span>
+<span class="sd">    (e.g. :py:meth:`.is_op_in` or :py:attr:`.channels`) do not need to interact</span>
+<span class="sd">    with the server to get the corresponding information. Instead it is cached</span>
+<span class="sd">    in the client.</span>
+
+<span class="sd">    It is also important to remember that the data in the client is only updated</span>
+<span class="sd">    on messages from the server.</span>
+<span class="sd">    For Example: :py:attr:`.channels` will</span>
+<span class="sd">    not contain a new channel instantly after joining it with</span>
+<span class="sd">    :py:meth:`.join` but only after</span>
+<span class="sd">    :py:meth:`handle_own_join()&lt;.IRCHandler.handle_own_join&gt;` was called.</span>
+
+<span class="sd">    Channel and nick name arguments to methods that send a command to the server</span>
+<span class="sd">    are case insensitive, except for methods that change the clients nick.</span>
+<span class="sd">    Channel names returned by the server (e.g. in IRCClient&#39;s</span>
+<span class="sd">    :py:attr:`.channels`-property)</span>
+<span class="sd">    are usually lower case while nick names are the case they were registered by</span>
+<span class="sd">    it&#39;s user.</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        handler (:py:class:`IRCHandler&lt;fredirc.IRCHandler&gt;`): \</span>
+<span class="sd">            handler that handles events from this client</span>
+<span class="sd">        nick (str): nick name for the client</span>
+<span class="sd">        server (str): server name or ip</span>
+<span class="sd">        port (int): port number to connect to</span>
+<span class="sd">        user_name (str): User name for registration to the server.</span>
+<span class="sd">                         If None, nick is used.</span>
+<span class="sd">        real_name (str): Full name of the client. If None, nick is used.</span>
+<span class="sd">        password (str): Optional password that can be used to</span>
+<span class="sd">                        authenticate to the server.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span>
+                 <span class="n">handler</span><span class="p">,</span>
+                 <span class="n">nick</span><span class="p">,</span>
+                 <span class="n">server</span><span class="p">,</span>
+                 <span class="n">port</span><span class="o">=</span><span class="mi">6667</span><span class="p">,</span>
+                 <span class="n">user_name</span><span class="o">=</span><span class="bp">None</span><span class="p">,</span>
+                 <span class="n">real_name</span><span class="o">=</span><span class="bp">None</span><span class="p">,</span>
+                 <span class="n">password</span><span class="o">=</span><span class="bp">None</span><span class="p">):</span>
+        <span class="n">asyncio</span><span class="o">.</span><span class="n">Protocol</span><span class="o">.</span><span class="n">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_handler</span> <span class="o">=</span> <span class="n">handler</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_state</span> <span class="o">=</span> <span class="n">IRCClientState</span><span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_buffer</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_last_broken_message</span> <span class="o">=</span> <span class="bp">None</span>
+        <span class="c"># Variable to determine if we want to reconnect the transport and</span>
+        <span class="c"># re-run the event loop automatically after it was stopped:</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_reconnect</span> <span class="o">=</span> <span class="bp">False</span>
+        <span class="c"># Register customized decoding error handler</span>
+        <span class="n">codecs</span><span class="o">.</span><span class="n">register_error</span><span class="p">(</span><span class="s">&#39;log_and_replace&#39;</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">_decoding_error_handler</span><span class="p">)</span>
+        <span class="c"># Configure logger</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_logger</span> <span class="o">=</span> <span class="n">logging</span><span class="o">.</span><span class="n">getLogger</span><span class="p">(</span><span class="s">&#39;FredIRC&#39;</span><span class="p">)</span>
+        <span class="n">log_file_handler</span> <span class="o">=</span> <span class="n">logging</span><span class="o">.</span><span class="n">FileHandler</span><span class="p">(</span><span class="s">&#39;irc.log&#39;</span><span class="p">)</span>
+        <span class="n">log_file_handler</span><span class="o">.</span><span class="n">setFormatter</span><span class="p">(</span><span class="n">logging</span><span class="o">.</span><span class="n">Formatter</span><span class="p">(</span>
+            <span class="s">&#39;</span><span class="si">%(asctime)s</span><span class="s"> </span><span class="si">%(name)s</span><span class="s"> (</span><span class="si">%(levelname)s</span><span class="s">): </span><span class="si">%(message)s</span><span class="s">&#39;</span><span class="p">))</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_logger</span><span class="o">.</span><span class="n">addHandler</span><span class="p">(</span><span class="n">log_file_handler</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_logger</span><span class="o">.</span><span class="n">setLevel</span><span class="p">(</span><span class="n">logging</span><span class="o">.</span><span class="n">INFO</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">enable_logging</span><span class="p">(</span><span class="bp">True</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s">&#39;Initializing IRC client&#39;</span><span class="p">)</span>
+        <span class="c"># Init message processor</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_processor</span> <span class="o">=</span> <span class="n">MessageProcessor</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_handler</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">_state</span><span class="p">,</span>
+                                           <span class="bp">self</span><span class="o">.</span><span class="n">_logger</span><span class="p">)</span>
+        <span class="c"># Connection and registration info</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_configured_nick</span> <span class="o">=</span> <span class="n">nick</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_configured_server</span> <span class="o">=</span> <span class="n">server</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_configured_port</span> <span class="o">=</span> <span class="n">port</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_configured_user_name</span> <span class="o">=</span> <span class="n">user_name</span> <span class="k">if</span> <span class="n">user_name</span> <span class="k">else</span> <span class="n">nick</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_configured_real_name</span> <span class="o">=</span> <span class="n">real_name</span> <span class="k">if</span> <span class="n">real_name</span> <span class="k">else</span> <span class="n">nick</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_configured_password</span> <span class="o">=</span> <span class="n">password</span>
+        <span class="c"># Pass this client object to the handler</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_handler</span><span class="o">.</span><span class="n">handle_client_init</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span>
+
+<div class="viewcode-block" id="IRCClient.run"><a class="viewcode-back" href="../../api.html#fredirc.IRCClient.run">[docs]</a>    <span class="k">def</span> <span class="nf">run</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot; Start the client&#39;s event loop.</span>
+
+<span class="sd">        An endless event loop which will call the ``handle_*`` methods from</span>
+<span class="sd">        :py:class:`.IRCHandler`. The client connects to the server</span>
+<span class="sd">        and calls :py:meth:`handle_connect()&lt;.IRCHandler.handle_connect&gt;` on</span>
+<span class="sd">        its handler if this is successful.</span>
+<span class="sd">        If the connection is closed the client can re-establish it without</span>
+<span class="sd">        exiting the event loop via :py:meth:`reconnect()&lt;.reconnect&gt;`.</span>
+<span class="sd">        To terminate the event loop use :py:meth:`terminate()&lt;.terminate&gt;`.</span>
+<span class="sd">        Afterwards run() will return.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">loop</span> <span class="o">=</span> <span class="n">asyncio</span><span class="o">.</span><span class="n">get_event_loop</span><span class="p">()</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="n">loop</span><span class="o">.</span><span class="n">is_running</span><span class="p">():</span>
+            <span class="k">try</span><span class="p">:</span>
+                <span class="k">while</span> <span class="bp">True</span><span class="p">:</span>
+                    <span class="bp">self</span><span class="o">.</span><span class="n">_reconnect</span> <span class="o">=</span> <span class="bp">False</span>
+                    <span class="bp">self</span><span class="o">.</span><span class="n">_connect</span><span class="p">()</span>
+                    <span class="n">loop</span><span class="o">.</span><span class="n">run_forever</span><span class="p">()</span>
+                    <span class="k">if</span> <span class="ow">not</span> <span class="bp">self</span><span class="o">.</span><span class="n">_reconnect</span><span class="p">:</span>
+                        <span class="k">break</span>
+            <span class="k">finally</span><span class="p">:</span>
+                <span class="n">loop</span><span class="o">.</span><span class="n">close</span><span class="p">()</span></div>
+
+<div class="viewcode-block" id="IRCClient.reconnect"><a class="viewcode-back" href="../../api.html#fredirc.IRCClient.reconnect">[docs]</a>    <span class="k">def</span> <span class="nf">reconnect</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">delay</span><span class="o">=</span><span class="mf">0.0</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot; Reconnect the client to the server.</span>
+
+<span class="sd">        This only reconnects a disconnected client. If the client is still</span>
+<span class="sd">        connected to the server, it will have no effects.</span>
+<span class="sd">        So reconnect() could be used to re-establish the connection on</span>
+<span class="sd">        :py:meth:`handle_disconnect()&lt;.IRCHandler.handle_disconnect&gt;`.</span>
+
+<span class="sd">        After successful reconnection</span>
+<span class="sd">        :py:meth:`handle_connect()&lt;.IRCHandler.handle_connect&gt;` gets called.</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            delay (float): Time to delay the reconnection attempt in seconds.</span>
+<span class="sd">                           Can be useful as servers might refuse a client</span>
+<span class="sd">                           that reconnects to fast.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_state</span><span class="o">.</span><span class="n">connected</span><span class="p">:</span>
+            <span class="k">return</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_reconnect</span> <span class="o">=</span> <span class="bp">True</span>
+        <span class="n">time</span><span class="o">.</span><span class="n">sleep</span><span class="p">(</span><span class="n">delay</span><span class="p">)</span>
+        <span class="n">asyncio</span><span class="o">.</span><span class="n">get_event_loop</span><span class="p">()</span><span class="o">.</span><span class="n">stop</span><span class="p">()</span>  <span class="c"># TODO use terminate() here?</span></div>
+
+<div class="viewcode-block" id="IRCClient.enable_logging"><a class="viewcode-back" href="../../api.html#fredirc.IRCClient.enable_logging">[docs]</a>    <span class="k">def</span> <span class="nf">enable_logging</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">enable</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot; Enable or disable logging.</span>
+
+<span class="sd">        Logging is enabled by default.</span>
+
+<span class="sd">       Args:</span>
+<span class="sd">            enable (bool): ``True`` to enable logging, ``False`` disable it</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="n">enable</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_logger</span><span class="o">.</span><span class="n">removeFilter</span><span class="p">(</span><span class="k">lambda</span> <span class="n">x</span><span class="p">:</span> <span class="mi">0</span><span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_logger</span><span class="o">.</span><span class="n">addFilter</span><span class="p">(</span><span class="k">lambda</span> <span class="n">x</span><span class="p">:</span> <span class="mi">0</span><span class="p">)</span></div>
+
+<div class="viewcode-block" id="IRCClient.set_log_level"><a class="viewcode-back" href="../../api.html#fredirc.IRCClient.set_log_level">[docs]</a>    <span class="k">def</span> <span class="nf">set_log_level</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">level</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot; Set the log level that is used if logging is enabled.</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            level (int): the log level as defined by constants in Python&#39;s \</span>
+<span class="sd">            `logging module &lt;https://docs.python.org/2/library/logging.html#logging-levels&gt;`_ \</span>
+<span class="sd">            (``DEBUG``, ``INFO``, ``WARNING``, ``ERROR``, ``CRITICAL``)</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_logger</span><span class="o">.</span><span class="n">setLevel</span><span class="p">(</span><span class="n">level</span><span class="p">)</span></div>
+
+<div class="viewcode-block" id="IRCClient.terminate"><a class="viewcode-back" href="../../api.html#fredirc.IRCClient.terminate">[docs]</a>    <span class="k">def</span> <span class="nf">terminate</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot; Shutdown the IRCClient by terminating the event loop.</span>
+
+<span class="sd">        Control flow will continue after the call to :py:meth:`.IRCClient.run`.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s">&#39;Event-Loop terminated.&#39;</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_reconnect</span> <span class="o">=</span> <span class="bp">False</span>
+        <span class="n">asyncio</span><span class="o">.</span><span class="n">get_event_loop</span><span class="p">()</span><span class="o">.</span><span class="n">stop</span><span class="p">()</span></div>
+
+    <span class="c"># --- IRC related methods ---</span>
+
+<div class="viewcode-block" id="IRCClient.register"><a class="viewcode-back" href="../../api.html#fredirc.IRCClient.register">[docs]</a>    <span class="k">def</span> <span class="nf">register</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">nick</span><span class="o">=</span><span class="bp">None</span><span class="p">,</span> <span class="n">user_name</span><span class="o">=</span><span class="bp">None</span><span class="p">,</span> <span class="n">real_name</span><span class="o">=</span><span class="bp">None</span><span class="p">,</span> <span class="n">password</span><span class="o">=</span><span class="bp">None</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot; Register to the IRC server.</span>
+
+<span class="sd">        When called with no arguments, registration data given on initialization</span>
+<span class="sd">        or the last call to register is used.</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            nick (str): Nick name for the client.</span>
+<span class="sd">            user_name (str): User name for registration to the server.</span>
+<span class="sd">            real_name (str): Full name of the client.</span>
+<span class="sd">            password (str): Optional password that might be used to</span>
+<span class="sd">                            authenticate to the server.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="c"># Configure registration data</span>
+        <span class="k">if</span> <span class="n">nick</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_configured_nick</span> <span class="o">=</span> <span class="n">nick</span>
+        <span class="k">if</span> <span class="n">user_name</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_configured_user_name</span> <span class="o">=</span> <span class="n">user_name</span>
+        <span class="k">if</span> <span class="n">real_name</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_configured_real_name</span> <span class="o">=</span> <span class="n">real_name</span>
+        <span class="k">if</span> <span class="n">password</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_configured_password</span> <span class="o">=</span> <span class="n">password</span>
+        <span class="c"># Send registration messages</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_configured_password</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_send_message</span><span class="p">(</span><span class="n">messages</span><span class="o">.</span><span class="n">password</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_configured_password</span><span class="p">))</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_send_message</span><span class="p">(</span><span class="n">messages</span><span class="o">.</span><span class="n">nick</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_configured_nick</span><span class="p">))</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_send_message</span><span class="p">(</span><span class="n">messages</span><span class="o">.</span><span class="n">user</span><span class="p">(</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_configured_user_name</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">_configured_real_name</span><span class="p">))</span></div>
+
+<div class="viewcode-block" id="IRCClient.change_nick"><a class="viewcode-back" href="../../api.html#fredirc.IRCClient.change_nick">[docs]</a>    <span class="k">def</span> <span class="nf">change_nick</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">nick</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot; Change the nick name of the client.</span>
+
+<span class="sd">        Note that the clients :py:attr:`.nick`-property will not change</span>
+<span class="sd">        directly, but only after the server acknowledged the new nick name.</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            nick (str): The new nick name.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_send_message</span><span class="p">(</span><span class="n">messages</span><span class="o">.</span><span class="n">nick</span><span class="p">(</span><span class="n">nick</span><span class="p">))</span></div>
+
+<div class="viewcode-block" id="IRCClient.join"><a class="viewcode-back" href="../../api.html#fredirc.IRCClient.join">[docs]</a>    <span class="k">def</span> <span class="nf">join</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">channel</span><span class="p">,</span> <span class="o">*</span><span class="n">channels</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot; Join the specified channel(s).</span>
+
+<span class="sd">        Note that no matter what case the channel strings are in, in the</span>
+<span class="sd">        handler functions of :py:class:`.IRCHandler` channel names will</span>
+<span class="sd">        probably always be lower case.</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            channel (str): one or more channels</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_send_message</span><span class="p">(</span><span class="n">messages</span><span class="o">.</span><span class="n">join</span><span class="p">((</span><span class="n">channel</span><span class="p">,)</span> <span class="o">+</span> <span class="n">channels</span><span class="p">))</span></div>
+
+<div class="viewcode-block" id="IRCClient.part"><a class="viewcode-back" href="../../api.html#fredirc.IRCClient.part">[docs]</a>    <span class="k">def</span> <span class="nf">part</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">message</span><span class="p">,</span> <span class="n">channel</span><span class="p">,</span> <span class="o">*</span><span class="n">channels</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot; Leave the specified channel(s).</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            message (str): part message</span>
+<span class="sd">            channel (str): one or more channels</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_send_message</span><span class="p">(</span><span class="n">messages</span><span class="o">.</span><span class="n">part</span><span class="p">((</span><span class="n">channel</span><span class="p">,)</span> <span class="o">+</span> <span class="n">channels</span><span class="p">,</span> <span class="n">message</span><span class="p">))</span></div>
+
+<div class="viewcode-block" id="IRCClient.quit"><a class="viewcode-back" href="../../api.html#fredirc.IRCClient.quit">[docs]</a>    <span class="k">def</span> <span class="nf">quit</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">message</span><span class="o">=</span><span class="bp">None</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot; Disconnect from the IRC server.</span>
+
+<span class="sd">        Also see :py:meth:`handle_disconnect()&lt;.IRCHandler.handle_disconnect`.</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            message (str): optional message, send to the server</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_send_message</span><span class="p">(</span><span class="n">messages</span><span class="o">.</span><span class="n">quit</span><span class="p">(</span><span class="n">message</span><span class="p">))</span></div>
+
+<div class="viewcode-block" id="IRCClient.send_message"><a class="viewcode-back" href="../../api.html#fredirc.IRCClient.send_message">[docs]</a>    <span class="k">def</span> <span class="nf">send_message</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">channel</span><span class="p">,</span> <span class="n">message</span><span class="p">,</span> <span class="n">delay</span><span class="o">=</span><span class="mf">0.0</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot; Send a message to a channel.</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            channel (str): the addressed channel</span>
+<span class="sd">            message (str): the message to send</span>
+<span class="sd">            delay (float): the delay in second before sending message</span>
+<span class="sd">                           the bot is not blocked during delay</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">def</span> <span class="nf">send</span><span class="p">():</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_send_message</span><span class="p">(</span><span class="n">messages</span><span class="o">.</span><span class="n">privmsg</span><span class="p">(</span><span class="n">channel</span><span class="p">,</span> <span class="n">message</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">_state</span><span class="o">.</span><span class="n">nick</span><span class="p">))</span>
+        <span class="k">if</span> <span class="n">delay</span> <span class="o">&gt;</span> <span class="mf">0.0</span><span class="p">:</span>
+            <span class="n">task</span> <span class="o">=</span> <span class="n">Task</span><span class="p">(</span><span class="n">delay</span><span class="p">,</span> <span class="bp">False</span><span class="p">,</span> <span class="n">send</span><span class="p">)</span>
+            <span class="n">task</span><span class="o">.</span><span class="n">start</span><span class="p">()</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">send</span><span class="p">()</span></div>
+
+<div class="viewcode-block" id="IRCClient.send_private_message"><a class="viewcode-back" href="../../api.html#fredirc.IRCClient.send_private_message">[docs]</a>    <span class="k">def</span> <span class="nf">send_private_message</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">user</span><span class="p">,</span> <span class="n">message</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot; Send a private message to a user.</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            user (str):  the addressed user</span>
+<span class="sd">            message (str): the message tro send</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="n">user</span><span class="o">.</span><span class="n">startswith</span><span class="p">(</span><span class="s">&#39;#&#39;</span><span class="p">)</span> <span class="ow">or</span> <span class="n">user</span><span class="o">.</span><span class="n">startswith</span><span class="p">(</span><span class="s">&#39;+&#39;</span><span class="p">)</span> <span class="ow">or</span> <span class="n">user</span><span class="o">.</span><span class="n">startswith</span><span class="p">(</span><span class="s">&#39;&amp;&#39;</span><span class="p">):</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_logger</span><span class="o">.</span><span class="n">warn</span><span class="p">(</span><span class="s">&quot;Detained private message to {} which seems to be&quot;</span>
+                              <span class="s">&quot;a channel instead of a user.&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">user</span><span class="p">))</span>
+            <span class="k">return</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_send_message</span><span class="p">(</span>
+            <span class="n">messages</span><span class="o">.</span><span class="n">privmsg</span><span class="p">(</span><span class="n">user</span><span class="p">,</span> <span class="n">message</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">_state</span><span class="o">.</span><span class="n">nick</span><span class="p">))</span></div>
+
+<div class="viewcode-block" id="IRCClient.kick"><a class="viewcode-back" href="../../api.html#fredirc.IRCClient.kick">[docs]</a>    <span class="k">def</span> <span class="nf">kick</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">user</span><span class="p">,</span> <span class="n">channel</span><span class="p">,</span> <span class="n">reason</span><span class="o">=</span><span class="bp">None</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot; Forcefully remove a user from a channel.</span>
+
+<span class="sd">        If the client is no operator, the server will respond with an</span>
+<span class="sd">        error message that can be handled via</span>
+<span class="sd">        :py:meth:`handle_error()&lt;fredirc.IRCHandler.handle_error&gt;`.</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            user (str): the affected user</span>
+<span class="sd">            channel (str): the channel</span>
+<span class="sd">            reason (str): optional message with the reason</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_send_message</span><span class="p">(</span><span class="n">messages</span><span class="o">.</span><span class="n">kick</span><span class="p">((</span><span class="n">channel</span><span class="p">,),</span> <span class="p">(</span><span class="n">user</span><span class="p">,),</span> <span class="n">reason</span><span class="p">))</span></div>
+
+<div class="viewcode-block" id="IRCClient.give_op"><a class="viewcode-back" href="../../api.html#fredirc.IRCClient.give_op">[docs]</a>    <span class="k">def</span> <span class="nf">give_op</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">user</span><span class="p">,</span> <span class="n">channel</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot; Grant operator rights to a user on a channel.</span>
+
+<span class="sd">        If the client is no operator, the server will respond with an</span>
+<span class="sd">        error message that can be handled via</span>
+<span class="sd">        :py:meth:`handle_error()&lt;fredirc.IRCHandler.handle_error&gt;`.</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            user (str): the affected user</span>
+<span class="sd">            channel (str): the channel</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">mode_change</span> <span class="o">=</span> <span class="n">ChannelModeChange</span><span class="p">(</span><span class="bp">True</span><span class="p">,</span> <span class="n">ChannelMode</span><span class="o">.</span><span class="n">OPERATOR</span><span class="p">,</span> <span class="p">(</span><span class="n">user</span><span class="p">,))</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_send_message</span><span class="p">(</span><span class="n">messages</span><span class="o">.</span><span class="n">channel_mode</span><span class="p">(</span><span class="n">channel</span><span class="p">,</span> <span class="n">mode_change</span><span class="p">))</span></div>
+
+<div class="viewcode-block" id="IRCClient.revoke_op"><a class="viewcode-back" href="../../api.html#fredirc.IRCClient.revoke_op">[docs]</a>    <span class="k">def</span> <span class="nf">revoke_op</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">user</span><span class="p">,</span> <span class="n">channel</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot; Revoke operator rights from user on a channel.</span>
+
+<span class="sd">        If the client is no operator, the server will respond with an</span>
+<span class="sd">        error message that can be handled via</span>
+<span class="sd">        :py:meth:`handle_error()&lt;fredirc.IRCHandler.handle_error&gt;`.</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            user (str): the affected user</span>
+<span class="sd">            channel (str): the channel</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">mode_change</span> <span class="o">=</span> <span class="n">ChannelModeChange</span><span class="p">(</span><span class="bp">False</span><span class="p">,</span> <span class="n">ChannelMode</span><span class="o">.</span><span class="n">OPERATOR</span><span class="p">,</span> <span class="p">(</span><span class="n">user</span><span class="p">,))</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_send_message</span><span class="p">(</span><span class="n">messages</span><span class="o">.</span><span class="n">channel_mode</span><span class="p">(</span><span class="n">channel</span><span class="p">,</span> <span class="n">mode_change</span><span class="p">))</span></div>
+
+<div class="viewcode-block" id="IRCClient.give_voice"><a class="viewcode-back" href="../../api.html#fredirc.IRCClient.give_voice">[docs]</a>    <span class="k">def</span> <span class="nf">give_voice</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">user</span><span class="p">,</span> <span class="n">channel</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot; Grant voice rights to a user on a channel.</span>
+
+<span class="sd">        If the client is no operator, the server will respond with an</span>
+<span class="sd">        error message that can be handled via</span>
+<span class="sd">        :py:meth:`handle_error()&lt;fredirc.IRCHandler.handle_error&gt;`.</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            user (str): the affected user</span>
+<span class="sd">            channel (str): the channel</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">mode_change</span> <span class="o">=</span> <span class="n">ChannelModeChange</span><span class="p">(</span><span class="bp">True</span><span class="p">,</span> <span class="n">ChannelMode</span><span class="o">.</span><span class="n">VOICE</span><span class="p">,</span> <span class="p">(</span><span class="n">user</span><span class="p">,))</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_send_message</span><span class="p">(</span><span class="n">messages</span><span class="o">.</span><span class="n">channel_mode</span><span class="p">(</span><span class="n">channel</span><span class="p">,</span> <span class="n">mode_change</span><span class="p">))</span></div>
+
+<div class="viewcode-block" id="IRCClient.revoke_voice"><a class="viewcode-back" href="../../api.html#fredirc.IRCClient.revoke_voice">[docs]</a>    <span class="k">def</span> <span class="nf">revoke_voice</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">user</span><span class="p">,</span> <span class="n">channel</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot; Revoke voice rights from user on a channel.</span>
+
+<span class="sd">        If the client is no operator, the server will respond with an</span>
+<span class="sd">        error message that can be handled via</span>
+<span class="sd">        :py:meth:`handle_error()&lt;fredirc.IRCHandler.handle_error&gt;`.</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            user (str): the affected user</span>
+<span class="sd">            channel (str): the channel</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">mode_change</span> <span class="o">=</span> <span class="n">ChannelModeChange</span><span class="p">(</span><span class="bp">False</span><span class="p">,</span> <span class="n">ChannelMode</span><span class="o">.</span><span class="n">VOICE</span><span class="p">,</span> <span class="p">(</span><span class="n">user</span><span class="p">,))</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_send_message</span><span class="p">(</span><span class="n">messages</span><span class="o">.</span><span class="n">channel_mode</span><span class="p">(</span><span class="n">channel</span><span class="p">,</span> <span class="n">mode_change</span><span class="p">))</span></div>
+
+<div class="viewcode-block" id="IRCClient.is_op_in"><a class="viewcode-back" href="../../api.html#fredirc.IRCClient.is_op_in">[docs]</a>    <span class="k">def</span> <span class="nf">is_op_in</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">channel</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Check if this client has operator rights in the given channel.</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            channel (str): the channel (case-insensitive)</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="n">channel</span><span class="o">.</span><span class="n">lower</span><span class="p">()</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">_state</span><span class="o">.</span><span class="n">operator_in</span></div>
+
+<div class="viewcode-block" id="IRCClient.has_voice_in"><a class="viewcode-back" href="../../api.html#fredirc.IRCClient.has_voice_in">[docs]</a>    <span class="k">def</span> <span class="nf">has_voice_in</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">channel</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Check if this client has voice rights in the given channel.</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            channel (str): the channel (case-insensitive)</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="n">channel</span><span class="o">.</span><span class="n">lower</span><span class="p">()</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">_state</span><span class="o">.</span><span class="n">has_voice_in</span></div>
+
+<div class="viewcode-block" id="IRCClient.pong"><a class="viewcode-back" href="../../api.html#fredirc.IRCClient.pong">[docs]</a>    <span class="k">def</span> <span class="nf">pong</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot; Send a pong message to the server. &quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_send_message</span><span class="p">(</span><span class="n">messages</span><span class="o">.</span><span class="n">pong</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_state</span><span class="o">.</span><span class="n">server</span><span class="p">))</span></div>
+
+    <span class="c"># --- Private methods ---</span>
+
+    <span class="k">def</span> <span class="nf">_send_message</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">message</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot; Send a message to the server.</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            message (str): A valid IRC message. Only carriage return and line</span>
+<span class="sd">                           feed are appended automatically.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_logger</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="s">&#39;Sending message: {}&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">message</span><span class="p">))</span>
+        <span class="n">message</span> <span class="o">+=</span> <span class="s">&#39;</span><span class="se">\r\n</span><span class="s">&#39;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_transport</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="n">message</span><span class="o">.</span><span class="n">encode</span><span class="p">(</span><span class="s">&#39;utf-8&#39;</span><span class="p">))</span>
+
+    <span class="k">def</span> <span class="nf">_connect</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot; Create a connection to the configured server using asyncio&#39;s</span>
+<span class="sd">        event loop and this IRCClient instance as protocol.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">loop</span> <span class="o">=</span> <span class="n">asyncio</span><span class="o">.</span><span class="n">get_event_loop</span><span class="p">()</span>
+        <span class="n">task</span> <span class="o">=</span> <span class="n">asyncio</span><span class="o">.</span><span class="n">Task</span><span class="p">(</span><span class="n">loop</span><span class="o">.</span><span class="n">create_connection</span><span class="p">(</span>
+            <span class="bp">self</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">_configured_server</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">_configured_port</span><span class="p">))</span>
+        <span class="k">try</span><span class="p">:</span>
+            <span class="n">loop</span><span class="o">.</span><span class="n">run_until_complete</span><span class="p">(</span><span class="n">task</span><span class="p">)</span>
+        <span class="k">except</span> <span class="n">TimeoutError</span><span class="p">:</span>
+            <span class="n">message</span> <span class="o">=</span> <span class="p">(</span><span class="s">&#39;Cannot connect to server {} on port {}.&#39;</span>
+                       <span class="s">&#39;Connection timed out&#39;</span><span class="p">)</span><span class="o">.</span><span class="n">format</span><span class="p">(</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">_configured_server</span><span class="p">,</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">_configured_port</span><span class="p">)</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_logger</span><span class="o">.</span><span class="n">error</span><span class="p">(</span><span class="n">message</span><span class="p">)</span>
+            <span class="k">raise</span> <span class="n">ConnectionTimeoutError</span><span class="p">(</span><span class="n">message</span><span class="p">)</span>
+
+    <span class="k">def</span> <span class="nf">_disconnect</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot; Tell the IRCClient that it lost its connection to the server. &quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_state</span><span class="o">.</span><span class="n">connected</span> <span class="o">=</span> <span class="bp">False</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_handler</span><span class="o">.</span><span class="n">handle_disconnect</span><span class="p">()</span>
+
+    <span class="k">def</span> <span class="nf">_decoding_error_handler</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">error</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot; Error handler that is used with the byte.decode() method.</span>
+
+<span class="sd">        Does the same as the built-in &#39;replace&#39; error handler, but logs an</span>
+<span class="sd">        error message before.</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            error (UnicodeDecodeError): The error that was raised during decode.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_logger</span><span class="o">.</span><span class="n">error</span><span class="p">(</span>
+            <span class="s">&#39;Invalid character encoding: {}&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">error</span><span class="o">.</span><span class="n">reason</span><span class="p">))</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_logger</span><span class="o">.</span><span class="n">error</span><span class="p">(</span><span class="s">&#39;Replacing the malformed character.&#39;</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">codecs</span><span class="o">.</span><span class="n">replace_errors</span><span class="p">(</span><span class="n">error</span><span class="p">)</span>
+
+    <span class="c"># --- Implemented methods from superclasses ---</span>
+
+    <span class="k">def</span> <span class="nf">__call__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot; Returns this IRCClient instance. Used as factory method for </span>
+<span class="sd">            BaseEventLoop.create_connection().</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="bp">self</span>
+
+    <span class="k">def</span> <span class="nf">connection_made</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">transport</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot; Implementation of inherited method</span>
+<span class="sd">            (from :class:`asyncio.Protocol`).</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s">&#39;Connected to server.&#39;</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_transport</span> <span class="o">=</span> <span class="n">transport</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_state</span><span class="o">.</span><span class="n">connected</span> <span class="o">=</span> <span class="bp">True</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_handler</span><span class="o">.</span><span class="n">handle_connect</span><span class="p">()</span>
+
+    <span class="k">def</span> <span class="nf">connect_lost</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">exc</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot; Implementation of inherited method</span>
+<span class="sd">            (from :class:`asyncio.Protocol`).</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s">&#39;Connection closed.&#39;</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_disconnect</span><span class="p">()</span>
+
+    <span class="k">def</span> <span class="nf">eof_received</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot; Implementation of inherited method</span>
+<span class="sd">            (from :class:`asyncio.Protocol`).</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_logger</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="s">&#39;Received EOF&#39;</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_disconnect</span><span class="p">()</span>
+
+    <span class="k">def</span> <span class="nf">data_received</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">data</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot; Implementation of inherited method</span>
+<span class="sd">            (from :class:`asyncio.Protocol`).</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">try</span><span class="p">:</span>
+            <span class="n">data</span> <span class="o">=</span> <span class="n">data</span><span class="o">.</span><span class="n">decode</span><span class="p">(</span><span class="s">&#39;utf-8&#39;</span><span class="p">,</span> <span class="s">&#39;log_and_replace&#39;</span><span class="p">)</span>
+            <span class="c"># The received data might break off in the middle of a message</span>
+            <span class="c"># (i.e. there is no linebreak at the end).</span>
+            <span class="c"># If so, that broken message is stored until we receive the rest of it.</span>
+            <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_last_broken_message</span><span class="p">:</span>
+                <span class="n">data</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_last_broken_message</span> <span class="o">+</span> <span class="n">data</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">_last_broken_message</span> <span class="o">=</span> <span class="bp">None</span>
+            <span class="k">if</span> <span class="n">data</span><span class="o">.</span><span class="n">endswith</span><span class="p">(</span><span class="s">&#39;</span><span class="se">\n</span><span class="s">&#39;</span><span class="p">):</span>
+                <span class="n">received_broken_message</span> <span class="o">=</span> <span class="bp">False</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="n">received_broken_message</span> <span class="o">=</span> <span class="bp">True</span>
+            <span class="n">data</span> <span class="o">=</span> <span class="n">data</span><span class="o">.</span><span class="n">splitlines</span><span class="p">()</span>
+            <span class="k">if</span> <span class="n">received_broken_message</span><span class="p">:</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">_last_broken_message</span> <span class="o">=</span> <span class="n">data</span><span class="o">.</span><span class="n">pop</span><span class="p">()</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_buffer</span> <span class="o">+=</span> <span class="n">data</span>
+            <span class="c"># ### TODO ###</span>
+            <span class="c"># Do we really need to create a copy here?</span>
+            <span class="c"># There&#39;s probably a better way to allow pop during iteration.</span>
+            <span class="c"># Alternatives:</span>
+            <span class="c"># 1. Make buffer a byte string (and just append incoming data),</span>
+            <span class="c">#    then loop &#39;while self._buffer&#39;, look for terminator and remove</span>
+            <span class="c">#    the message.</span>
+            <span class="c"># 2. Make buffer a byte string, split lines to list, iterate list,</span>
+            <span class="c">#    clear buffer. Con: While handling messages in loop, buffer</span>
+            <span class="c">#    stays the same (empty or with all messages that were received)</span>
+            <span class="c"># Con of buffer byte string: more difficult to debug</span>
+            <span class="c">#</span>
+            <span class="n">tmp_buffer</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_buffer</span><span class="p">)</span>
+            <span class="k">for</span> <span class="n">message</span> <span class="ow">in</span> <span class="n">tmp_buffer</span><span class="p">:</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">_logger</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="s">&#39;Incoming message: {}&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">message</span><span class="p">))</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">_processor</span><span class="o">.</span><span class="n">process</span><span class="p">(</span><span class="n">message</span><span class="p">)</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">_buffer</span><span class="o">.</span><span class="n">pop</span><span class="p">(</span><span class="mi">0</span><span class="p">)</span>
+        <span class="c"># Shutdown client if unhandled exception occurs, as EventLoop does not</span>
+        <span class="c"># provide a handle_error() method so far.</span>
+        <span class="k">except</span> <span class="ne">Exception</span> <span class="k">as</span> <span class="n">e</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_logger</span><span class="o">.</span><span class="n">exception</span><span class="p">((</span><span class="s">&#39;Unhandled Exception while running an &#39;</span> <span class="o">+</span>
+                                   <span class="s">&#39;IRCClient: {}&#39;</span><span class="p">)</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">e</span><span class="p">))</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_logger</span><span class="o">.</span><span class="n">critical</span><span class="p">(</span><span class="s">&#39;Shutting down the client, due to an &#39;</span> <span class="o">+</span>
+                                  <span class="s">&#39;unhandled exception!&#39;</span><span class="p">)</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">terminate</span><span class="p">()</span>
+
+    <span class="k">def</span> <span class="nf">_get_channel_info</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">return</span> <span class="n">_ReadOnlyDict</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_state</span><span class="o">.</span><span class="n">channels</span><span class="p">)</span>
+
+    <span class="n">channel_info</span> <span class="o">=</span> <span class="nb">property</span><span class="p">(</span><span class="n">_get_channel_info</span><span class="p">)</span>
+    <span class="sd">&quot;&quot;&quot; Get information about channels.</span>
+
+<span class="sd">    To get all channel names use :py:attr:`.channels`.</span>
+
+<span class="sd">    Returns:</span>
+<span class="sd">        dict: A read-only(!) mapping of channel names to</span>
+<span class="sd">        :py:class:`ChannelInfo&lt;fredirc.ChannelInfo&gt;` objects.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="k">def</span> <span class="nf">_get_nick</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_state</span><span class="o">.</span><span class="n">nick</span>
+
+    <span class="n">nick</span> <span class="o">=</span> <span class="nb">property</span><span class="p">(</span><span class="n">_get_nick</span><span class="p">)</span>
+    <span class="sd">&quot;&quot;&quot; Current nick name of the client (*read-only*).</span>
+
+<span class="sd">    Returns:</span>
+<span class="sd">        str: nick name or ``None`` if client is not registered</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">def</span> <span class="nf">_get_server</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_state</span><span class="o">.</span><span class="n">server</span>
+
+    <span class="n">server</span> <span class="o">=</span> <span class="nb">property</span><span class="p">(</span><span class="n">_get_server</span><span class="p">)</span>
+    <span class="sd">&quot;&quot;&quot; Name of the Server this client is currently connected to (*read-only*).</span>
+
+<span class="sd">    Returns:</span>
+<span class="sd">        str: server name or ``None`` if client is not connected to a server.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="k">def</span> <span class="nf">_get_channels</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">return</span> <span class="nb">iter</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_state</span><span class="o">.</span><span class="n">channels</span><span class="o">.</span><span class="n">keys</span><span class="p">())</span>
+
+    <span class="n">channels</span> <span class="o">=</span> <span class="nb">property</span><span class="p">(</span><span class="n">_get_channels</span><span class="p">)</span>
+    <span class="sd">&quot;&quot;&quot; Names of channels this client is currently in (*read-only*).</span>
+
+<span class="sd">    Returns:</span>
+<span class="sd">        iterator: over channel names as strings</span>
+<span class="sd">    &quot;&quot;&quot;</span></div>
+
+
+<span class="k">class</span> <span class="nc">IRCClientState</span><span class="p">(</span><span class="nb">object</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot; Stores the state of an IRCClient.</span>
+
+<span class="sd">    This class is **internally** used by IRCClient to keep track of it&#39;s</span>
+<span class="sd">    current state.</span>
+<span class="sd">    The main purpose is to bundle all the needed information and thus make it</span>
+<span class="sd">    easier to keep track of them.</span>
+
+<span class="sd">    .. note:: The state information in this class should only be set in</span>
+<span class="sd">              consequence of a message from the server confirming that state.</span>
+<span class="sd">              For example: The nick should not be set when the client sends a</span>
+<span class="sd">              nick message, but when it receives a message from the server that</span>
+<span class="sd">              says the nick has changed.</span>
+
+<span class="sd">    To change the state the public properties connected and registered can be</span>
+<span class="sd">    set directly.</span>
+<span class="sd">    Note that there are dependencies between the states of the client.</span>
+<span class="sd">    If a client is registered, it must also be connected and if it is not</span>
+<span class="sd">    connected it can&#39;t be registered. These constraints are preserved</span>
+<span class="sd">    automatically.</span>
+
+<span class="sd">    For example:</span>
+
+<span class="sd">    ..code-block:: python</span>
+
+<span class="sd">    state = IRCClientState()</span>
+<span class="sd">    state.connected = True</span>
+<span class="sd">    state.registered = True</span>
+<span class="sd">    state.connected = False</span>
+<span class="sd">    print(state.registered) # False</span>
+<span class="sd">    state.registered = True</span>
+<span class="sd">    print(state.connected) # True</span>
+
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="c"># --- Constants, internally used to set the _state flag ---</span>
+    <span class="n">_DISCONNECTED</span> <span class="o">=</span> <span class="mi">0</span>
+    <span class="n">_CONNECTED</span> <span class="o">=</span> <span class="mi">1</span>
+    <span class="n">_REGISTERED</span> <span class="o">=</span> <span class="mi">2</span>
+
+    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_state</span> <span class="o">=</span> <span class="n">IRCClientState</span><span class="o">.</span><span class="n">_DISCONNECTED</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">server</span> <span class="o">=</span> <span class="bp">None</span>
+        <span class="c"># Note: Nicks in server messages always have the case in which they</span>
+        <span class="c">#       were registered.</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">nick</span> <span class="o">=</span> <span class="bp">None</span>
+        <span class="c"># keys: channel name, values: ChannelInfo</span>
+        <span class="c"># Note: Channel names will always be saved lower case</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">channels</span> <span class="o">=</span> <span class="p">{}</span>
+        <span class="c"># Channels, where the client is channel operator in:</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">operator_in</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="c"># Channels, where the client has voice rights in:</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">has_voice_in</span> <span class="o">=</span> <span class="p">[]</span>
+
+    <span class="c"># --- Properties that provide an interface to the internal _state flag ---</span>
+
+    <span class="nd">@property</span>
+    <span class="k">def</span> <span class="nf">connected</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_state</span> <span class="o">&gt;=</span> <span class="n">IRCClientState</span><span class="o">.</span><span class="n">_CONNECTED</span>
+
+    <span class="nd">@connected.setter</span>
+    <span class="k">def</span> <span class="nf">connected</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">value</span><span class="p">):</span>
+        <span class="k">if</span> <span class="n">value</span> <span class="ow">and</span> <span class="bp">self</span><span class="o">.</span><span class="n">_state</span> <span class="o">&lt;</span> <span class="n">IRCClientState</span><span class="o">.</span><span class="n">_CONNECTED</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_state</span> <span class="o">=</span> <span class="n">IRCClientState</span><span class="o">.</span><span class="n">_CONNECTED</span>
+        <span class="k">elif</span> <span class="ow">not</span> <span class="n">value</span> <span class="ow">and</span> <span class="bp">self</span><span class="o">.</span><span class="n">_state</span> <span class="o">&gt;=</span> <span class="n">IRCClientState</span><span class="o">.</span><span class="n">_CONNECTED</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_state</span> <span class="o">=</span> <span class="n">IRCClientState</span><span class="o">.</span><span class="n">_DISCONNECTED</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_disconnect</span><span class="p">()</span>
+
+    <span class="nd">@property</span>
+    <span class="k">def</span> <span class="nf">registered</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_state</span> <span class="o">==</span> <span class="n">IRCClientState</span><span class="o">.</span><span class="n">_REGISTERED</span>
+
+    <span class="nd">@registered.setter</span>
+    <span class="k">def</span> <span class="nf">registered</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">value</span><span class="p">):</span>
+        <span class="k">if</span> <span class="n">value</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_state</span> <span class="o">=</span> <span class="n">IRCClientState</span><span class="o">.</span><span class="n">_REGISTERED</span>
+        <span class="k">elif</span> <span class="ow">not</span> <span class="n">value</span> <span class="ow">and</span> <span class="bp">self</span><span class="o">.</span><span class="n">_state</span> <span class="o">==</span> <span class="n">IRCClientState</span><span class="o">.</span><span class="n">_REGISTERED</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_state</span> <span class="o">=</span> <span class="n">IRCClientState</span><span class="o">.</span><span class="n">_CONNECTED</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_unregister</span><span class="p">()</span>
+
+    <span class="c"># --- Private methods ----</span>
+
+    <span class="k">def</span> <span class="nf">_unregister</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot; Reset all attributes that require registration to a server. &quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">nick</span> <span class="o">=</span> <span class="bp">None</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">channels</span> <span class="o">=</span> <span class="p">{}</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">operator_in</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">has_voice_in</span> <span class="o">=</span> <span class="p">[]</span>
+
+    <span class="k">def</span> <span class="nf">_disconnect</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot; Reset all attributes that require connection to a server. &quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_unregister</span><span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">server</span> <span class="o">=</span> <span class="bp">None</span>
+</pre></div>
+
+          </div>
+        </div>
+      </div>
+      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+        <div class="sphinxsidebarwrapper">
+<div id="searchbox" style="display: none" role="search">
+  <h3>Quick search</h3>
+    <form class="search" action="../../search.html" method="get">
+      <input type="text" name="q" />
+      <input type="submit" value="Go" />
+      <input type="hidden" name="check_keywords" value="yes" />
+      <input type="hidden" name="area" value="default" />
+    </form>
+    <p class="searchtip" style="font-size: 90%">
+    Enter search terms or a module, class or function name.
+    </p>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../../genindex.html" title="General Index"
+             >index</a></li>
+        <li class="nav-item nav-item-0"><a href="../../index.html">FredIRC 0.3.0 documentation</a> &raquo;</li>
+          <li class="nav-item nav-item-1"><a href="../index.html" >Module code</a> &raquo;</li> 
+      </ul>
+    </div>
+    <div class="footer" role="contentinfo">
+        &copy; Copyright 2014-2015, Tobias Marquardt.
+      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 1.3.3.
+    </div>
+  </body>
+</html>

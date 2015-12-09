@@ -6,7 +6,7 @@
   <head>
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
     
-    <title>API Reference &mdash; FredIRC 0.2.2 documentation</title>
+    <title>API Reference &mdash; FredIRC 0.3.0 documentation</title>
     
     <link rel="stylesheet" href="_static/nature.css" type="text/css" />
     <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
@@ -14,7 +14,7 @@
     <script type="text/javascript">
       var DOCUMENTATION_OPTIONS = {
         URL_ROOT:    './',
-        VERSION:     '0.2.2',
+        VERSION:     '0.3.0',
         COLLAPSE_INDEX: false,
         FILE_SUFFIX: '.html',
         HAS_SOURCE:  true
@@ -23,12 +23,12 @@
     <script type="text/javascript" src="_static/jquery.js"></script>
     <script type="text/javascript" src="_static/underscore.js"></script>
     <script type="text/javascript" src="_static/doctools.js"></script>
-    <link rel="top" title="FredIRC 0.2.2 documentation" href="index.html" />
+    <link rel="top" title="FredIRC 0.3.0 documentation" href="index.html" />
     <link rel="next" title="Changelog" href="history.html" />
     <link rel="prev" title="Beginner’s Guide" href="guide.html" /> 
   </head>
-  <body>
-    <div class="related">
+  <body role="document">
+    <div class="related" role="navigation" aria-label="related navigation">
       <h3>Navigation</h3>
       <ul>
         <li class="right" style="margin-right: 10px">
@@ -40,14 +40,14 @@
         <li class="right" >
           <a href="guide.html" title="Beginner’s Guide"
              accesskey="P">previous</a> |</li>
-        <li><a href="index.html">FredIRC 0.2.2 documentation</a> &raquo;</li> 
+        <li class="nav-item nav-item-0"><a href="index.html">FredIRC 0.3.0 documentation</a> &raquo;</li> 
       </ul>
     </div>  
 
     <div class="document">
       <div class="documentwrapper">
         <div class="bodywrapper">
-          <div class="body">
+          <div class="body" role="main">
             
   <div class="section" id="api-reference">
 <h1>API Reference<a class="headerlink" href="#api-reference" title="Permalink to this headline">¶</a></h1>
@@ -57,30 +57,64 @@
 <p>The following classes are the main part of the API and might be of
 interest to anyone who uses FredIRC:</p>
 <ul class="simple">
-<li><a class="reference internal" href="#fredirc.IRCHandler" title="fredirc.IRCHandler"><tt class="xref py py-class docutils literal"><span class="pre">IRCHandler</span></tt></a> - Abstract base class containing event handler
+<li><a class="reference internal" href="#fredirc.IRCHandler" title="fredirc.IRCHandler"><code class="xref py py-class docutils literal"><span class="pre">IRCHandler</span></code></a> - Abstract base class containing event handler
 methods that can be implemented in subclasses.</li>
-<li><a class="reference internal" href="#fredirc.BaseIRCHandler" title="fredirc.BaseIRCHandler"><tt class="xref py py-class docutils literal"><span class="pre">BaseIRCHandler</span></tt></a> - You probably want to subclass this, to
+<li><a class="reference internal" href="#fredirc.BaseIRCHandler" title="fredirc.BaseIRCHandler"><code class="xref py py-class docutils literal"><span class="pre">BaseIRCHandler</span></code></a> - You probably want to subclass this, to
 overwrite handler methods in your bot. It is derived from IRCHandler itself.</li>
-<li><a class="reference internal" href="#fredirc.IRCClient" title="fredirc.IRCClient"><tt class="xref py py-class docutils literal"><span class="pre">IRCClient</span></tt></a> - Implements basic IRC client functionality and runs
+<li><a class="reference internal" href="#fredirc.IRCClient" title="fredirc.IRCClient"><code class="xref py py-class docutils literal"><span class="pre">IRCClient</span></code></a> - Implements basic IRC client functionality and runs
 the whole framework. Provides an interface to send messages to the server.</li>
-<li><a class="reference internal" href="#fredirc.Task" title="fredirc.Task"><tt class="xref py py-class docutils literal"><span class="pre">Task</span></tt></a> - Schedule tasks to be executed by the event loop at a
+<li><a class="reference internal" href="#fredirc.Task" title="fredirc.Task"><code class="xref py py-class docutils literal"><span class="pre">Task</span></code></a> - Schedule tasks to be executed by the event loop at a
 specific time.</li>
 </ul>
 </div>
 <div class="section" id="irchandler-class">
-<h2><tt class="docutils literal"><span class="pre">IRCHandler</span></tt> Class<a class="headerlink" href="#irchandler-class" title="Permalink to this headline">¶</a></h2>
+<h2><code class="docutils literal"><span class="pre">IRCHandler</span></code> Class<a class="headerlink" href="#irchandler-class" title="Permalink to this headline">¶</a></h2>
 <dl class="class">
 <dt id="fredirc.IRCHandler">
-<em class="property">class </em><tt class="descclassname">fredirc.</tt><tt class="descname">IRCHandler</tt><a class="headerlink" href="#fredirc.IRCHandler" title="Permalink to this definition">¶</a></dt>
+<em class="property">class </em><code class="descclassname">fredirc.</code><code class="descname">IRCHandler</code><a class="reference internal" href="_modules/fredirc/handler.html#IRCHandler"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#fredirc.IRCHandler" title="Permalink to this definition">¶</a></dt>
 <dd><p>Abstract base class for IRC handler classes.</p>
 <p>This abstract base class contains handler functions for IRC related events
 (mostly messages from a server) a client might be interested in. It just
 defines an interface and all method bodies are empty.
-You probably want to subclass <a class="reference internal" href="#fredirc.BaseIRCHandler" title="fredirc.BaseIRCHandler"><tt class="xref py py-class docutils literal"><span class="pre">BaseIRCHandler</span></tt></a> instead of
+You probably want to subclass <a class="reference internal" href="#fredirc.BaseIRCHandler" title="fredirc.BaseIRCHandler"><code class="xref py py-class docutils literal"><span class="pre">BaseIRCHandler</span></code></a> instead of
 inheriting directly from this class.</p>
 <dl class="method">
+<dt id="fredirc.IRCHandler.handle_client_init">
+<code class="descname">handle_client_init</code><span class="sig-paren">(</span><em>client</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/fredirc/handler.html#IRCHandler.handle_client_init"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#fredirc.IRCHandler.handle_client_init" title="Permalink to this definition">¶</a></dt>
+<dd><p>This handler was attached to a client.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>client</strong> (<a class="reference internal" href="#fredirc.IRCClient" title="fredirc.IRCClient"><code class="xref py py-class docutils literal"><span class="pre">IRCClient</span></code></a>) &#8211; The client.</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="fredirc.IRCHandler.handle_connect">
+<code class="descname">handle_connect</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/fredirc/handler.html#IRCHandler.handle_connect"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#fredirc.IRCHandler.handle_connect" title="Permalink to this definition">¶</a></dt>
+<dd><p>The client established a connection to the server.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="fredirc.IRCHandler.handle_disconnect">
+<code class="descname">handle_disconnect</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/fredirc/handler.html#IRCHandler.handle_disconnect"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#fredirc.IRCHandler.handle_disconnect" title="Permalink to this definition">¶</a></dt>
+<dd><p>The client lost connection to the server.</p>
+<p>This might be the result of a network error but also occurs after
+a quit by the client or a forced disconnect by the server.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="fredirc.IRCHandler.handle_register">
+<code class="descname">handle_register</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/fredirc/handler.html#IRCHandler.handle_register"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#fredirc.IRCHandler.handle_register" title="Permalink to this definition">¶</a></dt>
+<dd><p>The client successfully registered to the server.</p>
+</dd></dl>
+
+<dl class="method">
 <dt id="fredirc.IRCHandler.handle_channel_message">
-<tt class="descname">handle_channel_message</tt><big>(</big><em>channel</em>, <em>message</em>, <em>sender=None</em><big>)</big><a class="headerlink" href="#fredirc.IRCHandler.handle_channel_message" title="Permalink to this definition">¶</a></dt>
+<code class="descname">handle_channel_message</code><span class="sig-paren">(</span><em>channel</em>, <em>message</em>, <em>sender=None</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/fredirc/handler.html#IRCHandler.handle_channel_message"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#fredirc.IRCHandler.handle_channel_message" title="Permalink to this definition">¶</a></dt>
 <dd><p>Received a message to a channel.</p>
 <p>A message was sent to a channel the client currently belongs to.
 Does not include messages from the client itself!</p>
@@ -92,238 +126,9 @@ Does not include messages from the client itself!</p>
 <li><strong>channel</strong> (<a class="reference external" href="http://docs.python.org/library/functions.html#str" title="(in Python v2.7)"><em>str</em></a>) &#8211; the channel name</li>
 <li><strong>message</strong> (<a class="reference external" href="http://docs.python.org/library/functions.html#str" title="(in Python v2.7)"><em>str</em></a>) &#8211; the received message</li>
 <li><strong>sender</strong> (<a class="reference external" href="http://docs.python.org/library/functions.html#str" title="(in Python v2.7)"><em>str</em></a>) &#8211; Sender of the message, usually a nickname.</li>
+<li><strong>be None.</strong> (<em>Might</em>) &#8211; </li>
 </ul>
 </td>
-</tr>
-</tbody>
-</table>
-</dd></dl>
-
-<dl class="method">
-<dt id="fredirc.IRCHandler.handle_client_init">
-<tt class="descname">handle_client_init</tt><big>(</big><em>client</em><big>)</big><a class="headerlink" href="#fredirc.IRCHandler.handle_client_init" title="Permalink to this definition">¶</a></dt>
-<dd><p>This handler was attached to a client.</p>
-<table class="docutils field-list" frame="void" rules="none">
-<col class="field-name" />
-<col class="field-body" />
-<tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>client</strong> (<a class="reference internal" href="#fredirc.IRCClient" title="fredirc.IRCClient"><tt class="xref py py-class docutils literal"><span class="pre">IRCClient</span></tt></a>) &#8211; The client.</td>
-</tr>
-</tbody>
-</table>
-</dd></dl>
-
-<dl class="method">
-<dt id="fredirc.IRCHandler.handle_connect">
-<tt class="descname">handle_connect</tt><big>(</big><big>)</big><a class="headerlink" href="#fredirc.IRCHandler.handle_connect" title="Permalink to this definition">¶</a></dt>
-<dd><p>The client established a connection to the server.</p>
-</dd></dl>
-
-<dl class="method">
-<dt id="fredirc.IRCHandler.handle_disconnect">
-<tt class="descname">handle_disconnect</tt><big>(</big><big>)</big><a class="headerlink" href="#fredirc.IRCHandler.handle_disconnect" title="Permalink to this definition">¶</a></dt>
-<dd><p>The client lost connection to the server.</p>
-<p>This might be the result of a network error but also occurs after
-a quit by the client or a forced disconnect by the server.</p>
-</dd></dl>
-
-<dl class="method">
-<dt id="fredirc.IRCHandler.handle_error">
-<tt class="descname">handle_error</tt><big>(</big><em>error</em>, <em>**params</em><big>)</big><a class="headerlink" href="#fredirc.IRCHandler.handle_error" title="Permalink to this definition">¶</a></dt>
-<dd><p>An irc error message was received from the server.</p>
-<p>The error codes are defined in <a class="reference internal" href="#fredirc.Err" title="fredirc.Err"><tt class="xref py py-class docutils literal"><span class="pre">Err</span></tt></a>.
-The contents of the params dictionary depend on the specific error.
-See the documentation of <a class="reference internal" href="#fredirc.Err" title="fredirc.Err"><tt class="xref py py-class docutils literal"><span class="pre">Err</span></tt></a> for details.</p>
-<table class="docutils field-list" frame="void" rules="none">
-<col class="field-name" />
-<col class="field-body" />
-<tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
-<li><strong>error</strong> (<a class="reference external" href="http://docs.python.org/library/functions.html#int" title="(in Python v2.7)"><em>int</em></a>) &#8211; 3-digit error code (between 400 and 599)</li>
-<li><strong>params</strong> (<a class="reference external" href="http://docs.python.org/library/stdtypes.html#dict" title="(in Python v2.7)"><em>dict</em></a>) &#8211; Parameters of the error message, each consisting of                 a parameter name and a value.</li>
-</ul>
-</td>
-</tr>
-</tbody>
-</table>
-</dd></dl>
-
-<dl class="method">
-<dt id="fredirc.IRCHandler.handle_got_op">
-<tt class="descname">handle_got_op</tt><big>(</big><em>channel</em>, <em>nick</em>, <em>initiator</em><big>)</big><a class="headerlink" href="#fredirc.IRCHandler.handle_got_op" title="Permalink to this definition">¶</a></dt>
-<dd><p>A user received operator status.</p>
-<table class="docutils field-list" frame="void" rules="none">
-<col class="field-name" />
-<col class="field-body" />
-<tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
-<li><strong>channel</strong> (<a class="reference external" href="http://docs.python.org/library/functions.html#str" title="(in Python v2.7)"><em>str</em></a>) &#8211; name of the channel</li>
-<li><strong>nick</strong> (<a class="reference external" href="http://docs.python.org/library/functions.html#str" title="(in Python v2.7)"><em>str</em></a>) &#8211; the user who became operator</li>
-<li><strong>initiator</strong> (<a class="reference external" href="http://docs.python.org/library/functions.html#str" title="(in Python v2.7)"><em>str</em></a>) &#8211; the user who granted the operator rights</li>
-</ul>
-</td>
-</tr>
-</tbody>
-</table>
-</dd></dl>
-
-<dl class="method">
-<dt id="fredirc.IRCHandler.handle_got_voice">
-<tt class="descname">handle_got_voice</tt><big>(</big><em>channel</em>, <em>nick</em>, <em>initiator</em><big>)</big><a class="headerlink" href="#fredirc.IRCHandler.handle_got_voice" title="Permalink to this definition">¶</a></dt>
-<dd><p>A user received voice rights.</p>
-<table class="docutils field-list" frame="void" rules="none">
-<col class="field-name" />
-<col class="field-body" />
-<tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
-<li><strong>channel</strong> (<a class="reference external" href="http://docs.python.org/library/functions.html#str" title="(in Python v2.7)"><em>str</em></a>) &#8211; name of the channel</li>
-<li><strong>nick</strong> (<a class="reference external" href="http://docs.python.org/library/functions.html#str" title="(in Python v2.7)"><em>str</em></a>) &#8211; the user who received voice</li>
-<li><strong>initiator</strong> (<a class="reference external" href="http://docs.python.org/library/functions.html#str" title="(in Python v2.7)"><em>str</em></a>) &#8211; the user who granted the voice rights</li>
-</ul>
-</td>
-</tr>
-</tbody>
-</table>
-</dd></dl>
-
-<dl class="method">
-<dt id="fredirc.IRCHandler.handle_join">
-<tt class="descname">handle_join</tt><big>(</big><em>channel</em>, <em>nick</em><big>)</big><a class="headerlink" href="#fredirc.IRCHandler.handle_join" title="Permalink to this definition">¶</a></dt>
-<dd><p>Called when a user joined the channel.</p>
-<p>To handle joins of the IRCClient itself, use
-<a class="reference internal" href="#fredirc.IRCHandler.handle_own_join" title="fredirc.IRCHandler.handle_own_join"><tt class="xref py py-meth docutils literal"><span class="pre">handle_own_join()</span></tt></a>.</p>
-<table class="docutils field-list" frame="void" rules="none">
-<col class="field-name" />
-<col class="field-body" />
-<tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
-<li><strong>channel</strong> (<a class="reference external" href="http://docs.python.org/library/functions.html#str" title="(in Python v2.7)"><em>str</em></a>) &#8211; a name of a channel, the client is currently in</li>
-<li><strong>nick</strong> (<a class="reference external" href="http://docs.python.org/library/functions.html#str" title="(in Python v2.7)"><em>str</em></a>) &#8211; nick of the member that joined the channel</li>
-</ul>
-</td>
-</tr>
-</tbody>
-</table>
-</dd></dl>
-
-<dl class="method">
-<dt id="fredirc.IRCHandler.handle_kick">
-<tt class="descname">handle_kick</tt><big>(</big><em>channel</em>, <em>nick</em>, <em>initiator</em>, <em>reason</em><big>)</big><a class="headerlink" href="#fredirc.IRCHandler.handle_kick" title="Permalink to this definition">¶</a></dt>
-<dd><p>A user got kicked from a channel.</p>
-<p>Might be the IRCClient itself.</p>
-<table class="docutils field-list" frame="void" rules="none">
-<col class="field-name" />
-<col class="field-body" />
-<tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
-<li><strong>channel</strong> (<a class="reference external" href="http://docs.python.org/library/functions.html#str" title="(in Python v2.7)"><em>str</em></a>) &#8211; the channel</li>
-<li><strong>nick</strong> (<a class="reference external" href="http://docs.python.org/library/functions.html#str" title="(in Python v2.7)"><em>str</em></a>) &#8211; the user who got kicked</li>
-<li><strong>reason</strong> (<a class="reference external" href="http://docs.python.org/library/functions.html#str" title="(in Python v2.7)"><em>str</em></a>) &#8211; reason for the kick (might be None)</li>
-</ul>
-</td>
-</tr>
-</tbody>
-</table>
-</dd></dl>
-
-<dl class="method">
-<dt id="fredirc.IRCHandler.handle_lost_op">
-<tt class="descname">handle_lost_op</tt><big>(</big><em>channel</em>, <em>nick</em>, <em>initiator</em><big>)</big><a class="headerlink" href="#fredirc.IRCHandler.handle_lost_op" title="Permalink to this definition">¶</a></dt>
-<dd><p>A user lost operator status.</p>
-<table class="docutils field-list" frame="void" rules="none">
-<col class="field-name" />
-<col class="field-body" />
-<tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
-<li><strong>channel</strong> (<a class="reference external" href="http://docs.python.org/library/functions.html#str" title="(in Python v2.7)"><em>str</em></a>) &#8211; name of the channel</li>
-<li><strong>nick</strong> (<a class="reference external" href="http://docs.python.org/library/functions.html#str" title="(in Python v2.7)"><em>str</em></a>) &#8211; the user who is no longer operator</li>
-<li><strong>initiator</strong> (<a class="reference external" href="http://docs.python.org/library/functions.html#str" title="(in Python v2.7)"><em>str</em></a>) &#8211; the user who initiated the mode change</li>
-</ul>
-</td>
-</tr>
-</tbody>
-</table>
-</dd></dl>
-
-<dl class="method">
-<dt id="fredirc.IRCHandler.handle_lost_voice">
-<tt class="descname">handle_lost_voice</tt><big>(</big><em>channel</em>, <em>nick</em>, <em>initiator</em><big>)</big><a class="headerlink" href="#fredirc.IRCHandler.handle_lost_voice" title="Permalink to this definition">¶</a></dt>
-<dd><p>A user lost voide rights.</p>
-<table class="docutils field-list" frame="void" rules="none">
-<col class="field-name" />
-<col class="field-body" />
-<tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
-<li><strong>channel</strong> (<a class="reference external" href="http://docs.python.org/library/functions.html#str" title="(in Python v2.7)"><em>str</em></a>) &#8211; name of the channel</li>
-<li><strong>nick</strong> (<a class="reference external" href="http://docs.python.org/library/functions.html#str" title="(in Python v2.7)"><em>str</em></a>) &#8211; the user who no longer has voice</li>
-<li><strong>initiator</strong> (<a class="reference external" href="http://docs.python.org/library/functions.html#str" title="(in Python v2.7)"><em>str</em></a>) &#8211; the user who initiated the mode change</li>
-</ul>
-</td>
-</tr>
-</tbody>
-</table>
-</dd></dl>
-
-<dl class="method">
-<dt id="fredirc.IRCHandler.handle_own_join">
-<tt class="descname">handle_own_join</tt><big>(</big><em>channel</em><big>)</big><a class="headerlink" href="#fredirc.IRCHandler.handle_own_join" title="Permalink to this definition">¶</a></dt>
-<dd><p>Called when the IRCClient joined a channel.</p>
-<p>To handle joins of other members, use <a class="reference internal" href="#fredirc.IRCHandler.handle_join" title="fredirc.IRCHandler.handle_join"><tt class="xref py py-meth docutils literal"><span class="pre">handle_join()</span></tt></a>.</p>
-<table class="docutils field-list" frame="void" rules="none">
-<col class="field-name" />
-<col class="field-body" />
-<tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>channel</strong> (<a class="reference external" href="http://docs.python.org/library/functions.html#str" title="(in Python v2.7)"><em>str</em></a>) &#8211; name of the channel</td>
-</tr>
-</tbody>
-</table>
-</dd></dl>
-
-<dl class="method">
-<dt id="fredirc.IRCHandler.handle_own_part">
-<tt class="descname">handle_own_part</tt><big>(</big><em>channel</em><big>)</big><a class="headerlink" href="#fredirc.IRCHandler.handle_own_part" title="Permalink to this definition">¶</a></dt>
-<dd><p>Called when the IRCClient left a channel.</p>
-<p>To handle parting of other members, use <a class="reference internal" href="#fredirc.IRCHandler.handle_part" title="fredirc.IRCHandler.handle_part"><tt class="xref py py-meth docutils literal"><span class="pre">handle_part()</span></tt></a>.</p>
-<table class="docutils field-list" frame="void" rules="none">
-<col class="field-name" />
-<col class="field-body" />
-<tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>channel</strong> (<a class="reference external" href="http://docs.python.org/library/functions.html#str" title="(in Python v2.7)"><em>str</em></a>) &#8211; name of the channel</td>
-</tr>
-</tbody>
-</table>
-</dd></dl>
-
-<dl class="method">
-<dt id="fredirc.IRCHandler.handle_part">
-<tt class="descname">handle_part</tt><big>(</big><em>channel</em>, <em>nick</em>, <em>message=None</em><big>)</big><a class="headerlink" href="#fredirc.IRCHandler.handle_part" title="Permalink to this definition">¶</a></dt>
-<dd><p>Called when a user left the channel.</p>
-<p>To handle partings of the IRCClient itself, use
-<a class="reference internal" href="#fredirc.IRCHandler.handle_own_part" title="fredirc.IRCHandler.handle_own_part"><tt class="xref py py-meth docutils literal"><span class="pre">handle_own_part()</span></tt></a>.</p>
-<table class="docutils field-list" frame="void" rules="none">
-<col class="field-name" />
-<col class="field-body" />
-<tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
-<li><strong>channel</strong> (<a class="reference external" href="http://docs.python.org/library/functions.html#str" title="(in Python v2.7)"><em>str</em></a>) &#8211; a name of a channel, the client is currently in</li>
-<li><strong>nick</strong> (<a class="reference external" href="http://docs.python.org/library/functions.html#str" title="(in Python v2.7)"><em>str</em></a>) &#8211; nick of the member that left the channel</li>
-<li><strong>message</strong> (<a class="reference external" href="http://docs.python.org/library/functions.html#str" title="(in Python v2.7)"><em>str</em></a>) &#8211; part message of the parting member (might be None)</li>
-</ul>
-</td>
-</tr>
-</tbody>
-</table>
-</dd></dl>
-
-<dl class="method">
-<dt id="fredirc.IRCHandler.handle_ping">
-<tt class="descname">handle_ping</tt><big>(</big><em>server</em><big>)</big><a class="headerlink" href="#fredirc.IRCHandler.handle_ping" title="Permalink to this definition">¶</a></dt>
-<dd><p>Received a ping message from the server.</p>
-<table class="docutils field-list" frame="void" rules="none">
-<col class="field-name" />
-<col class="field-body" />
-<tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>server</strong> (<a class="reference external" href="http://docs.python.org/library/functions.html#str" title="(in Python v2.7)"><em>str</em></a>) &#8211; name or ip of the server.</td>
 </tr>
 </tbody>
 </table>
@@ -331,7 +136,7 @@ See the documentation of <a class="reference internal" href="#fredirc.Err" title
 
 <dl class="method">
 <dt id="fredirc.IRCHandler.handle_private_message">
-<tt class="descname">handle_private_message</tt><big>(</big><em>message</em>, <em>sender=None</em><big>)</big><a class="headerlink" href="#fredirc.IRCHandler.handle_private_message" title="Permalink to this definition">¶</a></dt>
+<code class="descname">handle_private_message</code><span class="sig-paren">(</span><em>message</em>, <em>sender=None</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/fredirc/handler.html#IRCHandler.handle_private_message"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#fredirc.IRCHandler.handle_private_message" title="Permalink to this definition">¶</a></dt>
 <dd><p>Received private message (query).</p>
 <table class="docutils field-list" frame="void" rules="none">
 <col class="field-name" />
@@ -349,14 +154,324 @@ Might be None.</li>
 </dd></dl>
 
 <dl class="method">
-<dt id="fredirc.IRCHandler.handle_register">
-<tt class="descname">handle_register</tt><big>(</big><big>)</big><a class="headerlink" href="#fredirc.IRCHandler.handle_register" title="Permalink to this definition">¶</a></dt>
-<dd><p>The client successfully registered to the server.</p>
+<dt id="fredirc.IRCHandler.handle_join">
+<code class="descname">handle_join</code><span class="sig-paren">(</span><em>channel</em>, <em>nick</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/fredirc/handler.html#IRCHandler.handle_join"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#fredirc.IRCHandler.handle_join" title="Permalink to this definition">¶</a></dt>
+<dd><p>Called when another user joined the channel.</p>
+<p>To handle joins of the IRCClient itself, use
+<a class="reference internal" href="#fredirc.IRCHandler.handle_own_join" title="fredirc.IRCHandler.handle_own_join"><code class="xref py py-meth docutils literal"><span class="pre">handle_own_join()</span></code></a>.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
+<li><strong>channel</strong> (<a class="reference external" href="http://docs.python.org/library/functions.html#str" title="(in Python v2.7)"><em>str</em></a>) &#8211; a name of a channel, the client is currently in</li>
+<li><strong>nick</strong> (<a class="reference external" href="http://docs.python.org/library/functions.html#str" title="(in Python v2.7)"><em>str</em></a>) &#8211; nick of the member that joined the channel</li>
+</ul>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="fredirc.IRCHandler.handle_own_join">
+<code class="descname">handle_own_join</code><span class="sig-paren">(</span><em>channel</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/fredirc/handler.html#IRCHandler.handle_own_join"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#fredirc.IRCHandler.handle_own_join" title="Permalink to this definition">¶</a></dt>
+<dd><p>Called when the IRCClient joined a channel.</p>
+<p>To handle joins of other members, use <a class="reference internal" href="#fredirc.IRCHandler.handle_join" title="fredirc.IRCHandler.handle_join"><code class="xref py py-meth docutils literal"><span class="pre">handle_join()</span></code></a>.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>channel</strong> (<a class="reference external" href="http://docs.python.org/library/functions.html#str" title="(in Python v2.7)"><em>str</em></a>) &#8211; name of the channel</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="fredirc.IRCHandler.handle_quit">
+<code class="descname">handle_quit</code><span class="sig-paren">(</span><em>nick</em>, <em>message=None</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/fredirc/handler.html#IRCHandler.handle_quit"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#fredirc.IRCHandler.handle_quit" title="Permalink to this definition">¶</a></dt>
+<dd><p>A user disconnected from the server.</p>
+<p>Also see: <a class="reference internal" href="#fredirc.IRCHandler.handle_part" title="fredirc.IRCHandler.handle_part"><code class="xref py py-meth docutils literal"><span class="pre">handle_part()</span></code></a></p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
+<li><strong>nick</strong> (<a class="reference external" href="http://docs.python.org/library/functions.html#str" title="(in Python v2.7)"><em>str</em></a>) &#8211; nick of the user</li>
+<li><strong>message</strong> (<a class="reference external" href="http://docs.python.org/library/functions.html#str" title="(in Python v2.7)"><em>str</em></a>) &#8211; quit message (might be None)</li>
+</ul>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="fredirc.IRCHandler.handle_part">
+<code class="descname">handle_part</code><span class="sig-paren">(</span><em>channel</em>, <em>nick</em>, <em>message=None</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/fredirc/handler.html#IRCHandler.handle_part"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#fredirc.IRCHandler.handle_part" title="Permalink to this definition">¶</a></dt>
+<dd><p>Called when another user left the channel.</p>
+<p>To handle partings of the IRCClient itself, use
+<a class="reference internal" href="#fredirc.IRCHandler.handle_own_part" title="fredirc.IRCHandler.handle_own_part"><code class="xref py py-meth docutils literal"><span class="pre">handle_own_part()</span></code></a>.</p>
+<p>Also see: <a class="reference internal" href="#fredirc.IRCHandler.handle_quit" title="fredirc.IRCHandler.handle_quit"><code class="xref py py-meth docutils literal"><span class="pre">handle_quit()</span></code></a></p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
+<li><strong>channel</strong> (<a class="reference external" href="http://docs.python.org/library/functions.html#str" title="(in Python v2.7)"><em>str</em></a>) &#8211; a name of a channel, the client is currently in</li>
+<li><strong>nick</strong> (<a class="reference external" href="http://docs.python.org/library/functions.html#str" title="(in Python v2.7)"><em>str</em></a>) &#8211; nick of the member that left the channel</li>
+<li><strong>message</strong> (<a class="reference external" href="http://docs.python.org/library/functions.html#str" title="(in Python v2.7)"><em>str</em></a>) &#8211; part message of the parting member (might be None)</li>
+</ul>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="fredirc.IRCHandler.handle_own_part">
+<code class="descname">handle_own_part</code><span class="sig-paren">(</span><em>channel</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/fredirc/handler.html#IRCHandler.handle_own_part"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#fredirc.IRCHandler.handle_own_part" title="Permalink to this definition">¶</a></dt>
+<dd><p>Called when the IRCClient left a channel.</p>
+<p>To handle parting of other members, use <a class="reference internal" href="#fredirc.IRCHandler.handle_part" title="fredirc.IRCHandler.handle_part"><code class="xref py py-meth docutils literal"><span class="pre">handle_part()</span></code></a>.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>channel</strong> (<a class="reference external" href="http://docs.python.org/library/functions.html#str" title="(in Python v2.7)"><em>str</em></a>) &#8211; name of the channel</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="fredirc.IRCHandler.handle_kick">
+<code class="descname">handle_kick</code><span class="sig-paren">(</span><em>channel</em>, <em>nick</em>, <em>initiator</em>, <em>reason</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/fredirc/handler.html#IRCHandler.handle_kick"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#fredirc.IRCHandler.handle_kick" title="Permalink to this definition">¶</a></dt>
+<dd><p>Another user got kicked from a channel.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
+<li><strong>channel</strong> (<a class="reference external" href="http://docs.python.org/library/functions.html#str" title="(in Python v2.7)"><em>str</em></a>) &#8211; the channel</li>
+<li><strong>nick</strong> (<a class="reference external" href="http://docs.python.org/library/functions.html#str" title="(in Python v2.7)"><em>str</em></a>) &#8211; the user who got kicked</li>
+<li><strong>reason</strong> (<a class="reference external" href="http://docs.python.org/library/functions.html#str" title="(in Python v2.7)"><em>str</em></a>) &#8211; reason for the kick (might be None)</li>
+</ul>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="fredirc.IRCHandler.handle_own_kick">
+<code class="descname">handle_own_kick</code><span class="sig-paren">(</span><em>channel</em>, <em>initiator</em>, <em>reason</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/fredirc/handler.html#IRCHandler.handle_own_kick"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#fredirc.IRCHandler.handle_own_kick" title="Permalink to this definition">¶</a></dt>
+<dd><p>The IRCClient got kicked from a channel.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
+<li><strong>channel</strong> (<a class="reference external" href="http://docs.python.org/library/functions.html#str" title="(in Python v2.7)"><em>str</em></a>) &#8211; the channel</li>
+<li><strong>reason</strong> (<a class="reference external" href="http://docs.python.org/library/functions.html#str" title="(in Python v2.7)"><em>str</em></a>) &#8211; reason for the kick (might be None)</li>
+</ul>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="fredirc.IRCHandler.handle_got_op">
+<code class="descname">handle_got_op</code><span class="sig-paren">(</span><em>channel</em>, <em>nick</em>, <em>initiator</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/fredirc/handler.html#IRCHandler.handle_got_op"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#fredirc.IRCHandler.handle_got_op" title="Permalink to this definition">¶</a></dt>
+<dd><p>Another user received operator status.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
+<li><strong>channel</strong> (<a class="reference external" href="http://docs.python.org/library/functions.html#str" title="(in Python v2.7)"><em>str</em></a>) &#8211; name of the channel</li>
+<li><strong>nick</strong> (<a class="reference external" href="http://docs.python.org/library/functions.html#str" title="(in Python v2.7)"><em>str</em></a>) &#8211; the user who became operator</li>
+<li><strong>initiator</strong> (<a class="reference external" href="http://docs.python.org/library/functions.html#str" title="(in Python v2.7)"><em>str</em></a>) &#8211; the user who granted the operator rights</li>
+</ul>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="fredirc.IRCHandler.handle_own_got_op">
+<code class="descname">handle_own_got_op</code><span class="sig-paren">(</span><em>channel</em>, <em>initiator</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/fredirc/handler.html#IRCHandler.handle_own_got_op"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#fredirc.IRCHandler.handle_own_got_op" title="Permalink to this definition">¶</a></dt>
+<dd><p>The IRCClient received operator status.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
+<li><strong>channel</strong> (<a class="reference external" href="http://docs.python.org/library/functions.html#str" title="(in Python v2.7)"><em>str</em></a>) &#8211; name of the channel</li>
+<li><strong>initiator</strong> (<a class="reference external" href="http://docs.python.org/library/functions.html#str" title="(in Python v2.7)"><em>str</em></a>) &#8211; the user who granted the operator rights</li>
+</ul>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="fredirc.IRCHandler.handle_lost_op">
+<code class="descname">handle_lost_op</code><span class="sig-paren">(</span><em>channel</em>, <em>nick</em>, <em>initiator</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/fredirc/handler.html#IRCHandler.handle_lost_op"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#fredirc.IRCHandler.handle_lost_op" title="Permalink to this definition">¶</a></dt>
+<dd><p>Another user lost operator status.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
+<li><strong>channel</strong> (<a class="reference external" href="http://docs.python.org/library/functions.html#str" title="(in Python v2.7)"><em>str</em></a>) &#8211; name of the channel</li>
+<li><strong>nick</strong> (<a class="reference external" href="http://docs.python.org/library/functions.html#str" title="(in Python v2.7)"><em>str</em></a>) &#8211; the user who is no longer operator</li>
+<li><strong>initiator</strong> (<a class="reference external" href="http://docs.python.org/library/functions.html#str" title="(in Python v2.7)"><em>str</em></a>) &#8211; the user who initiated the mode change</li>
+</ul>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="fredirc.IRCHandler.handle_own_lost_op">
+<code class="descname">handle_own_lost_op</code><span class="sig-paren">(</span><em>channel</em>, <em>initiator</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/fredirc/handler.html#IRCHandler.handle_own_lost_op"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#fredirc.IRCHandler.handle_own_lost_op" title="Permalink to this definition">¶</a></dt>
+<dd><p>The IRCClient lost operator status.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
+<li><strong>channel</strong> (<a class="reference external" href="http://docs.python.org/library/functions.html#str" title="(in Python v2.7)"><em>str</em></a>) &#8211; name of the channel</li>
+<li><strong>initiator</strong> (<a class="reference external" href="http://docs.python.org/library/functions.html#str" title="(in Python v2.7)"><em>str</em></a>) &#8211; the user who initiated the mode change</li>
+</ul>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="fredirc.IRCHandler.handle_got_voice">
+<code class="descname">handle_got_voice</code><span class="sig-paren">(</span><em>channel</em>, <em>nick</em>, <em>initiator</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/fredirc/handler.html#IRCHandler.handle_got_voice"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#fredirc.IRCHandler.handle_got_voice" title="Permalink to this definition">¶</a></dt>
+<dd><p>Another user received voice rights.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
+<li><strong>channel</strong> (<a class="reference external" href="http://docs.python.org/library/functions.html#str" title="(in Python v2.7)"><em>str</em></a>) &#8211; name of the channel</li>
+<li><strong>nick</strong> (<a class="reference external" href="http://docs.python.org/library/functions.html#str" title="(in Python v2.7)"><em>str</em></a>) &#8211; the user who received voice</li>
+<li><strong>initiator</strong> (<a class="reference external" href="http://docs.python.org/library/functions.html#str" title="(in Python v2.7)"><em>str</em></a>) &#8211; the user who granted the voice rights</li>
+</ul>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="fredirc.IRCHandler.handle_own_got_voice">
+<code class="descname">handle_own_got_voice</code><span class="sig-paren">(</span><em>channel</em>, <em>initiator</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/fredirc/handler.html#IRCHandler.handle_own_got_voice"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#fredirc.IRCHandler.handle_own_got_voice" title="Permalink to this definition">¶</a></dt>
+<dd><p>The IRCClient received voice rights.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
+<li><strong>channel</strong> (<a class="reference external" href="http://docs.python.org/library/functions.html#str" title="(in Python v2.7)"><em>str</em></a>) &#8211; name of the channel</li>
+<li><strong>initiator</strong> (<a class="reference external" href="http://docs.python.org/library/functions.html#str" title="(in Python v2.7)"><em>str</em></a>) &#8211; the user who granted the voice rights</li>
+</ul>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="fredirc.IRCHandler.handle_lost_voice">
+<code class="descname">handle_lost_voice</code><span class="sig-paren">(</span><em>channel</em>, <em>nick</em>, <em>initiator</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/fredirc/handler.html#IRCHandler.handle_lost_voice"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#fredirc.IRCHandler.handle_lost_voice" title="Permalink to this definition">¶</a></dt>
+<dd><p>Another user lost voice rights.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
+<li><strong>channel</strong> (<a class="reference external" href="http://docs.python.org/library/functions.html#str" title="(in Python v2.7)"><em>str</em></a>) &#8211; name of the channel</li>
+<li><strong>nick</strong> (<a class="reference external" href="http://docs.python.org/library/functions.html#str" title="(in Python v2.7)"><em>str</em></a>) &#8211; the user who no longer has voice</li>
+<li><strong>initiator</strong> (<a class="reference external" href="http://docs.python.org/library/functions.html#str" title="(in Python v2.7)"><em>str</em></a>) &#8211; the user who initiated the mode change</li>
+</ul>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="fredirc.IRCHandler.handle_own_lost_voice">
+<code class="descname">handle_own_lost_voice</code><span class="sig-paren">(</span><em>channel</em>, <em>initiator</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/fredirc/handler.html#IRCHandler.handle_own_lost_voice"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#fredirc.IRCHandler.handle_own_lost_voice" title="Permalink to this definition">¶</a></dt>
+<dd><p>The IRCClient lost voice rights.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
+<li><strong>channel</strong> (<a class="reference external" href="http://docs.python.org/library/functions.html#str" title="(in Python v2.7)"><em>str</em></a>) &#8211; name of the channel</li>
+<li><strong>initiator</strong> (<a class="reference external" href="http://docs.python.org/library/functions.html#str" title="(in Python v2.7)"><em>str</em></a>) &#8211; the user who initiated the mode change</li>
+</ul>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="fredirc.IRCHandler.handle_nick_change">
+<code class="descname">handle_nick_change</code><span class="sig-paren">(</span><em>old_nick</em>, <em>new_nick</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/fredirc/handler.html#IRCHandler.handle_nick_change"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#fredirc.IRCHandler.handle_nick_change" title="Permalink to this definition">¶</a></dt>
+<dd><p>A user&#8217;s nick name changed.</p>
+<p>To handle nick changes of the IRCClient itself, use
+<a class="reference internal" href="#fredirc.IRCHandler.handle_own_nick_change" title="fredirc.IRCHandler.handle_own_nick_change"><code class="xref py py-meth docutils literal"><span class="pre">handle_own_nick_change()</span></code></a>.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
+<li><strong>old_nick</strong> (<a class="reference external" href="http://docs.python.org/library/functions.html#str" title="(in Python v2.7)"><em>str</em></a>) &#8211; The nick name of the user until now.</li>
+<li><strong>new_nick</strong> (<a class="reference external" href="http://docs.python.org/library/functions.html#str" title="(in Python v2.7)"><em>str</em></a>) &#8211; The new nick name of the user.</li>
+</ul>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="fredirc.IRCHandler.handle_own_nick_change">
+<code class="descname">handle_own_nick_change</code><span class="sig-paren">(</span><em>old_nick</em>, <em>new_nick</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/fredirc/handler.html#IRCHandler.handle_own_nick_change"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#fredirc.IRCHandler.handle_own_nick_change" title="Permalink to this definition">¶</a></dt>
+<dd><p>The IRCCLient&#8217;s nick name changed.</p>
+<p>The <a class="reference internal" href="#fredirc.IRCClient.nick" title="fredirc.IRCClient.nick"><code class="xref py py-attr docutils literal"><span class="pre">nick</span></code></a>-property will already hold
+the new nick when this handler is called.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
+<li><strong>old_nick</strong> (<a class="reference external" href="http://docs.python.org/library/functions.html#str" title="(in Python v2.7)"><em>str</em></a>) &#8211; The old nick name.</li>
+<li><strong>new_nick</strong> (<a class="reference external" href="http://docs.python.org/library/functions.html#str" title="(in Python v2.7)"><em>str</em></a>) &#8211; The new nick name.</li>
+</ul>
+</td>
+</tr>
+</tbody>
+</table>
 </dd></dl>
 
 <dl class="method">
 <dt id="fredirc.IRCHandler.handle_response">
-<tt class="descname">handle_response</tt><big>(</big><em>response</em>, <em>message</em><big>)</big><a class="headerlink" href="#fredirc.IRCHandler.handle_response" title="Permalink to this definition">¶</a></dt>
+<code class="descname">handle_response</code><span class="sig-paren">(</span><em>response</em>, <em>message</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/fredirc/handler.html#IRCHandler.handle_response"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#fredirc.IRCHandler.handle_response" title="Permalink to this definition">¶</a></dt>
 <dd><p>A numeric response was received from the server.</p>
 <p>See the IRC client protocol specification for valid numeric response
 codes and their meaning. There are extra handler methods for many
@@ -376,8 +491,43 @@ common responses, but this general handler is always called first.</p>
 </dd></dl>
 
 <dl class="method">
+<dt id="fredirc.IRCHandler.handle_error">
+<code class="descname">handle_error</code><span class="sig-paren">(</span><em>error</em>, <em>**params</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/fredirc/handler.html#IRCHandler.handle_error"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#fredirc.IRCHandler.handle_error" title="Permalink to this definition">¶</a></dt>
+<dd><p>An irc error message was received from the server.</p>
+<p>The error codes are defined in <a class="reference internal" href="#fredirc.Err" title="fredirc.Err"><code class="xref py py-class docutils literal"><span class="pre">Err</span></code></a>.
+The contents of the params dictionary depend on the specific error.
+See the documentation of <a class="reference internal" href="#fredirc.Err" title="fredirc.Err"><code class="xref py py-class docutils literal"><span class="pre">Err</span></code></a> for details.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
+<li><strong>error</strong> (<a class="reference external" href="http://docs.python.org/library/functions.html#int" title="(in Python v2.7)"><em>int</em></a>) &#8211; 3-digit error code (between 400 and 599)</li>
+<li><strong>params</strong> (<a class="reference external" href="http://docs.python.org/library/stdtypes.html#dict" title="(in Python v2.7)"><em>dict</em></a>) &#8211; Parameters of the error message, each consisting of                 a parameter name and a value.</li>
+</ul>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="fredirc.IRCHandler.handle_ping">
+<code class="descname">handle_ping</code><span class="sig-paren">(</span><em>server</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/fredirc/handler.html#IRCHandler.handle_ping"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#fredirc.IRCHandler.handle_ping" title="Permalink to this definition">¶</a></dt>
+<dd><p>Received a ping message from the server.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>server</strong> (<a class="reference external" href="http://docs.python.org/library/functions.html#str" title="(in Python v2.7)"><em>str</em></a>) &#8211; name or ip of the server.</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
 <dt id="fredirc.IRCHandler.handle_unhandled_message">
-<tt class="descname">handle_unhandled_message</tt><big>(</big><em>message</em><big>)</big><a class="headerlink" href="#fredirc.IRCHandler.handle_unhandled_message" title="Permalink to this definition">¶</a></dt>
+<code class="descname">handle_unhandled_message</code><span class="sig-paren">(</span><em>message</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/fredirc/handler.html#IRCHandler.handle_unhandled_message"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#fredirc.IRCHandler.handle_unhandled_message" title="Permalink to this definition">¶</a></dt>
 <dd><dl class="docutils">
 <dt>This handler is called whenever a message is not handled by any</dt>
 <dd>other handler.</dd>
@@ -398,28 +548,28 @@ FredIRC or it is invalid/malformed.</p>
 
 </div>
 <div class="section" id="baseirchandler-class">
-<h2><tt class="docutils literal"><span class="pre">BaseIRCHandler</span></tt> Class<a class="headerlink" href="#baseirchandler-class" title="Permalink to this headline">¶</a></h2>
+<h2><code class="docutils literal"><span class="pre">BaseIRCHandler</span></code> Class<a class="headerlink" href="#baseirchandler-class" title="Permalink to this headline">¶</a></h2>
 <dl class="class">
 <dt id="fredirc.BaseIRCHandler">
-<em class="property">class </em><tt class="descclassname">fredirc.</tt><tt class="descname">BaseIRCHandler</tt><a class="headerlink" href="#fredirc.BaseIRCHandler" title="Permalink to this definition">¶</a></dt>
-<dd><p>Minimal <a class="reference internal" href="#fredirc.IRCHandler" title="fredirc.IRCHandler"><tt class="xref py py-class docutils literal"><span class="pre">IRCHandler</span></tt></a> implementation.</p>
+<em class="property">class </em><code class="descclassname">fredirc.</code><code class="descname">BaseIRCHandler</code><a class="reference internal" href="_modules/fredirc/handler.html#BaseIRCHandler"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#fredirc.BaseIRCHandler" title="Permalink to this definition">¶</a></dt>
+<dd><p>Minimal <a class="reference internal" href="#fredirc.IRCHandler" title="fredirc.IRCHandler"><code class="xref py py-class docutils literal"><span class="pre">IRCHandler</span></code></a> implementation.</p>
 <p>Implements the most basic handler functionality that probably every bot will
-need. It is recommended to subclass <a class="reference internal" href="#fredirc.BaseIRCHandler" title="fredirc.BaseIRCHandler"><tt class="xref py py-class docutils literal"><span class="pre">BaseIRCHandler</span></tt></a> instead
-of <a class="reference internal" href="#fredirc.IRCHandler" title="fredirc.IRCHandler"><tt class="xref py py-class docutils literal"><span class="pre">IRCHandler</span></tt></a>.</p>
+need. It is recommended to subclass <a class="reference internal" href="#fredirc.BaseIRCHandler" title="fredirc.BaseIRCHandler"><code class="xref py py-class docutils literal"><span class="pre">BaseIRCHandler</span></code></a> instead
+of <a class="reference internal" href="#fredirc.IRCHandler" title="fredirc.IRCHandler"><code class="xref py py-class docutils literal"><span class="pre">IRCHandler</span></code></a>.</p>
 <p>What it does for you:</p>
 <ul class="simple">
-<li>Store the <a class="reference internal" href="#fredirc.IRCClient" title="fredirc.IRCClient"><tt class="xref py py-class docutils literal"><span class="pre">IRCClient</span></tt></a> instance as attribute <tt class="docutils literal"><span class="pre">self.client</span></tt>         on <a class="reference internal" href="#fredirc.IRCHandler.handle_client_init" title="fredirc.IRCHandler.handle_client_init"><tt class="xref py py-meth docutils literal"><span class="pre">handle_client_init()</span></tt></a>.</li>
-<li>Register to the server on <a class="reference internal" href="#fredirc.IRCHandler.handle_connect" title="fredirc.IRCHandler.handle_connect"><tt class="xref py py-meth docutils literal"><span class="pre">handle_connect()</span></tt></a>.</li>
-<li>Respond with pong on <a class="reference internal" href="#fredirc.IRCHandler.handle_ping" title="fredirc.IRCHandler.handle_ping"><tt class="xref py py-meth docutils literal"><span class="pre">handle_ping()</span></tt></a>.</li>
+<li>Store the <a class="reference internal" href="#fredirc.IRCClient" title="fredirc.IRCClient"><code class="xref py py-class docutils literal"><span class="pre">IRCClient</span></code></a> instance as attribute <code class="docutils literal"><span class="pre">self.client</span></code>         on <a class="reference internal" href="#fredirc.IRCHandler.handle_client_init" title="fredirc.IRCHandler.handle_client_init"><code class="xref py py-meth docutils literal"><span class="pre">handle_client_init()</span></code></a>.</li>
+<li>Register to the server on <a class="reference internal" href="#fredirc.IRCHandler.handle_connect" title="fredirc.IRCHandler.handle_connect"><code class="xref py py-meth docutils literal"><span class="pre">handle_connect()</span></code></a>.</li>
+<li>Respond with pong on <a class="reference internal" href="#fredirc.IRCHandler.handle_ping" title="fredirc.IRCHandler.handle_ping"><code class="xref py py-meth docutils literal"><span class="pre">handle_ping()</span></code></a>.</li>
 </ul>
 </dd></dl>
 
 </div>
 <div class="section" id="ircclient-class">
-<h2><tt class="docutils literal"><span class="pre">IRCClient</span></tt> Class<a class="headerlink" href="#ircclient-class" title="Permalink to this headline">¶</a></h2>
+<h2><code class="docutils literal"><span class="pre">IRCClient</span></code> Class<a class="headerlink" href="#ircclient-class" title="Permalink to this headline">¶</a></h2>
 <dl class="class">
 <dt id="fredirc.IRCClient">
-<em class="property">class </em><tt class="descclassname">fredirc.</tt><tt class="descname">IRCClient</tt><big>(</big><em>handler</em>, <em>nick</em>, <em>server</em>, <em>port=6667</em>, <em>user_name=None</em>, <em>real_name=None</em>, <em>password=None</em><big>)</big><a class="headerlink" href="#fredirc.IRCClient" title="Permalink to this definition">¶</a></dt>
+<em class="property">class </em><code class="descclassname">fredirc.</code><code class="descname">IRCClient</code><span class="sig-paren">(</span><em>handler</em>, <em>nick</em>, <em>server</em>, <em>port=6667</em>, <em>user_name=None</em>, <em>real_name=None</em>, <em>password=None</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/fredirc/client.html#IRCClient"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#fredirc.IRCClient" title="Permalink to this definition">¶</a></dt>
 <dd><dl class="docutils">
 <dt>IRC client class managing the network connection and dispatching</dt>
 <dd>messages from the server.</dd>
@@ -428,29 +578,35 @@ of <a class="reference internal" href="#fredirc.IRCHandler" title="fredirc.IRCHa
 <p class="first admonition-title">Warning</p>
 <p class="last">Currently only a single IRCClient instance is allowed! Don&#8217;t
 run multiple clients. This will result in undefined behaviour. Also
-after <a class="reference internal" href="#fredirc.IRCClient.run" title="fredirc.IRCClient.run"><tt class="xref py py-meth docutils literal"><span class="pre">run()</span></tt></a> terminated you should not call it again!
+after <a class="reference internal" href="#fredirc.IRCClient.run" title="fredirc.IRCClient.run"><code class="xref py py-meth docutils literal"><span class="pre">run()</span></code></a> terminated you should not call it again!
 This will probably be fixed in future releases.</p>
 </div>
 <p>To connect to the server and start the processing event loop call
-<a class="reference internal" href="#fredirc.IRCClient.run" title="fredirc.IRCClient.run"><tt class="xref py py-meth docutils literal"><span class="pre">run()</span></tt></a> on your IRCClient instance.
+<a class="reference internal" href="#fredirc.IRCClient.run" title="fredirc.IRCClient.run"><code class="xref py py-meth docutils literal"><span class="pre">run()</span></code></a> on your IRCClient instance.
 Nick, user name, real name and password are used by
-<a class="reference internal" href="#fredirc.IRCClient.register" title="fredirc.IRCClient.register"><tt class="xref py py-meth docutils literal"><span class="pre">register()</span></tt></a> to register the client to the server.</p>
+<a class="reference internal" href="#fredirc.IRCClient.register" title="fredirc.IRCClient.register"><code class="xref py py-meth docutils literal"><span class="pre">register()</span></code></a> to register the client to the server.</p>
 <p>Most methods and members that return some state of the client
-(e.g. <a class="reference internal" href="#fredirc.IRCClient.is_op_in" title="fredirc.IRCClient.is_op_in"><tt class="xref py py-meth docutils literal"><span class="pre">is_op_in()</span></tt></a> or <a class="reference internal" href="#fredirc.IRCClient.channels" title="fredirc.IRCClient.channels"><tt class="xref py py-attr docutils literal"><span class="pre">channels</span></tt></a>) do not need to interact
+(e.g. <a class="reference internal" href="#fredirc.IRCClient.is_op_in" title="fredirc.IRCClient.is_op_in"><code class="xref py py-meth docutils literal"><span class="pre">is_op_in()</span></code></a> or <a class="reference internal" href="#fredirc.IRCClient.channels" title="fredirc.IRCClient.channels"><code class="xref py py-attr docutils literal"><span class="pre">channels</span></code></a>) do not need to interact
 with the server to get the corresponding information. Instead it is cached
 in the client.</p>
 <p>It is also important to remember that the data in the client is only updated
 on messages from the server.
-For Example: <a class="reference internal" href="#fredirc.IRCClient.channels" title="fredirc.IRCClient.channels"><tt class="xref py py-attr docutils literal"><span class="pre">channels</span></tt></a> will
+For Example: <a class="reference internal" href="#fredirc.IRCClient.channels" title="fredirc.IRCClient.channels"><code class="xref py py-attr docutils literal"><span class="pre">channels</span></code></a> will
 not contain a new channel instantly after joining it with
-<a class="reference internal" href="#fredirc.IRCClient.join" title="fredirc.IRCClient.join"><tt class="xref py py-meth docutils literal"><span class="pre">join()</span></tt></a> but only after
-<a class="reference internal" href="#fredirc.IRCHandler.handle_own_join" title="fredirc.IRCHandler.handle_own_join"><tt class="xref py py-meth docutils literal"><span class="pre">handle_own_join()</span></tt></a> was called.</p>
+<a class="reference internal" href="#fredirc.IRCClient.join" title="fredirc.IRCClient.join"><code class="xref py py-meth docutils literal"><span class="pre">join()</span></code></a> but only after
+<a class="reference internal" href="#fredirc.IRCHandler.handle_own_join" title="fredirc.IRCHandler.handle_own_join"><code class="xref py py-meth docutils literal"><span class="pre">handle_own_join()</span></code></a> was called.</p>
+<p>Channel and nick name arguments to methods that send a command to the server
+are case insensitive, except for methods that change the clients nick.
+Channel names returned by the server (e.g. in IRCClient&#8217;s
+<a class="reference internal" href="#fredirc.IRCClient.channels" title="fredirc.IRCClient.channels"><code class="xref py py-attr docutils literal"><span class="pre">channels</span></code></a>-property)
+are usually lower case while nick names are the case they were registered by
+it&#8217;s user.</p>
 <table class="docutils field-list" frame="void" rules="none">
 <col class="field-name" />
 <col class="field-body" />
 <tbody valign="top">
 <tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
-<li><strong>handler</strong> (<a class="reference internal" href="#fredirc.IRCHandler" title="fredirc.IRCHandler"><tt class="xref py py-class docutils literal"><span class="pre">IRCHandler</span></tt></a>) &#8211; handler that handles events from this client</li>
+<li><strong>handler</strong> (<a class="reference internal" href="#fredirc.IRCHandler" title="fredirc.IRCHandler"><code class="xref py py-class docutils literal"><span class="pre">IRCHandler</span></code></a>) &#8211; handler that handles events from this client</li>
 <li><strong>nick</strong> (<a class="reference external" href="http://docs.python.org/library/functions.html#str" title="(in Python v2.7)"><em>str</em></a>) &#8211; nick name for the client</li>
 <li><strong>server</strong> (<a class="reference external" href="http://docs.python.org/library/functions.html#str" title="(in Python v2.7)"><em>str</em></a>) &#8211; server name or ip</li>
 <li><strong>port</strong> (<a class="reference external" href="http://docs.python.org/library/functions.html#int" title="(in Python v2.7)"><em>int</em></a>) &#8211; port number to connect to</li>
@@ -464,212 +620,30 @@ authenticate to the server.</li>
 </tr>
 </tbody>
 </table>
-<dl class="attribute">
-<dt id="fredirc.IRCClient.channels">
-<tt class="descname">channels</tt><a class="headerlink" href="#fredirc.IRCClient.channels" title="Permalink to this definition">¶</a></dt>
-<dd><p>Names of channels this client is currently in (<em>read-only</em>).</p>
-<table class="docutils field-list" frame="void" rules="none">
-<col class="field-name" />
-<col class="field-body" />
-<tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Returns:</th><td class="field-body">channel names as strings, tuple might be empty</td>
-</tr>
-<tr class="field-even field"><th class="field-name">Return type:</th><td class="field-body">tuple</td>
-</tr>
-</tbody>
-</table>
-</dd></dl>
-
 <dl class="method">
-<dt id="fredirc.IRCClient.enable_logging">
-<tt class="descname">enable_logging</tt><big>(</big><em>enable</em><big>)</big><a class="headerlink" href="#fredirc.IRCClient.enable_logging" title="Permalink to this definition">¶</a></dt>
-<dd><p>Enable or disable logging.</p>
-<blockquote>
-<div>Logging is enabled by default.</div></blockquote>
-<table class="docutils field-list" frame="void" rules="none">
-<col class="field-name" />
-<col class="field-body" />
-<tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>enable</strong> (<a class="reference external" href="http://docs.python.org/library/functions.html#bool" title="(in Python v2.7)"><em>bool</em></a>) &#8211; <tt class="docutils literal"><span class="pre">True</span></tt> to enable logging, <tt class="docutils literal"><span class="pre">False</span></tt> disable it</td>
-</tr>
-</tbody>
-</table>
-</dd></dl>
-
-<dl class="method">
-<dt id="fredirc.IRCClient.give_op">
-<tt class="descname">give_op</tt><big>(</big><em>user</em>, <em>channel</em><big>)</big><a class="headerlink" href="#fredirc.IRCClient.give_op" title="Permalink to this definition">¶</a></dt>
-<dd><p>Grant operator rights to a user on a channel.</p>
-<p>If the client is no operator, the server will respond with an
-error message that can be handled via
-<a class="reference internal" href="#fredirc.IRCHandler.handle_error" title="fredirc.IRCHandler.handle_error"><tt class="xref py py-meth docutils literal"><span class="pre">handle_error()</span></tt></a>.</p>
-<table class="docutils field-list" frame="void" rules="none">
-<col class="field-name" />
-<col class="field-body" />
-<tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
-<li><strong>user</strong> (<a class="reference external" href="http://docs.python.org/library/functions.html#str" title="(in Python v2.7)"><em>str</em></a>) &#8211; the affected user</li>
-<li><strong>channel</strong> (<a class="reference external" href="http://docs.python.org/library/functions.html#str" title="(in Python v2.7)"><em>str</em></a>) &#8211; the channel</li>
-</ul>
-</td>
-</tr>
-</tbody>
-</table>
-</dd></dl>
-
-<dl class="method">
-<dt id="fredirc.IRCClient.give_voice">
-<tt class="descname">give_voice</tt><big>(</big><em>user</em>, <em>channel</em><big>)</big><a class="headerlink" href="#fredirc.IRCClient.give_voice" title="Permalink to this definition">¶</a></dt>
-<dd><p>Grant voice rights to a user on a channel.</p>
-<p>If the client is no operator, the server will respond with an
-error message that can be handled via
-<a class="reference internal" href="#fredirc.IRCHandler.handle_error" title="fredirc.IRCHandler.handle_error"><tt class="xref py py-meth docutils literal"><span class="pre">handle_error()</span></tt></a>.</p>
-<table class="docutils field-list" frame="void" rules="none">
-<col class="field-name" />
-<col class="field-body" />
-<tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
-<li><strong>user</strong> (<a class="reference external" href="http://docs.python.org/library/functions.html#str" title="(in Python v2.7)"><em>str</em></a>) &#8211; the affected user</li>
-<li><strong>channel</strong> (<a class="reference external" href="http://docs.python.org/library/functions.html#str" title="(in Python v2.7)"><em>str</em></a>) &#8211; the channel</li>
-</ul>
-</td>
-</tr>
-</tbody>
-</table>
-</dd></dl>
-
-<dl class="method">
-<dt id="fredirc.IRCClient.has_voice_in">
-<tt class="descname">has_voice_in</tt><big>(</big><em>channel</em><big>)</big><a class="headerlink" href="#fredirc.IRCClient.has_voice_in" title="Permalink to this definition">¶</a></dt>
-<dd><p>Check if this client has voice rights in the given channel.</p>
-<table class="docutils field-list" frame="void" rules="none">
-<col class="field-name" />
-<col class="field-body" />
-<tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>channel</strong> (<a class="reference external" href="http://docs.python.org/library/functions.html#str" title="(in Python v2.7)"><em>str</em></a>) &#8211; the channel (case-insensitive)</td>
-</tr>
-</tbody>
-</table>
-</dd></dl>
-
-<dl class="method">
-<dt id="fredirc.IRCClient.is_op_in">
-<tt class="descname">is_op_in</tt><big>(</big><em>channel</em><big>)</big><a class="headerlink" href="#fredirc.IRCClient.is_op_in" title="Permalink to this definition">¶</a></dt>
-<dd><p>Check if this client has operator rights in the given channel.</p>
-<table class="docutils field-list" frame="void" rules="none">
-<col class="field-name" />
-<col class="field-body" />
-<tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>channel</strong> (<a class="reference external" href="http://docs.python.org/library/functions.html#str" title="(in Python v2.7)"><em>str</em></a>) &#8211; the channel (case-insensitive)</td>
-</tr>
-</tbody>
-</table>
-</dd></dl>
-
-<dl class="method">
-<dt id="fredirc.IRCClient.join">
-<tt class="descname">join</tt><big>(</big><em>channel</em>, <em>*channels</em><big>)</big><a class="headerlink" href="#fredirc.IRCClient.join" title="Permalink to this definition">¶</a></dt>
-<dd><p>Join the specified channel(s).</p>
-<p>Note that no matter what case the channel strings are in, in the
-handler functions of <a class="reference internal" href="#fredirc.IRCHandler" title="fredirc.IRCHandler"><tt class="xref py py-class docutils literal"><span class="pre">IRCHandler</span></tt></a> channel names will
-probably always be lower case.</p>
-<table class="docutils field-list" frame="void" rules="none">
-<col class="field-name" />
-<col class="field-body" />
-<tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>channel</strong> (<a class="reference external" href="http://docs.python.org/library/functions.html#str" title="(in Python v2.7)"><em>str</em></a>) &#8211; one or more channels</td>
-</tr>
-</tbody>
-</table>
-</dd></dl>
-
-<dl class="method">
-<dt id="fredirc.IRCClient.kick">
-<tt class="descname">kick</tt><big>(</big><em>user</em>, <em>channel</em>, <em>reason=None</em><big>)</big><a class="headerlink" href="#fredirc.IRCClient.kick" title="Permalink to this definition">¶</a></dt>
-<dd><p>Forcefully remove a user from a channel.</p>
-<p>If the client is no operator, the server will respond with an
-error message that can be handled via
-<a class="reference internal" href="#fredirc.IRCHandler.handle_error" title="fredirc.IRCHandler.handle_error"><tt class="xref py py-meth docutils literal"><span class="pre">handle_error()</span></tt></a>.</p>
-<table class="docutils field-list" frame="void" rules="none">
-<col class="field-name" />
-<col class="field-body" />
-<tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
-<li><strong>user</strong> (<a class="reference external" href="http://docs.python.org/library/functions.html#str" title="(in Python v2.7)"><em>str</em></a>) &#8211; the affected user</li>
-<li><strong>channel</strong> (<a class="reference external" href="http://docs.python.org/library/functions.html#str" title="(in Python v2.7)"><em>str</em></a>) &#8211; the channel</li>
-<li><strong>reason</strong> (<a class="reference external" href="http://docs.python.org/library/functions.html#str" title="(in Python v2.7)"><em>str</em></a>) &#8211; optional message with the reason</li>
-</ul>
-</td>
-</tr>
-</tbody>
-</table>
-</dd></dl>
-
-<dl class="attribute">
-<dt id="fredirc.IRCClient.nick">
-<tt class="descname">nick</tt><a class="headerlink" href="#fredirc.IRCClient.nick" title="Permalink to this definition">¶</a></dt>
-<dd><p>Current nick name of the client (<em>read-only</em>).</p>
-<table class="docutils field-list" frame="void" rules="none">
-<col class="field-name" />
-<col class="field-body" />
-<tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Returns:</th><td class="field-body">nick name or <tt class="docutils literal"><span class="pre">None</span></tt> if client is not registered</td>
-</tr>
-<tr class="field-even field"><th class="field-name">Return type:</th><td class="field-body">str</td>
-</tr>
-</tbody>
-</table>
-</dd></dl>
-
-<dl class="method">
-<dt id="fredirc.IRCClient.part">
-<tt class="descname">part</tt><big>(</big><em>message</em>, <em>channel</em>, <em>*channels</em><big>)</big><a class="headerlink" href="#fredirc.IRCClient.part" title="Permalink to this definition">¶</a></dt>
-<dd><p>Leave the specified channel(s).</p>
-<table class="docutils field-list" frame="void" rules="none">
-<col class="field-name" />
-<col class="field-body" />
-<tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
-<li><strong>message</strong> (<a class="reference external" href="http://docs.python.org/library/functions.html#str" title="(in Python v2.7)"><em>str</em></a>) &#8211; part message</li>
-<li><strong>channel</strong> (<a class="reference external" href="http://docs.python.org/library/functions.html#str" title="(in Python v2.7)"><em>str</em></a>) &#8211; one or more channels</li>
-</ul>
-</td>
-</tr>
-</tbody>
-</table>
-</dd></dl>
-
-<dl class="method">
-<dt id="fredirc.IRCClient.pong">
-<tt class="descname">pong</tt><big>(</big><big>)</big><a class="headerlink" href="#fredirc.IRCClient.pong" title="Permalink to this definition">¶</a></dt>
-<dd><p>Send a pong message to the server.</p>
-</dd></dl>
-
-<dl class="method">
-<dt id="fredirc.IRCClient.quit">
-<tt class="descname">quit</tt><big>(</big><em>message=None</em><big>)</big><a class="headerlink" href="#fredirc.IRCClient.quit" title="Permalink to this definition">¶</a></dt>
-<dd><p>Disconnect from the IRC server.</p>
-<p>Also see <tt class="xref py py-meth docutils literal"><span class="pre">handle_disconnect()&lt;.IRCHandler.handle_disconnect()</span></tt>.</p>
-<table class="docutils field-list" frame="void" rules="none">
-<col class="field-name" />
-<col class="field-body" />
-<tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>message</strong> (<a class="reference external" href="http://docs.python.org/library/functions.html#str" title="(in Python v2.7)"><em>str</em></a>) &#8211; optional message, send to the server</td>
-</tr>
-</tbody>
-</table>
+<dt id="fredirc.IRCClient.run">
+<code class="descname">run</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/fredirc/client.html#IRCClient.run"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#fredirc.IRCClient.run" title="Permalink to this definition">¶</a></dt>
+<dd><p>Start the client&#8217;s event loop.</p>
+<p>An endless event loop which will call the <code class="docutils literal"><span class="pre">handle_*</span></code> methods from
+<a class="reference internal" href="#fredirc.IRCHandler" title="fredirc.IRCHandler"><code class="xref py py-class docutils literal"><span class="pre">IRCHandler</span></code></a>. The client connects to the server
+and calls <a class="reference internal" href="#fredirc.IRCHandler.handle_connect" title="fredirc.IRCHandler.handle_connect"><code class="xref py py-meth docutils literal"><span class="pre">handle_connect()</span></code></a> on
+its handler if this is successful.
+If the connection is closed the client can re-establish it without
+exiting the event loop via <a class="reference internal" href="#fredirc.IRCClient.reconnect" title="fredirc.IRCClient.reconnect"><code class="xref py py-meth docutils literal"><span class="pre">reconnect()</span></code></a>.
+To terminate the event loop use <a class="reference internal" href="#fredirc.IRCClient.terminate" title="fredirc.IRCClient.terminate"><code class="xref py py-meth docutils literal"><span class="pre">terminate()</span></code></a>.
+Afterwards run() will return.</p>
 </dd></dl>
 
 <dl class="method">
 <dt id="fredirc.IRCClient.reconnect">
-<tt class="descname">reconnect</tt><big>(</big><em>delay=0.0</em><big>)</big><a class="headerlink" href="#fredirc.IRCClient.reconnect" title="Permalink to this definition">¶</a></dt>
+<code class="descname">reconnect</code><span class="sig-paren">(</span><em>delay=0.0</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/fredirc/client.html#IRCClient.reconnect"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#fredirc.IRCClient.reconnect" title="Permalink to this definition">¶</a></dt>
 <dd><p>Reconnect the client to the server.</p>
 <p>This only reconnects a disconnected client. If the client is still
 connected to the server, it will have no effects.
 So reconnect() could be used to re-establish the connection on
-<a class="reference internal" href="#fredirc.IRCHandler.handle_disconnect" title="fredirc.IRCHandler.handle_disconnect"><tt class="xref py py-meth docutils literal"><span class="pre">handle_disconnect()</span></tt></a>.</p>
+<a class="reference internal" href="#fredirc.IRCHandler.handle_disconnect" title="fredirc.IRCHandler.handle_disconnect"><code class="xref py py-meth docutils literal"><span class="pre">handle_disconnect()</span></code></a>.</p>
 <p>After successful reconnection
-<a class="reference internal" href="#fredirc.IRCHandler.handle_connect" title="fredirc.IRCHandler.handle_connect"><tt class="xref py py-meth docutils literal"><span class="pre">handle_connect()</span></tt></a> gets called.</p>
+<a class="reference internal" href="#fredirc.IRCHandler.handle_connect" title="fredirc.IRCHandler.handle_connect"><code class="xref py py-meth docutils literal"><span class="pre">handle_connect()</span></code></a> gets called.</p>
 <table class="docutils field-list" frame="void" rules="none">
 <col class="field-name" />
 <col class="field-body" />
@@ -683,8 +657,45 @@ that reconnects to fast.</td>
 </dd></dl>
 
 <dl class="method">
+<dt id="fredirc.IRCClient.enable_logging">
+<code class="descname">enable_logging</code><span class="sig-paren">(</span><em>enable</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/fredirc/client.html#IRCClient.enable_logging"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#fredirc.IRCClient.enable_logging" title="Permalink to this definition">¶</a></dt>
+<dd><p>Enable or disable logging.</p>
+<blockquote>
+<div>Logging is enabled by default.</div></blockquote>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>enable</strong> (<a class="reference external" href="http://docs.python.org/library/functions.html#bool" title="(in Python v2.7)"><em>bool</em></a>) &#8211; <code class="docutils literal"><span class="pre">True</span></code> to enable logging, <code class="docutils literal"><span class="pre">False</span></code> disable it</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="fredirc.IRCClient.set_log_level">
+<code class="descname">set_log_level</code><span class="sig-paren">(</span><em>level</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/fredirc/client.html#IRCClient.set_log_level"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#fredirc.IRCClient.set_log_level" title="Permalink to this definition">¶</a></dt>
+<dd><p>Set the log level that is used if logging is enabled.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>level</strong> (<a class="reference external" href="http://docs.python.org/library/functions.html#int" title="(in Python v2.7)"><em>int</em></a>) &#8211; the log level as defined by constants in Python&#8217;s             <a class="reference external" href="https://docs.python.org/2/library/logging.html#logging-levels">logging module</a>             (<code class="docutils literal"><span class="pre">DEBUG</span></code>, <code class="docutils literal"><span class="pre">INFO</span></code>, <code class="docutils literal"><span class="pre">WARNING</span></code>, <code class="docutils literal"><span class="pre">ERROR</span></code>, <code class="docutils literal"><span class="pre">CRITICAL</span></code>)</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="fredirc.IRCClient.terminate">
+<code class="descname">terminate</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/fredirc/client.html#IRCClient.terminate"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#fredirc.IRCClient.terminate" title="Permalink to this definition">¶</a></dt>
+<dd><p>Shutdown the IRCClient by terminating the event loop.</p>
+<p>Control flow will continue after the call to <a class="reference internal" href="#fredirc.IRCClient.run" title="fredirc.IRCClient.run"><code class="xref py py-meth docutils literal"><span class="pre">IRCClient.run()</span></code></a>.</p>
+</dd></dl>
+
+<dl class="method">
 <dt id="fredirc.IRCClient.register">
-<tt class="descname">register</tt><big>(</big><em>nick=None</em>, <em>user_name=None</em>, <em>real_name=None</em>, <em>password=None</em><big>)</big><a class="headerlink" href="#fredirc.IRCClient.register" title="Permalink to this definition">¶</a></dt>
+<code class="descname">register</code><span class="sig-paren">(</span><em>nick=None</em>, <em>user_name=None</em>, <em>real_name=None</em>, <em>password=None</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/fredirc/client.html#IRCClient.register"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#fredirc.IRCClient.register" title="Permalink to this definition">¶</a></dt>
 <dd><p>Register to the IRC server.</p>
 <p>When called with no arguments, registration data given on initialization
 or the last call to register is used.</p>
@@ -706,12 +717,180 @@ authenticate to the server.</li>
 </dd></dl>
 
 <dl class="method">
+<dt id="fredirc.IRCClient.change_nick">
+<code class="descname">change_nick</code><span class="sig-paren">(</span><em>nick</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/fredirc/client.html#IRCClient.change_nick"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#fredirc.IRCClient.change_nick" title="Permalink to this definition">¶</a></dt>
+<dd><p>Change the nick name of the client.</p>
+<p>Note that the clients <a class="reference internal" href="#fredirc.IRCClient.nick" title="fredirc.IRCClient.nick"><code class="xref py py-attr docutils literal"><span class="pre">nick</span></code></a>-property will not change
+directly, but only after the server acknowledged the new nick name.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>nick</strong> (<a class="reference external" href="http://docs.python.org/library/functions.html#str" title="(in Python v2.7)"><em>str</em></a>) &#8211; The new nick name.</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="fredirc.IRCClient.join">
+<code class="descname">join</code><span class="sig-paren">(</span><em>channel</em>, <em>*channels</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/fredirc/client.html#IRCClient.join"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#fredirc.IRCClient.join" title="Permalink to this definition">¶</a></dt>
+<dd><p>Join the specified channel(s).</p>
+<p>Note that no matter what case the channel strings are in, in the
+handler functions of <a class="reference internal" href="#fredirc.IRCHandler" title="fredirc.IRCHandler"><code class="xref py py-class docutils literal"><span class="pre">IRCHandler</span></code></a> channel names will
+probably always be lower case.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>channel</strong> (<a class="reference external" href="http://docs.python.org/library/functions.html#str" title="(in Python v2.7)"><em>str</em></a>) &#8211; one or more channels</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="fredirc.IRCClient.part">
+<code class="descname">part</code><span class="sig-paren">(</span><em>message</em>, <em>channel</em>, <em>*channels</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/fredirc/client.html#IRCClient.part"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#fredirc.IRCClient.part" title="Permalink to this definition">¶</a></dt>
+<dd><p>Leave the specified channel(s).</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
+<li><strong>message</strong> (<a class="reference external" href="http://docs.python.org/library/functions.html#str" title="(in Python v2.7)"><em>str</em></a>) &#8211; part message</li>
+<li><strong>channel</strong> (<a class="reference external" href="http://docs.python.org/library/functions.html#str" title="(in Python v2.7)"><em>str</em></a>) &#8211; one or more channels</li>
+</ul>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="fredirc.IRCClient.quit">
+<code class="descname">quit</code><span class="sig-paren">(</span><em>message=None</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/fredirc/client.html#IRCClient.quit"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#fredirc.IRCClient.quit" title="Permalink to this definition">¶</a></dt>
+<dd><p>Disconnect from the IRC server.</p>
+<p>Also see <code class="xref py py-meth docutils literal"><span class="pre">handle_disconnect()&lt;.IRCHandler.handle_disconnect()</span></code>.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>message</strong> (<a class="reference external" href="http://docs.python.org/library/functions.html#str" title="(in Python v2.7)"><em>str</em></a>) &#8211; optional message, send to the server</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="fredirc.IRCClient.send_message">
+<code class="descname">send_message</code><span class="sig-paren">(</span><em>channel</em>, <em>message</em>, <em>delay=0.0</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/fredirc/client.html#IRCClient.send_message"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#fredirc.IRCClient.send_message" title="Permalink to this definition">¶</a></dt>
+<dd><p>Send a message to a channel.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
+<li><strong>channel</strong> (<a class="reference external" href="http://docs.python.org/library/functions.html#str" title="(in Python v2.7)"><em>str</em></a>) &#8211; the addressed channel</li>
+<li><strong>message</strong> (<a class="reference external" href="http://docs.python.org/library/functions.html#str" title="(in Python v2.7)"><em>str</em></a>) &#8211; the message to send</li>
+<li><strong>delay</strong> (<a class="reference external" href="http://docs.python.org/library/functions.html#float" title="(in Python v2.7)"><em>float</em></a>) &#8211; the delay in second before sending message
+the bot is not blocked during delay</li>
+</ul>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="fredirc.IRCClient.send_private_message">
+<code class="descname">send_private_message</code><span class="sig-paren">(</span><em>user</em>, <em>message</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/fredirc/client.html#IRCClient.send_private_message"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#fredirc.IRCClient.send_private_message" title="Permalink to this definition">¶</a></dt>
+<dd><p>Send a private message to a user.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
+<li><strong>user</strong> (<a class="reference external" href="http://docs.python.org/library/functions.html#str" title="(in Python v2.7)"><em>str</em></a>) &#8211; the addressed user</li>
+<li><strong>message</strong> (<a class="reference external" href="http://docs.python.org/library/functions.html#str" title="(in Python v2.7)"><em>str</em></a>) &#8211; the message tro send</li>
+</ul>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="fredirc.IRCClient.kick">
+<code class="descname">kick</code><span class="sig-paren">(</span><em>user</em>, <em>channel</em>, <em>reason=None</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/fredirc/client.html#IRCClient.kick"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#fredirc.IRCClient.kick" title="Permalink to this definition">¶</a></dt>
+<dd><p>Forcefully remove a user from a channel.</p>
+<p>If the client is no operator, the server will respond with an
+error message that can be handled via
+<a class="reference internal" href="#fredirc.IRCHandler.handle_error" title="fredirc.IRCHandler.handle_error"><code class="xref py py-meth docutils literal"><span class="pre">handle_error()</span></code></a>.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
+<li><strong>user</strong> (<a class="reference external" href="http://docs.python.org/library/functions.html#str" title="(in Python v2.7)"><em>str</em></a>) &#8211; the affected user</li>
+<li><strong>channel</strong> (<a class="reference external" href="http://docs.python.org/library/functions.html#str" title="(in Python v2.7)"><em>str</em></a>) &#8211; the channel</li>
+<li><strong>reason</strong> (<a class="reference external" href="http://docs.python.org/library/functions.html#str" title="(in Python v2.7)"><em>str</em></a>) &#8211; optional message with the reason</li>
+</ul>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="fredirc.IRCClient.give_op">
+<code class="descname">give_op</code><span class="sig-paren">(</span><em>user</em>, <em>channel</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/fredirc/client.html#IRCClient.give_op"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#fredirc.IRCClient.give_op" title="Permalink to this definition">¶</a></dt>
+<dd><p>Grant operator rights to a user on a channel.</p>
+<p>If the client is no operator, the server will respond with an
+error message that can be handled via
+<a class="reference internal" href="#fredirc.IRCHandler.handle_error" title="fredirc.IRCHandler.handle_error"><code class="xref py py-meth docutils literal"><span class="pre">handle_error()</span></code></a>.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
+<li><strong>user</strong> (<a class="reference external" href="http://docs.python.org/library/functions.html#str" title="(in Python v2.7)"><em>str</em></a>) &#8211; the affected user</li>
+<li><strong>channel</strong> (<a class="reference external" href="http://docs.python.org/library/functions.html#str" title="(in Python v2.7)"><em>str</em></a>) &#8211; the channel</li>
+</ul>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
 <dt id="fredirc.IRCClient.revoke_op">
-<tt class="descname">revoke_op</tt><big>(</big><em>user</em>, <em>channel</em><big>)</big><a class="headerlink" href="#fredirc.IRCClient.revoke_op" title="Permalink to this definition">¶</a></dt>
+<code class="descname">revoke_op</code><span class="sig-paren">(</span><em>user</em>, <em>channel</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/fredirc/client.html#IRCClient.revoke_op"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#fredirc.IRCClient.revoke_op" title="Permalink to this definition">¶</a></dt>
 <dd><p>Revoke operator rights from user on a channel.</p>
 <p>If the client is no operator, the server will respond with an
 error message that can be handled via
-<a class="reference internal" href="#fredirc.IRCHandler.handle_error" title="fredirc.IRCHandler.handle_error"><tt class="xref py py-meth docutils literal"><span class="pre">handle_error()</span></tt></a>.</p>
+<a class="reference internal" href="#fredirc.IRCHandler.handle_error" title="fredirc.IRCHandler.handle_error"><code class="xref py py-meth docutils literal"><span class="pre">handle_error()</span></code></a>.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
+<li><strong>user</strong> (<a class="reference external" href="http://docs.python.org/library/functions.html#str" title="(in Python v2.7)"><em>str</em></a>) &#8211; the affected user</li>
+<li><strong>channel</strong> (<a class="reference external" href="http://docs.python.org/library/functions.html#str" title="(in Python v2.7)"><em>str</em></a>) &#8211; the channel</li>
+</ul>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="fredirc.IRCClient.give_voice">
+<code class="descname">give_voice</code><span class="sig-paren">(</span><em>user</em>, <em>channel</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/fredirc/client.html#IRCClient.give_voice"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#fredirc.IRCClient.give_voice" title="Permalink to this definition">¶</a></dt>
+<dd><p>Grant voice rights to a user on a channel.</p>
+<p>If the client is no operator, the server will respond with an
+error message that can be handled via
+<a class="reference internal" href="#fredirc.IRCHandler.handle_error" title="fredirc.IRCHandler.handle_error"><code class="xref py py-meth docutils literal"><span class="pre">handle_error()</span></code></a>.</p>
 <table class="docutils field-list" frame="void" rules="none">
 <col class="field-name" />
 <col class="field-body" />
@@ -728,11 +907,11 @@ error message that can be handled via
 
 <dl class="method">
 <dt id="fredirc.IRCClient.revoke_voice">
-<tt class="descname">revoke_voice</tt><big>(</big><em>user</em>, <em>channel</em><big>)</big><a class="headerlink" href="#fredirc.IRCClient.revoke_voice" title="Permalink to this definition">¶</a></dt>
+<code class="descname">revoke_voice</code><span class="sig-paren">(</span><em>user</em>, <em>channel</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/fredirc/client.html#IRCClient.revoke_voice"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#fredirc.IRCClient.revoke_voice" title="Permalink to this definition">¶</a></dt>
 <dd><p>Revoke voice rights from user on a channel.</p>
 <p>If the client is no operator, the server will respond with an
 error message that can be handled via
-<a class="reference internal" href="#fredirc.IRCHandler.handle_error" title="fredirc.IRCHandler.handle_error"><tt class="xref py py-meth docutils literal"><span class="pre">handle_error()</span></tt></a>.</p>
+<a class="reference internal" href="#fredirc.IRCHandler.handle_error" title="fredirc.IRCHandler.handle_error"><code class="xref py py-meth docutils literal"><span class="pre">handle_error()</span></code></a>.</p>
 <table class="docutils field-list" frame="void" rules="none">
 <col class="field-name" />
 <col class="field-body" />
@@ -748,50 +927,68 @@ error message that can be handled via
 </dd></dl>
 
 <dl class="method">
-<dt id="fredirc.IRCClient.run">
-<tt class="descname">run</tt><big>(</big><big>)</big><a class="headerlink" href="#fredirc.IRCClient.run" title="Permalink to this definition">¶</a></dt>
-<dd><p>Start the client&#8217;s event loop.</p>
-<p>An endless event loop which will call the <tt class="docutils literal"><span class="pre">handle_*</span></tt> methods from
-<a class="reference internal" href="#fredirc.IRCHandler" title="fredirc.IRCHandler"><tt class="xref py py-class docutils literal"><span class="pre">IRCHandler</span></tt></a>. The client connects to the server
-and calls <a class="reference internal" href="#fredirc.IRCHandler.handle_connect" title="fredirc.IRCHandler.handle_connect"><tt class="xref py py-meth docutils literal"><span class="pre">handle_connect()</span></tt></a> on
-its handler if this is successful.
-If the connection is closed the client can re-establish it without
-exiting the event loop via <a class="reference internal" href="#fredirc.IRCClient.reconnect" title="fredirc.IRCClient.reconnect"><tt class="xref py py-meth docutils literal"><span class="pre">reconnect()</span></tt></a>.
-To terminate the event loop use <a class="reference internal" href="#fredirc.IRCClient.terminate" title="fredirc.IRCClient.terminate"><tt class="xref py py-meth docutils literal"><span class="pre">terminate()</span></tt></a>.
-Afterwards run() will return.</p>
-</dd></dl>
-
-<dl class="method">
-<dt id="fredirc.IRCClient.send_message">
-<tt class="descname">send_message</tt><big>(</big><em>channel</em>, <em>message</em><big>)</big><a class="headerlink" href="#fredirc.IRCClient.send_message" title="Permalink to this definition">¶</a></dt>
-<dd><p>Send a message to a channel.</p>
+<dt id="fredirc.IRCClient.is_op_in">
+<code class="descname">is_op_in</code><span class="sig-paren">(</span><em>channel</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/fredirc/client.html#IRCClient.is_op_in"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#fredirc.IRCClient.is_op_in" title="Permalink to this definition">¶</a></dt>
+<dd><p>Check if this client has operator rights in the given channel.</p>
 <table class="docutils field-list" frame="void" rules="none">
 <col class="field-name" />
 <col class="field-body" />
 <tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
-<li><strong>channel</strong> (<a class="reference external" href="http://docs.python.org/library/functions.html#str" title="(in Python v2.7)"><em>str</em></a>) &#8211; the addressed channel</li>
-<li><strong>message</strong> (<a class="reference external" href="http://docs.python.org/library/functions.html#str" title="(in Python v2.7)"><em>str</em></a>) &#8211; the message to send</li>
-</ul>
-</td>
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>channel</strong> (<a class="reference external" href="http://docs.python.org/library/functions.html#str" title="(in Python v2.7)"><em>str</em></a>) &#8211; the channel (case-insensitive)</td>
 </tr>
 </tbody>
 </table>
 </dd></dl>
 
 <dl class="method">
-<dt id="fredirc.IRCClient.send_private_message">
-<tt class="descname">send_private_message</tt><big>(</big><em>user</em>, <em>message</em><big>)</big><a class="headerlink" href="#fredirc.IRCClient.send_private_message" title="Permalink to this definition">¶</a></dt>
-<dd><p>Send a private message to a user.</p>
+<dt id="fredirc.IRCClient.has_voice_in">
+<code class="descname">has_voice_in</code><span class="sig-paren">(</span><em>channel</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/fredirc/client.html#IRCClient.has_voice_in"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#fredirc.IRCClient.has_voice_in" title="Permalink to this definition">¶</a></dt>
+<dd><p>Check if this client has voice rights in the given channel.</p>
 <table class="docutils field-list" frame="void" rules="none">
 <col class="field-name" />
 <col class="field-body" />
 <tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
-<li><strong>user</strong> (<a class="reference external" href="http://docs.python.org/library/functions.html#str" title="(in Python v2.7)"><em>str</em></a>) &#8211; the addressed user</li>
-<li><strong>message</strong> (<a class="reference external" href="http://docs.python.org/library/functions.html#str" title="(in Python v2.7)"><em>str</em></a>) &#8211; the message tro send</li>
-</ul>
-</td>
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>channel</strong> (<a class="reference external" href="http://docs.python.org/library/functions.html#str" title="(in Python v2.7)"><em>str</em></a>) &#8211; the channel (case-insensitive)</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="fredirc.IRCClient.pong">
+<code class="descname">pong</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/fredirc/client.html#IRCClient.pong"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#fredirc.IRCClient.pong" title="Permalink to this definition">¶</a></dt>
+<dd><p>Send a pong message to the server.</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="fredirc.IRCClient.channel_info">
+<code class="descname">channel_info</code><a class="headerlink" href="#fredirc.IRCClient.channel_info" title="Permalink to this definition">¶</a></dt>
+<dd><p>Get information about channels.</p>
+<p>To get all channel names use <a class="reference internal" href="#fredirc.IRCClient.channels" title="fredirc.IRCClient.channels"><code class="xref py py-attr docutils literal"><span class="pre">channels</span></code></a>.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Returns:</th><td class="field-body">A read-only(!) mapping of channel names to
+<a class="reference internal" href="#fredirc.ChannelInfo" title="fredirc.ChannelInfo"><code class="xref py py-class docutils literal"><span class="pre">ChannelInfo</span></code></a> objects.</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Return type:</th><td class="field-body"><a class="reference external" href="http://docs.python.org/library/stdtypes.html#dict" title="(in Python v2.7)">dict</a></td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="fredirc.IRCClient.nick">
+<code class="descname">nick</code><a class="headerlink" href="#fredirc.IRCClient.nick" title="Permalink to this definition">¶</a></dt>
+<dd><p>Current nick name of the client (<em>read-only</em>).</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Returns:</th><td class="field-body">nick name or <code class="docutils literal"><span class="pre">None</span></code> if client is not registered</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Return type:</th><td class="field-body"><a class="reference external" href="http://docs.python.org/library/functions.html#str" title="(in Python v2.7)">str</a></td>
 </tr>
 </tbody>
 </table>
@@ -799,64 +996,119 @@ Afterwards run() will return.</p>
 
 <dl class="attribute">
 <dt id="fredirc.IRCClient.server">
-<tt class="descname">server</tt><a class="headerlink" href="#fredirc.IRCClient.server" title="Permalink to this definition">¶</a></dt>
+<code class="descname">server</code><a class="headerlink" href="#fredirc.IRCClient.server" title="Permalink to this definition">¶</a></dt>
 <dd><p>Name of the Server this client is currently connected to (<em>read-only</em>).</p>
 <table class="docutils field-list" frame="void" rules="none">
 <col class="field-name" />
 <col class="field-body" />
 <tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Returns:</th><td class="field-body">server name or <tt class="docutils literal"><span class="pre">None</span></tt> if client is not connected to a server.</td>
+<tr class="field-odd field"><th class="field-name">Returns:</th><td class="field-body">server name or <code class="docutils literal"><span class="pre">None</span></code> if client is not connected to a server.</td>
 </tr>
-<tr class="field-even field"><th class="field-name">Return type:</th><td class="field-body">str</td>
+<tr class="field-even field"><th class="field-name">Return type:</th><td class="field-body"><a class="reference external" href="http://docs.python.org/library/functions.html#str" title="(in Python v2.7)">str</a></td>
 </tr>
 </tbody>
 </table>
 </dd></dl>
 
-<dl class="method">
-<dt id="fredirc.IRCClient.set_log_level">
-<tt class="descname">set_log_level</tt><big>(</big><em>level</em><big>)</big><a class="headerlink" href="#fredirc.IRCClient.set_log_level" title="Permalink to this definition">¶</a></dt>
-<dd><p>Set the log level that is used if logging is enabled.</p>
+<dl class="attribute">
+<dt id="fredirc.IRCClient.channels">
+<code class="descname">channels</code><a class="headerlink" href="#fredirc.IRCClient.channels" title="Permalink to this definition">¶</a></dt>
+<dd><p>Names of channels this client is currently in (<em>read-only</em>).</p>
 <table class="docutils field-list" frame="void" rules="none">
 <col class="field-name" />
 <col class="field-body" />
 <tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>level</strong> (<a class="reference external" href="http://docs.python.org/library/functions.html#int" title="(in Python v2.7)"><em>int</em></a>) &#8211; the log level as defined by constants in Python&#8217;s             <a class="reference external" href="https://docs.python.org/2/library/logging.html#logging-levels">logging module</a>             (<tt class="docutils literal"><span class="pre">DEBUG</span></tt>, <tt class="docutils literal"><span class="pre">INFO</span></tt>, <tt class="docutils literal"><span class="pre">WARNING</span></tt>, <tt class="docutils literal"><span class="pre">ERROR</span></tt>, <tt class="docutils literal"><span class="pre">CRITICAL</span></tt>)</td>
+<tr class="field-odd field"><th class="field-name">Returns:</th><td class="field-body">over channel names as strings</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Return type:</th><td class="field-body">iterator</td>
 </tr>
 </tbody>
 </table>
 </dd></dl>
 
-<dl class="method">
-<dt id="fredirc.IRCClient.terminate">
-<tt class="descname">terminate</tt><big>(</big><big>)</big><a class="headerlink" href="#fredirc.IRCClient.terminate" title="Permalink to this definition">¶</a></dt>
-<dd><p>Shutdown the IRCClient by terminating the event loop.</p>
-<p>Control flow will continue after the call to <a class="reference internal" href="#fredirc.IRCClient.run" title="fredirc.IRCClient.run"><tt class="xref py py-meth docutils literal"><span class="pre">IRCClient.run()</span></tt></a>.</p>
+</dd></dl>
+
+</div>
+<div class="section" id="channelinfo-class">
+<h2><code class="docutils literal"><span class="pre">ChannelInfo</span></code> Class<a class="headerlink" href="#channelinfo-class" title="Permalink to this headline">¶</a></h2>
+<dl class="class">
+<dt id="fredirc.ChannelInfo">
+<em class="property">class </em><code class="descclassname">fredirc.</code><code class="descname">ChannelInfo</code><span class="sig-paren">(</span><em>name</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/fredirc/info.html#ChannelInfo"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#fredirc.ChannelInfo" title="Permalink to this definition">¶</a></dt>
+<dd><p>Provides information about a channel.</p>
+<p>A ChannelInfo object is a view on a channel and is automatically updated
+as long as the client is in the channel. Afterwards the ChannelInfo becomes
+invalid and should not be used any longer.</p>
+<dl class="attribute">
+<dt id="fredirc.ChannelInfo.name">
+<code class="descname">name</code><a class="headerlink" href="#fredirc.ChannelInfo.name" title="Permalink to this definition">¶</a></dt>
+<dd><p>Name of the channel (<em>read-only</em>).</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Returns:</th><td class="field-body">name</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Return type:</th><td class="field-body"><a class="reference external" href="http://docs.python.org/library/functions.html#str" title="(in Python v2.7)">str</a></td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="fredirc.ChannelInfo.topic">
+<code class="descname">topic</code><a class="headerlink" href="#fredirc.ChannelInfo.topic" title="Permalink to this definition">¶</a></dt>
+<dd><p>Topic of the channel (<em>read-only</em>).</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Returns:</th><td class="field-body">topic, might be empty</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Return type:</th><td class="field-body"><a class="reference external" href="http://docs.python.org/library/functions.html#str" title="(in Python v2.7)">str</a></td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="fredirc.ChannelInfo.nicks">
+<code class="descname">nicks</code><a class="headerlink" href="#fredirc.ChannelInfo.nicks" title="Permalink to this definition">¶</a></dt>
+<dd><p>Nicks of all visible users in this channel. (<em>read-only</em>).</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Returns:</th><td class="field-body">over nick names</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Return type:</th><td class="field-body">iterator</td>
+</tr>
+</tbody>
+</table>
 </dd></dl>
 
 </dd></dl>
 
 </div>
 <div class="section" id="task-class">
-<h2><tt class="docutils literal"><span class="pre">Task</span></tt> Class<a class="headerlink" href="#task-class" title="Permalink to this headline">¶</a></h2>
+<h2><code class="docutils literal"><span class="pre">Task</span></code> Class<a class="headerlink" href="#task-class" title="Permalink to this headline">¶</a></h2>
 <dl class="class">
 <dt id="fredirc.Task">
-<em class="property">class </em><tt class="descclassname">fredirc.</tt><tt class="descname">Task</tt><big>(</big><em>delay</em>, <em>repeat=False</em>, <em>func=None</em><big>)</big><a class="headerlink" href="#fredirc.Task" title="Permalink to this definition">¶</a></dt>
+<em class="property">class </em><code class="descclassname">fredirc.</code><code class="descname">Task</code><span class="sig-paren">(</span><em>delay</em>, <em>repeat=False</em>, <em>func=None</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/fredirc/task.html#Task"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#fredirc.Task" title="Permalink to this definition">¶</a></dt>
 <dd><p>A Task can be used to schedule a function that will be executed by the
 event loop.</p>
 <div class="admonition note">
 <p class="first admonition-title">Note</p>
 <p class="last">A task will be scheduled only if there is a running(!)
-<a class="reference internal" href="#fredirc.IRCClient" title="fredirc.IRCClient"><tt class="xref py py-class docutils literal"><span class="pre">IRCClient</span></tt></a> instance in the same process.</p>
+<a class="reference internal" href="#fredirc.IRCClient" title="fredirc.IRCClient"><code class="xref py py-class docutils literal"><span class="pre">IRCClient</span></code></a> instance in the same process.</p>
 </div>
 <p>There are two ways to use a Task:</p>
 <ol class="arabic simple">
-<li>Subclass Task and overwrite its <a class="reference internal" href="#fredirc.Task.run" title="fredirc.Task.run"><tt class="xref py py-meth docutils literal"><span class="pre">run()</span></tt></a> method.</li>
+<li>Subclass Task and overwrite its <a class="reference internal" href="#fredirc.Task.run" title="fredirc.Task.run"><code class="xref py py-meth docutils literal"><span class="pre">run()</span></code></a> method.</li>
 <li>Instantiate the task directly and provide a function as parameter to the
 constructor.</li>
 </ol>
 <p>After initialization the Task must be started explicitly via
-<a class="reference internal" href="#fredirc.Task.start" title="fredirc.Task.start"><tt class="xref py py-meth docutils literal"><span class="pre">start()</span></tt></a>.</p>
+<a class="reference internal" href="#fredirc.Task.start" title="fredirc.Task.start"><code class="xref py py-meth docutils literal"><span class="pre">start()</span></code></a>.</p>
 <table class="docutils field-list" frame="void" rules="none">
 <col class="field-name" />
 <col class="field-body" />
@@ -864,8 +1116,8 @@ constructor.</li>
 <tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
 <li><strong>delay</strong> (<a class="reference external" href="http://docs.python.org/library/functions.html#float" title="(in Python v2.7)"><em>float</em></a>) &#8211; Time (in seconds) to defer the execution of the task
 after it is started or the interval for its repeated
-execution if <tt class="docutils literal"><span class="pre">repeat=True</span></tt>.</li>
-<li><strong>repeat</strong> (<a class="reference external" href="http://docs.python.org/library/functions.html#bool" title="(in Python v2.7)"><em>bool</em></a>) &#8211; If <tt class="docutils literal"><span class="pre">True</span></tt> the task will run periodically until it is
+execution if <code class="docutils literal"><span class="pre">repeat=True</span></code>.</li>
+<li><strong>repeat</strong> (<a class="reference external" href="http://docs.python.org/library/functions.html#bool" title="(in Python v2.7)"><em>bool</em></a>) &#8211; If <code class="docutils literal"><span class="pre">True</span></code> the task will run periodically until it is
 stopped.</li>
 <li><strong>func</strong> (<em>function type</em>) &#8211; function that will be called (the actual task)</li>
 </ul>
@@ -874,8 +1126,15 @@ stopped.</li>
 </tbody>
 </table>
 <dl class="method">
+<dt id="fredirc.Task.change_delay">
+<code class="descname">change_delay</code><span class="sig-paren">(</span><em>delay</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/fredirc/task.html#Task.change_delay"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#fredirc.Task.change_delay" title="Permalink to this definition">¶</a></dt>
+<dd><p>Change Task delay.</p>
+<p>The new delay will be applied to the next repeat of the tasK</p>
+</dd></dl>
+
+<dl class="method">
 <dt id="fredirc.Task.run">
-<tt class="descname">run</tt><big>(</big><big>)</big><a class="headerlink" href="#fredirc.Task.run" title="Permalink to this definition">¶</a></dt>
+<code class="descname">run</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/fredirc/task.html#Task.run"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#fredirc.Task.run" title="Permalink to this definition">¶</a></dt>
 <dd><p>Method that is called on execution of the Task.</p>
 <p>Can be overwritten in subclasses or by passing a function to
 the constructor.</p>
@@ -883,15 +1142,15 @@ the constructor.</p>
 
 <dl class="method">
 <dt id="fredirc.Task.start">
-<tt class="descname">start</tt><big>(</big><big>)</big><a class="headerlink" href="#fredirc.Task.start" title="Permalink to this definition">¶</a></dt>
+<code class="descname">start</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/fredirc/task.html#Task.start"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#fredirc.Task.start" title="Permalink to this definition">¶</a></dt>
 <dd><p>Start the task.</p>
-<p>It will be executed in <tt class="docutils literal"><span class="pre">delay</span></tt> seconds (as specified in the constructor).
-A started task can be stopped by calling <a class="reference internal" href="#fredirc.Task.stop" title="fredirc.Task.stop"><tt class="xref py py-meth docutils literal"><span class="pre">stop()</span></tt></a>.</p>
+<p>It will be executed after the configured delay.
+A started task can be stopped by calling <a class="reference internal" href="#fredirc.Task.stop" title="fredirc.Task.stop"><code class="xref py py-meth docutils literal"><span class="pre">stop()</span></code></a>.</p>
 </dd></dl>
 
 <dl class="method">
 <dt id="fredirc.Task.stop">
-<tt class="descname">stop</tt><big>(</big><big>)</big><a class="headerlink" href="#fredirc.Task.stop" title="Permalink to this definition">¶</a></dt>
+<code class="descname">stop</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/fredirc/task.html#Task.stop"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#fredirc.Task.stop" title="Permalink to this definition">¶</a></dt>
 <dd><p>Stop the task.</p>
 <p>Will have no effect if task is not running. The task might be started
 again later.</p>
@@ -901,287 +1160,287 @@ again later.</p>
 
 </div>
 <div class="section" id="err-class">
-<h2><tt class="docutils literal"><span class="pre">Err</span></tt> Class<a class="headerlink" href="#err-class" title="Permalink to this headline">¶</a></h2>
+<h2><code class="docutils literal"><span class="pre">Err</span></code> Class<a class="headerlink" href="#err-class" title="Permalink to this headline">¶</a></h2>
 <dl class="class">
 <dt id="fredirc.Err">
-<em class="property">class </em><tt class="descclassname">fredirc.</tt><tt class="descname">Err</tt><a class="headerlink" href="#fredirc.Err" title="Permalink to this definition">¶</a></dt>
+<em class="property">class </em><code class="descclassname">fredirc.</code><code class="descname">Err</code><a class="reference internal" href="_modules/fredirc/messages.html#Err"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#fredirc.Err" title="Permalink to this definition">¶</a></dt>
 <dd><p>Error Replies</p>
 <p>Contains numerical constants for errors as defined by the irc client
 protocol as well as the keywords of error specific parameters.
 Error numbers and parameters are passed to
-<a class="reference internal" href="#fredirc.IRCHandler.handle_error" title="fredirc.IRCHandler.handle_error"><tt class="xref py py-meth docutils literal"><span class="pre">handle_error(self,</span> <span class="pre">error,</span> <span class="pre">**params)</span></tt></a>.
-You can take a look at <a class="reference internal" href="#fredirc.Err.ERROR_PARAMETERS" title="fredirc.Err.ERROR_PARAMETERS"><tt class="xref py py-attr docutils literal"><span class="pre">ERROR_PARAMETERS</span></tt></a> to find out the
+<a class="reference internal" href="#fredirc.IRCHandler.handle_error" title="fredirc.IRCHandler.handle_error"><code class="xref py py-meth docutils literal"><span class="pre">handle_error(self,</span> <span class="pre">error,</span> <span class="pre">**params)</span></code></a>.
+You can take a look at <a class="reference internal" href="#fredirc.Err.ERROR_PARAMETERS" title="fredirc.Err.ERROR_PARAMETERS"><code class="xref py py-attr docutils literal"><span class="pre">ERROR_PARAMETERS</span></code></a> to find out the
 parameter keywords for a particular error.</p>
-<p>See the <a class="reference internal" href="guide.html#guide-handle-errors"><em>beginner&#8217;s guide</em></a> for an example on how
+<p>See the <a class="reference internal" href="guide.html#guide-handle-errors"><span>beginner&#8217;s guide</span></a> for an example on how
 to use this class to handle errors.</p>
 <dl class="attribute">
-<dt id="fredirc.Err.ALREADYREGISTRED">
-<tt class="descname">ALREADYREGISTRED</tt><em class="property"> = 462</em><a class="headerlink" href="#fredirc.Err.ALREADYREGISTRED" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
-
-<dl class="attribute">
-<dt id="fredirc.Err.BADCHANMASK">
-<tt class="descname">BADCHANMASK</tt><em class="property"> = 476</em><a class="headerlink" href="#fredirc.Err.BADCHANMASK" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
-
-<dl class="attribute">
-<dt id="fredirc.Err.BADCHANNELKEY">
-<tt class="descname">BADCHANNELKEY</tt><em class="property"> = 475</em><a class="headerlink" href="#fredirc.Err.BADCHANNELKEY" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
-
-<dl class="attribute">
-<dt id="fredirc.Err.BADMASK">
-<tt class="descname">BADMASK</tt><em class="property"> = 415</em><a class="headerlink" href="#fredirc.Err.BADMASK" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
-
-<dl class="attribute">
-<dt id="fredirc.Err.BANLISTFULL">
-<tt class="descname">BANLISTFULL</tt><em class="property"> = 478</em><a class="headerlink" href="#fredirc.Err.BANLISTFULL" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
-
-<dl class="attribute">
-<dt id="fredirc.Err.BANNEDFROMCHAN">
-<tt class="descname">BANNEDFROMCHAN</tt><em class="property"> = 474</em><a class="headerlink" href="#fredirc.Err.BANNEDFROMCHAN" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
-
-<dl class="attribute">
-<dt id="fredirc.Err.CANNOTSENDTOCHAN">
-<tt class="descname">CANNOTSENDTOCHAN</tt><em class="property"> = 404</em><a class="headerlink" href="#fredirc.Err.CANNOTSENDTOCHAN" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
-
-<dl class="attribute">
-<dt id="fredirc.Err.CANTKILLSERVER">
-<tt class="descname">CANTKILLSERVER</tt><em class="property"> = 483</em><a class="headerlink" href="#fredirc.Err.CANTKILLSERVER" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
-
-<dl class="attribute">
-<dt id="fredirc.Err.CHANNELISFULL">
-<tt class="descname">CHANNELISFULL</tt><em class="property"> = 471</em><a class="headerlink" href="#fredirc.Err.CHANNELISFULL" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
-
-<dl class="attribute">
-<dt id="fredirc.Err.CHANOPRIVSNEEDED">
-<tt class="descname">CHANOPRIVSNEEDED</tt><em class="property"> = 482</em><a class="headerlink" href="#fredirc.Err.CHANOPRIVSNEEDED" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
-
-<dl class="attribute">
-<dt id="fredirc.Err.ERRONEUSNICKNAME">
-<tt class="descname">ERRONEUSNICKNAME</tt><em class="property"> = 432</em><a class="headerlink" href="#fredirc.Err.ERRONEUSNICKNAME" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
-
-<dl class="attribute">
-<dt id="fredirc.Err.ERROR_PARAMETERS">
-<tt class="descname">ERROR_PARAMETERS</tt><em class="property"> = {401: ['nick', 'message'], 402: ['server_name', 'message'], 403: ['channel_name', 'message'], 404: ['channel_name', 'message'], 405: ['channel_name', 'message'], 406: ['nick', 'message'], 407: ['target', 'message'], 408: ['service_name', 'message'], 409: ['message'], 411: ['message'], 412: ['message'], 413: ['mask', 'message'], 414: ['mask', 'message'], 415: ['mask', 'message'], 421: ['command', 'message'], 422: ['message'], 423: ['server', 'message'], 424: ['message'], 431: ['message'], 432: ['nick', 'message'], 433: ['nick', 'message'], 436: ['nick', 'message'], 437: ['nick', 'message'], 441: ['nick', 'channel', 'message'], 442: ['channel', 'message'], 443: ['user', 'channel', 'message'], 444: ['user', 'channel', 'message'], 445: ['message'], 446: ['message'], 451: ['message'], 461: ['command', 'message'], 462: ['message'], 463: ['message'], 464: ['message'], 465: ['message'], 466: [], 467: ['channel', 'message'], 471: ['channel', 'message'], 472: ['mode', 'message'], 473: ['channel', 'message'], 474: ['channel', 'message'], 475: ['channel', 'message'], 476: ['channel', 'message'], 477: ['channel', 'message'], 478: ['channel', 'message'], 481: ['message'], 482: ['channel', 'message'], 483: ['message'], 484: ['message'], 485: ['message'], 491: ['message'], 501: ['message'], 502: ['message']}</em><a class="headerlink" href="#fredirc.Err.ERROR_PARAMETERS" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
-
-<dl class="attribute">
-<dt id="fredirc.Err.FILEERROR">
-<tt class="descname">FILEERROR</tt><em class="property"> = 424</em><a class="headerlink" href="#fredirc.Err.FILEERROR" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
-
-<dl class="attribute">
-<dt id="fredirc.Err.INVITEONLYCHAN">
-<tt class="descname">INVITEONLYCHAN</tt><em class="property"> = 473</em><a class="headerlink" href="#fredirc.Err.INVITEONLYCHAN" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
-
-<dl class="attribute">
-<dt id="fredirc.Err.KEYSET">
-<tt class="descname">KEYSET</tt><em class="property"> = 467</em><a class="headerlink" href="#fredirc.Err.KEYSET" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
-
-<dl class="attribute">
-<dt id="fredirc.Err.NEEDMOREPARAMS">
-<tt class="descname">NEEDMOREPARAMS</tt><em class="property"> = 461</em><a class="headerlink" href="#fredirc.Err.NEEDMOREPARAMS" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
-
-<dl class="attribute">
-<dt id="fredirc.Err.NICKCOLLISION">
-<tt class="descname">NICKCOLLISION</tt><em class="property"> = 436</em><a class="headerlink" href="#fredirc.Err.NICKCOLLISION" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
-
-<dl class="attribute">
-<dt id="fredirc.Err.NICKNAMEINUSE">
-<tt class="descname">NICKNAMEINUSE</tt><em class="property"> = 433</em><a class="headerlink" href="#fredirc.Err.NICKNAMEINUSE" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
-
-<dl class="attribute">
-<dt id="fredirc.Err.NOADMININFO">
-<tt class="descname">NOADMININFO</tt><em class="property"> = 423</em><a class="headerlink" href="#fredirc.Err.NOADMININFO" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
-
-<dl class="attribute">
-<dt id="fredirc.Err.NOCHANMODES">
-<tt class="descname">NOCHANMODES</tt><em class="property"> = 477</em><a class="headerlink" href="#fredirc.Err.NOCHANMODES" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
-
-<dl class="attribute">
-<dt id="fredirc.Err.NOLOGIN">
-<tt class="descname">NOLOGIN</tt><em class="property"> = 444</em><a class="headerlink" href="#fredirc.Err.NOLOGIN" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
-
-<dl class="attribute">
-<dt id="fredirc.Err.NOMOTD">
-<tt class="descname">NOMOTD</tt><em class="property"> = 422</em><a class="headerlink" href="#fredirc.Err.NOMOTD" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
-
-<dl class="attribute">
-<dt id="fredirc.Err.NONICKNAMEGIVEN">
-<tt class="descname">NONICKNAMEGIVEN</tt><em class="property"> = 431</em><a class="headerlink" href="#fredirc.Err.NONICKNAMEGIVEN" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
-
-<dl class="attribute">
-<dt id="fredirc.Err.NOOPERHOST">
-<tt class="descname">NOOPERHOST</tt><em class="property"> = 491</em><a class="headerlink" href="#fredirc.Err.NOOPERHOST" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
-
-<dl class="attribute">
-<dt id="fredirc.Err.NOORIGIN">
-<tt class="descname">NOORIGIN</tt><em class="property"> = 409</em><a class="headerlink" href="#fredirc.Err.NOORIGIN" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
-
-<dl class="attribute">
-<dt id="fredirc.Err.NOPERMFORHOST">
-<tt class="descname">NOPERMFORHOST</tt><em class="property"> = 463</em><a class="headerlink" href="#fredirc.Err.NOPERMFORHOST" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
-
-<dl class="attribute">
-<dt id="fredirc.Err.NOPRIVILEGES">
-<tt class="descname">NOPRIVILEGES</tt><em class="property"> = 481</em><a class="headerlink" href="#fredirc.Err.NOPRIVILEGES" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
-
-<dl class="attribute">
-<dt id="fredirc.Err.NORECIPIENT">
-<tt class="descname">NORECIPIENT</tt><em class="property"> = 411</em><a class="headerlink" href="#fredirc.Err.NORECIPIENT" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
-
-<dl class="attribute">
-<dt id="fredirc.Err.NOSUCHCHANNEL">
-<tt class="descname">NOSUCHCHANNEL</tt><em class="property"> = 403</em><a class="headerlink" href="#fredirc.Err.NOSUCHCHANNEL" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
-
-<dl class="attribute">
 <dt id="fredirc.Err.NOSUCHNICK">
-<tt class="descname">NOSUCHNICK</tt><em class="property"> = 401</em><a class="headerlink" href="#fredirc.Err.NOSUCHNICK" title="Permalink to this definition">¶</a></dt>
+<code class="descname">NOSUCHNICK</code><em class="property"> = 401</em><a class="headerlink" href="#fredirc.Err.NOSUCHNICK" title="Permalink to this definition">¶</a></dt>
 <dd></dd></dl>
 
 <dl class="attribute">
 <dt id="fredirc.Err.NOSUCHSERVER">
-<tt class="descname">NOSUCHSERVER</tt><em class="property"> = 402</em><a class="headerlink" href="#fredirc.Err.NOSUCHSERVER" title="Permalink to this definition">¶</a></dt>
+<code class="descname">NOSUCHSERVER</code><em class="property"> = 402</em><a class="headerlink" href="#fredirc.Err.NOSUCHSERVER" title="Permalink to this definition">¶</a></dt>
 <dd></dd></dl>
 
 <dl class="attribute">
-<dt id="fredirc.Err.NOSUCHSERVICE">
-<tt class="descname">NOSUCHSERVICE</tt><em class="property"> = 408</em><a class="headerlink" href="#fredirc.Err.NOSUCHSERVICE" title="Permalink to this definition">¶</a></dt>
+<dt id="fredirc.Err.NOSUCHCHANNEL">
+<code class="descname">NOSUCHCHANNEL</code><em class="property"> = 403</em><a class="headerlink" href="#fredirc.Err.NOSUCHCHANNEL" title="Permalink to this definition">¶</a></dt>
 <dd></dd></dl>
 
 <dl class="attribute">
-<dt id="fredirc.Err.NOTEXTTOSEND">
-<tt class="descname">NOTEXTTOSEND</tt><em class="property"> = 412</em><a class="headerlink" href="#fredirc.Err.NOTEXTTOSEND" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
-
-<dl class="attribute">
-<dt id="fredirc.Err.NOTONCHANNEL">
-<tt class="descname">NOTONCHANNEL</tt><em class="property"> = 442</em><a class="headerlink" href="#fredirc.Err.NOTONCHANNEL" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
-
-<dl class="attribute">
-<dt id="fredirc.Err.NOTOPLEVEL">
-<tt class="descname">NOTOPLEVEL</tt><em class="property"> = 413</em><a class="headerlink" href="#fredirc.Err.NOTOPLEVEL" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
-
-<dl class="attribute">
-<dt id="fredirc.Err.NOTREGISTERED">
-<tt class="descname">NOTREGISTERED</tt><em class="property"> = 451</em><a class="headerlink" href="#fredirc.Err.NOTREGISTERED" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
-
-<dl class="attribute">
-<dt id="fredirc.Err.PASSWDMISMATCH">
-<tt class="descname">PASSWDMISMATCH</tt><em class="property"> = 464</em><a class="headerlink" href="#fredirc.Err.PASSWDMISMATCH" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
-
-<dl class="attribute">
-<dt id="fredirc.Err.RESTRICTED">
-<tt class="descname">RESTRICTED</tt><em class="property"> = 484</em><a class="headerlink" href="#fredirc.Err.RESTRICTED" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
-
-<dl class="attribute">
-<dt id="fredirc.Err.SUMMONDISABLED">
-<tt class="descname">SUMMONDISABLED</tt><em class="property"> = 445</em><a class="headerlink" href="#fredirc.Err.SUMMONDISABLED" title="Permalink to this definition">¶</a></dt>
+<dt id="fredirc.Err.CANNOTSENDTOCHAN">
+<code class="descname">CANNOTSENDTOCHAN</code><em class="property"> = 404</em><a class="headerlink" href="#fredirc.Err.CANNOTSENDTOCHAN" title="Permalink to this definition">¶</a></dt>
 <dd></dd></dl>
 
 <dl class="attribute">
 <dt id="fredirc.Err.TOOMANYCHANNELS">
-<tt class="descname">TOOMANYCHANNELS</tt><em class="property"> = 405</em><a class="headerlink" href="#fredirc.Err.TOOMANYCHANNELS" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
-
-<dl class="attribute">
-<dt id="fredirc.Err.TOOMANYTARGETS">
-<tt class="descname">TOOMANYTARGETS</tt><em class="property"> = 407</em><a class="headerlink" href="#fredirc.Err.TOOMANYTARGETS" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
-
-<dl class="attribute">
-<dt id="fredirc.Err.UMODEUNKNOWNFLAG">
-<tt class="descname">UMODEUNKNOWNFLAG</tt><em class="property"> = 501</em><a class="headerlink" href="#fredirc.Err.UMODEUNKNOWNFLAG" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
-
-<dl class="attribute">
-<dt id="fredirc.Err.UNAVAILRESOURCE">
-<tt class="descname">UNAVAILRESOURCE</tt><em class="property"> = 437</em><a class="headerlink" href="#fredirc.Err.UNAVAILRESOURCE" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
-
-<dl class="attribute">
-<dt id="fredirc.Err.UNIQOPPRIVSNEEDED">
-<tt class="descname">UNIQOPPRIVSNEEDED</tt><em class="property"> = 485</em><a class="headerlink" href="#fredirc.Err.UNIQOPPRIVSNEEDED" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
-
-<dl class="attribute">
-<dt id="fredirc.Err.UNKNOWNCOMMAND">
-<tt class="descname">UNKNOWNCOMMAND</tt><em class="property"> = 421</em><a class="headerlink" href="#fredirc.Err.UNKNOWNCOMMAND" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
-
-<dl class="attribute">
-<dt id="fredirc.Err.UNKNOWNMODE">
-<tt class="descname">UNKNOWNMODE</tt><em class="property"> = 472</em><a class="headerlink" href="#fredirc.Err.UNKNOWNMODE" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
-
-<dl class="attribute">
-<dt id="fredirc.Err.USERNOTINCHANNEL">
-<tt class="descname">USERNOTINCHANNEL</tt><em class="property"> = 441</em><a class="headerlink" href="#fredirc.Err.USERNOTINCHANNEL" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
-
-<dl class="attribute">
-<dt id="fredirc.Err.USERONCHANNEL">
-<tt class="descname">USERONCHANNEL</tt><em class="property"> = 443</em><a class="headerlink" href="#fredirc.Err.USERONCHANNEL" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
-
-<dl class="attribute">
-<dt id="fredirc.Err.USERSDISABLED">
-<tt class="descname">USERSDISABLED</tt><em class="property"> = 446</em><a class="headerlink" href="#fredirc.Err.USERSDISABLED" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
-
-<dl class="attribute">
-<dt id="fredirc.Err.USERSDONTMATCH">
-<tt class="descname">USERSDONTMATCH</tt><em class="property"> = 502</em><a class="headerlink" href="#fredirc.Err.USERSDONTMATCH" title="Permalink to this definition">¶</a></dt>
+<code class="descname">TOOMANYCHANNELS</code><em class="property"> = 405</em><a class="headerlink" href="#fredirc.Err.TOOMANYCHANNELS" title="Permalink to this definition">¶</a></dt>
 <dd></dd></dl>
 
 <dl class="attribute">
 <dt id="fredirc.Err.WASNOSUCHNICK">
-<tt class="descname">WASNOSUCHNICK</tt><em class="property"> = 406</em><a class="headerlink" href="#fredirc.Err.WASNOSUCHNICK" title="Permalink to this definition">¶</a></dt>
+<code class="descname">WASNOSUCHNICK</code><em class="property"> = 406</em><a class="headerlink" href="#fredirc.Err.WASNOSUCHNICK" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="attribute">
+<dt id="fredirc.Err.TOOMANYTARGETS">
+<code class="descname">TOOMANYTARGETS</code><em class="property"> = 407</em><a class="headerlink" href="#fredirc.Err.TOOMANYTARGETS" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="attribute">
+<dt id="fredirc.Err.NOSUCHSERVICE">
+<code class="descname">NOSUCHSERVICE</code><em class="property"> = 408</em><a class="headerlink" href="#fredirc.Err.NOSUCHSERVICE" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="attribute">
+<dt id="fredirc.Err.NOORIGIN">
+<code class="descname">NOORIGIN</code><em class="property"> = 409</em><a class="headerlink" href="#fredirc.Err.NOORIGIN" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="attribute">
+<dt id="fredirc.Err.NORECIPIENT">
+<code class="descname">NORECIPIENT</code><em class="property"> = 411</em><a class="headerlink" href="#fredirc.Err.NORECIPIENT" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="attribute">
+<dt id="fredirc.Err.NOTEXTTOSEND">
+<code class="descname">NOTEXTTOSEND</code><em class="property"> = 412</em><a class="headerlink" href="#fredirc.Err.NOTEXTTOSEND" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="attribute">
+<dt id="fredirc.Err.NOTOPLEVEL">
+<code class="descname">NOTOPLEVEL</code><em class="property"> = 413</em><a class="headerlink" href="#fredirc.Err.NOTOPLEVEL" title="Permalink to this definition">¶</a></dt>
 <dd></dd></dl>
 
 <dl class="attribute">
 <dt id="fredirc.Err.WILDTOPLEVEL">
-<tt class="descname">WILDTOPLEVEL</tt><em class="property"> = 414</em><a class="headerlink" href="#fredirc.Err.WILDTOPLEVEL" title="Permalink to this definition">¶</a></dt>
+<code class="descname">WILDTOPLEVEL</code><em class="property"> = 414</em><a class="headerlink" href="#fredirc.Err.WILDTOPLEVEL" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="attribute">
+<dt id="fredirc.Err.BADMASK">
+<code class="descname">BADMASK</code><em class="property"> = 415</em><a class="headerlink" href="#fredirc.Err.BADMASK" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="attribute">
+<dt id="fredirc.Err.UNKNOWNCOMMAND">
+<code class="descname">UNKNOWNCOMMAND</code><em class="property"> = 421</em><a class="headerlink" href="#fredirc.Err.UNKNOWNCOMMAND" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="attribute">
+<dt id="fredirc.Err.NOMOTD">
+<code class="descname">NOMOTD</code><em class="property"> = 422</em><a class="headerlink" href="#fredirc.Err.NOMOTD" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="attribute">
+<dt id="fredirc.Err.NOADMININFO">
+<code class="descname">NOADMININFO</code><em class="property"> = 423</em><a class="headerlink" href="#fredirc.Err.NOADMININFO" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="attribute">
+<dt id="fredirc.Err.FILEERROR">
+<code class="descname">FILEERROR</code><em class="property"> = 424</em><a class="headerlink" href="#fredirc.Err.FILEERROR" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="attribute">
+<dt id="fredirc.Err.NONICKNAMEGIVEN">
+<code class="descname">NONICKNAMEGIVEN</code><em class="property"> = 431</em><a class="headerlink" href="#fredirc.Err.NONICKNAMEGIVEN" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="attribute">
+<dt id="fredirc.Err.ERRONEUSNICKNAME">
+<code class="descname">ERRONEUSNICKNAME</code><em class="property"> = 432</em><a class="headerlink" href="#fredirc.Err.ERRONEUSNICKNAME" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="attribute">
+<dt id="fredirc.Err.NICKNAMEINUSE">
+<code class="descname">NICKNAMEINUSE</code><em class="property"> = 433</em><a class="headerlink" href="#fredirc.Err.NICKNAMEINUSE" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="attribute">
+<dt id="fredirc.Err.NICKCOLLISION">
+<code class="descname">NICKCOLLISION</code><em class="property"> = 436</em><a class="headerlink" href="#fredirc.Err.NICKCOLLISION" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="attribute">
+<dt id="fredirc.Err.UNAVAILRESOURCE">
+<code class="descname">UNAVAILRESOURCE</code><em class="property"> = 437</em><a class="headerlink" href="#fredirc.Err.UNAVAILRESOURCE" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="attribute">
+<dt id="fredirc.Err.USERNOTINCHANNEL">
+<code class="descname">USERNOTINCHANNEL</code><em class="property"> = 441</em><a class="headerlink" href="#fredirc.Err.USERNOTINCHANNEL" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="attribute">
+<dt id="fredirc.Err.NOTONCHANNEL">
+<code class="descname">NOTONCHANNEL</code><em class="property"> = 442</em><a class="headerlink" href="#fredirc.Err.NOTONCHANNEL" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="attribute">
+<dt id="fredirc.Err.USERONCHANNEL">
+<code class="descname">USERONCHANNEL</code><em class="property"> = 443</em><a class="headerlink" href="#fredirc.Err.USERONCHANNEL" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="attribute">
+<dt id="fredirc.Err.NOLOGIN">
+<code class="descname">NOLOGIN</code><em class="property"> = 444</em><a class="headerlink" href="#fredirc.Err.NOLOGIN" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="attribute">
+<dt id="fredirc.Err.SUMMONDISABLED">
+<code class="descname">SUMMONDISABLED</code><em class="property"> = 445</em><a class="headerlink" href="#fredirc.Err.SUMMONDISABLED" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="attribute">
+<dt id="fredirc.Err.USERSDISABLED">
+<code class="descname">USERSDISABLED</code><em class="property"> = 446</em><a class="headerlink" href="#fredirc.Err.USERSDISABLED" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="attribute">
+<dt id="fredirc.Err.NOTREGISTERED">
+<code class="descname">NOTREGISTERED</code><em class="property"> = 451</em><a class="headerlink" href="#fredirc.Err.NOTREGISTERED" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="attribute">
+<dt id="fredirc.Err.NEEDMOREPARAMS">
+<code class="descname">NEEDMOREPARAMS</code><em class="property"> = 461</em><a class="headerlink" href="#fredirc.Err.NEEDMOREPARAMS" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="attribute">
+<dt id="fredirc.Err.ALREADYREGISTRED">
+<code class="descname">ALREADYREGISTRED</code><em class="property"> = 462</em><a class="headerlink" href="#fredirc.Err.ALREADYREGISTRED" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="attribute">
+<dt id="fredirc.Err.NOPERMFORHOST">
+<code class="descname">NOPERMFORHOST</code><em class="property"> = 463</em><a class="headerlink" href="#fredirc.Err.NOPERMFORHOST" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="attribute">
+<dt id="fredirc.Err.PASSWDMISMATCH">
+<code class="descname">PASSWDMISMATCH</code><em class="property"> = 464</em><a class="headerlink" href="#fredirc.Err.PASSWDMISMATCH" title="Permalink to this definition">¶</a></dt>
 <dd></dd></dl>
 
 <dl class="attribute">
 <dt id="fredirc.Err.YOUREBANNEDCREEP">
-<tt class="descname">YOUREBANNEDCREEP</tt><em class="property"> = 465</em><a class="headerlink" href="#fredirc.Err.YOUREBANNEDCREEP" title="Permalink to this definition">¶</a></dt>
+<code class="descname">YOUREBANNEDCREEP</code><em class="property"> = 465</em><a class="headerlink" href="#fredirc.Err.YOUREBANNEDCREEP" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="attribute">
+<dt id="fredirc.Err.KEYSET">
+<code class="descname">KEYSET</code><em class="property"> = 467</em><a class="headerlink" href="#fredirc.Err.KEYSET" title="Permalink to this definition">¶</a></dt>
 <dd></dd></dl>
 
 <dl class="attribute">
 <dt id="fredirc.Err.YOUWILLBEBANNED">
-<tt class="descname">YOUWILLBEBANNED</tt><em class="property"> = 466</em><a class="headerlink" href="#fredirc.Err.YOUWILLBEBANNED" title="Permalink to this definition">¶</a></dt>
+<code class="descname">YOUWILLBEBANNED</code><em class="property"> = 466</em><a class="headerlink" href="#fredirc.Err.YOUWILLBEBANNED" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="attribute">
+<dt id="fredirc.Err.CHANNELISFULL">
+<code class="descname">CHANNELISFULL</code><em class="property"> = 471</em><a class="headerlink" href="#fredirc.Err.CHANNELISFULL" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="attribute">
+<dt id="fredirc.Err.UNKNOWNMODE">
+<code class="descname">UNKNOWNMODE</code><em class="property"> = 472</em><a class="headerlink" href="#fredirc.Err.UNKNOWNMODE" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="attribute">
+<dt id="fredirc.Err.INVITEONLYCHAN">
+<code class="descname">INVITEONLYCHAN</code><em class="property"> = 473</em><a class="headerlink" href="#fredirc.Err.INVITEONLYCHAN" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="attribute">
+<dt id="fredirc.Err.BANNEDFROMCHAN">
+<code class="descname">BANNEDFROMCHAN</code><em class="property"> = 474</em><a class="headerlink" href="#fredirc.Err.BANNEDFROMCHAN" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="attribute">
+<dt id="fredirc.Err.BADCHANNELKEY">
+<code class="descname">BADCHANNELKEY</code><em class="property"> = 475</em><a class="headerlink" href="#fredirc.Err.BADCHANNELKEY" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="attribute">
+<dt id="fredirc.Err.BADCHANMASK">
+<code class="descname">BADCHANMASK</code><em class="property"> = 476</em><a class="headerlink" href="#fredirc.Err.BADCHANMASK" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="attribute">
+<dt id="fredirc.Err.NOCHANMODES">
+<code class="descname">NOCHANMODES</code><em class="property"> = 477</em><a class="headerlink" href="#fredirc.Err.NOCHANMODES" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="attribute">
+<dt id="fredirc.Err.BANLISTFULL">
+<code class="descname">BANLISTFULL</code><em class="property"> = 478</em><a class="headerlink" href="#fredirc.Err.BANLISTFULL" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="attribute">
+<dt id="fredirc.Err.NOPRIVILEGES">
+<code class="descname">NOPRIVILEGES</code><em class="property"> = 481</em><a class="headerlink" href="#fredirc.Err.NOPRIVILEGES" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="attribute">
+<dt id="fredirc.Err.CHANOPRIVSNEEDED">
+<code class="descname">CHANOPRIVSNEEDED</code><em class="property"> = 482</em><a class="headerlink" href="#fredirc.Err.CHANOPRIVSNEEDED" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="attribute">
+<dt id="fredirc.Err.CANTKILLSERVER">
+<code class="descname">CANTKILLSERVER</code><em class="property"> = 483</em><a class="headerlink" href="#fredirc.Err.CANTKILLSERVER" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="attribute">
+<dt id="fredirc.Err.RESTRICTED">
+<code class="descname">RESTRICTED</code><em class="property"> = 484</em><a class="headerlink" href="#fredirc.Err.RESTRICTED" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="attribute">
+<dt id="fredirc.Err.UNIQOPPRIVSNEEDED">
+<code class="descname">UNIQOPPRIVSNEEDED</code><em class="property"> = 485</em><a class="headerlink" href="#fredirc.Err.UNIQOPPRIVSNEEDED" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="attribute">
+<dt id="fredirc.Err.NOOPERHOST">
+<code class="descname">NOOPERHOST</code><em class="property"> = 491</em><a class="headerlink" href="#fredirc.Err.NOOPERHOST" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="attribute">
+<dt id="fredirc.Err.UMODEUNKNOWNFLAG">
+<code class="descname">UMODEUNKNOWNFLAG</code><em class="property"> = 501</em><a class="headerlink" href="#fredirc.Err.UMODEUNKNOWNFLAG" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="attribute">
+<dt id="fredirc.Err.USERSDONTMATCH">
+<code class="descname">USERSDONTMATCH</code><em class="property"> = 502</em><a class="headerlink" href="#fredirc.Err.USERSDONTMATCH" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="attribute">
+<dt id="fredirc.Err.ERROR_PARAMETERS">
+<code class="descname">ERROR_PARAMETERS</code><em class="property"> = {401: ['nick', 'message'], 402: ['server_name', 'message'], 403: ['channel_name', 'message'], 404: ['channel_name', 'message'], 405: ['channel_name', 'message'], 406: ['nick', 'message'], 407: ['target', 'message'], 408: ['service_name', 'message'], 409: ['message'], 411: ['message'], 412: ['message'], 413: ['mask', 'message'], 414: ['mask', 'message'], 415: ['mask', 'message'], 421: ['command', 'message'], 422: ['message'], 423: ['server', 'message'], 424: ['message'], 431: ['message'], 432: ['nick', 'message'], 433: ['nick', 'message'], 436: ['nick', 'message'], 437: ['nick', 'message'], 441: ['nick', 'channel', 'message'], 442: ['channel', 'message'], 443: ['user', 'channel', 'message'], 444: ['user', 'channel', 'message'], 445: ['message'], 446: ['message'], 451: ['message'], 461: ['command', 'message'], 462: ['message'], 463: ['message'], 464: ['message'], 465: ['message'], 466: [], 467: ['channel', 'message'], 471: ['channel', 'message'], 472: ['mode', 'message'], 473: ['channel', 'message'], 474: ['channel', 'message'], 475: ['channel', 'message'], 476: ['channel', 'message'], 477: ['channel', 'message'], 478: ['channel', 'message'], 481: ['message'], 482: ['channel', 'message'], 483: ['message'], 484: ['message'], 485: ['message'], 491: ['message'], 501: ['message'], 502: ['message']}</em><a class="headerlink" href="#fredirc.Err.ERROR_PARAMETERS" title="Permalink to this definition">¶</a></dt>
 <dd></dd></dl>
 
 </dd></dl>
@@ -1191,27 +1450,27 @@ to use this class to handle errors.</p>
 <h2>Exception Classes<a class="headerlink" href="#exception-classes" title="Permalink to this headline">¶</a></h2>
 <dl class="class">
 <dt id="fredirc.FredIRCError">
-<em class="property">class </em><tt class="descclassname">fredirc.</tt><tt class="descname">FredIRCError</tt><big>(</big><em>message</em><big>)</big><a class="headerlink" href="#fredirc.FredIRCError" title="Permalink to this definition">¶</a></dt>
+<em class="property">class </em><code class="descclassname">fredirc.</code><code class="descname">FredIRCError</code><span class="sig-paren">(</span><em>message</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/fredirc/errors.html#FredIRCError"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#fredirc.FredIRCError" title="Permalink to this definition">¶</a></dt>
 <dd><p>Base class for FredIRC specific Exceptions. Contains a message with further
 description of the error.</p>
 </dd></dl>
 
 <dl class="class">
 <dt id="fredirc.MessageHandlingError">
-<em class="property">class </em><tt class="descclassname">fredirc.</tt><tt class="descname">MessageHandlingError</tt><big>(</big><em>message</em><big>)</big><a class="headerlink" href="#fredirc.MessageHandlingError" title="Permalink to this definition">¶</a></dt>
+<em class="property">class </em><code class="descclassname">fredirc.</code><code class="descname">MessageHandlingError</code><span class="sig-paren">(</span><em>message</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/fredirc/errors.html#MessageHandlingError"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#fredirc.MessageHandlingError" title="Permalink to this definition">¶</a></dt>
 <dd><p>Indicates that the specified message can not be handled by any of the
 normal message handlers.</p>
 </dd></dl>
 
 <dl class="class">
 <dt id="fredirc.ParserError">
-<em class="property">class </em><tt class="descclassname">fredirc.</tt><tt class="descname">ParserError</tt><big>(</big><em>message</em><big>)</big><a class="headerlink" href="#fredirc.ParserError" title="Permalink to this definition">¶</a></dt>
+<em class="property">class </em><code class="descclassname">fredirc.</code><code class="descname">ParserError</code><span class="sig-paren">(</span><em>message</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/fredirc/errors.html#ParserError"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#fredirc.ParserError" title="Permalink to this definition">¶</a></dt>
 <dd><p>Indicates that a parser rejects its input.</p>
 </dd></dl>
 
 <dl class="class">
 <dt id="fredirc.ConnectionTimeoutError">
-<em class="property">class </em><tt class="descclassname">fredirc.</tt><tt class="descname">ConnectionTimeoutError</tt><big>(</big><em>message</em><big>)</big><a class="headerlink" href="#fredirc.ConnectionTimeoutError" title="Permalink to this definition">¶</a></dt>
+<em class="property">class </em><code class="descclassname">fredirc.</code><code class="descname">ConnectionTimeoutError</code><span class="sig-paren">(</span><em>message</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/fredirc/errors.html#ConnectionTimeoutError"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#fredirc.ConnectionTimeoutError" title="Permalink to this definition">¶</a></dt>
 <dd><p>The connection to a server timed out.</p>
 </dd></dl>
 
@@ -1222,17 +1481,18 @@ normal message handlers.</p>
           </div>
         </div>
       </div>
-      <div class="sphinxsidebar">
+      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
         <div class="sphinxsidebarwrapper">
   <h3><a href="index.html">Table Of Contents</a></h3>
   <ul>
 <li><a class="reference internal" href="#">API Reference</a><ul>
 <li><a class="reference internal" href="#overview">Overview</a></li>
-<li><a class="reference internal" href="#irchandler-class"><tt class="docutils literal"><span class="pre">IRCHandler</span></tt> Class</a></li>
-<li><a class="reference internal" href="#baseirchandler-class"><tt class="docutils literal"><span class="pre">BaseIRCHandler</span></tt> Class</a></li>
-<li><a class="reference internal" href="#ircclient-class"><tt class="docutils literal"><span class="pre">IRCClient</span></tt> Class</a></li>
-<li><a class="reference internal" href="#task-class"><tt class="docutils literal"><span class="pre">Task</span></tt> Class</a></li>
-<li><a class="reference internal" href="#err-class"><tt class="docutils literal"><span class="pre">Err</span></tt> Class</a></li>
+<li><a class="reference internal" href="#irchandler-class"><code class="docutils literal"><span class="pre">IRCHandler</span></code> Class</a></li>
+<li><a class="reference internal" href="#baseirchandler-class"><code class="docutils literal"><span class="pre">BaseIRCHandler</span></code> Class</a></li>
+<li><a class="reference internal" href="#ircclient-class"><code class="docutils literal"><span class="pre">IRCClient</span></code> Class</a></li>
+<li><a class="reference internal" href="#channelinfo-class"><code class="docutils literal"><span class="pre">ChannelInfo</span></code> Class</a></li>
+<li><a class="reference internal" href="#task-class"><code class="docutils literal"><span class="pre">Task</span></code> Class</a></li>
+<li><a class="reference internal" href="#err-class"><code class="docutils literal"><span class="pre">Err</span></code> Class</a></li>
 <li><a class="reference internal" href="#exception-classes">Exception Classes</a></li>
 </ul>
 </li>
@@ -1244,7 +1504,7 @@ normal message handlers.</p>
   <h4>Next topic</h4>
   <p class="topless"><a href="history.html"
                         title="next chapter">Changelog</a></p>
-<div id="searchbox" style="display: none">
+<div id="searchbox" style="display: none" role="search">
   <h3>Quick search</h3>
     <form class="search" action="search.html" method="get">
       <input type="text" name="q" />
@@ -1261,7 +1521,7 @@ normal message handlers.</p>
       </div>
       <div class="clearer"></div>
     </div>
-    <div class="related">
+    <div class="related" role="navigation" aria-label="related navigation">
       <h3>Navigation</h3>
       <ul>
         <li class="right" style="margin-right: 10px">
@@ -1273,12 +1533,12 @@ normal message handlers.</p>
         <li class="right" >
           <a href="guide.html" title="Beginner’s Guide"
              >previous</a> |</li>
-        <li><a href="index.html">FredIRC 0.2.2 documentation</a> &raquo;</li> 
+        <li class="nav-item nav-item-0"><a href="index.html">FredIRC 0.3.0 documentation</a> &raquo;</li> 
       </ul>
     </div>
-    <div class="footer">
+    <div class="footer" role="contentinfo">
         &copy; Copyright 2014-2015, Tobias Marquardt.
-      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 1.2.3.
+      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 1.3.3.
     </div>
   </body>
 </html>
