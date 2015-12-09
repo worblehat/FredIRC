@@ -1,6 +1,7 @@
 
 FredIRC
 =======
+
 FredIRC is an event-driven Python framework for
 `IRC (Internet Relay Chat) <http://en.wikipedia.org/wiki/Internet_Relay_Chat>`_
 bots. It provides a high-level abstraction of
@@ -12,9 +13,7 @@ and convenient utilities related to bot development.
 
 .. warning:: While fully usable, FredIRC is still pre-1.0 software and has no
    backwards compatibility guarantees until the 1.0 release occurs. Please make
-   sure to read the
-   `Changelog <http://worblehat.github.io/FredIRC/history.html>`_ carefully
-   anytime you upgrade!
+   sure to read the changelog carefully anytime you upgrade!
 
 Features
 --------
