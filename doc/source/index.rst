@@ -31,6 +31,8 @@ The source code repository is hosted at `Github <https://github.com/worblehat/Fr
 Wishlist
 ++++++++
 
+* More commands (e.g. KICK, TOPIC,...)
+* Querying user modes for other users
 * Advanced logging of chat histories
 * Allow multiple IRCClient instances and/or to re-run a terminated IRCClient
 * SSL-support

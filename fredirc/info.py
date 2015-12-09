@@ -90,5 +90,3 @@ class _ReadOnlyDict(collections.Mapping):
 
     def values(self):
         return self._data.values()
-
-

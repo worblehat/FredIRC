@@ -1,10 +1,10 @@
 Changelog
 =========
 
-v0.3.0 (2015-12-XX)
+v0.3.0 (2015-12-09)
 -------------------
 
-**Attention**: This release contains some backward-incompatible changes (marked with (!) below).
+**Attention**: This release contains some backward-incompatible changes (marked with **(!)** below).
 
 * ChannelInfo-class with information about a channel like current topic and members
 
@@ -12,14 +12,16 @@ v0.3.0 (2015-12-XX)
 
 * changing the nick name of the client
 * handle nick changes
-* introduced handle_own_(kick|got_op|lost_op|got_voice|lost_voice)-methods
+* handle quits
+* handle changes to operator- and voice-status
+* introduced handle_own_kick()-method
 
-  * (!) when the bot gets kicked, this can only be handled in
+  * **(!)** when the bot gets kicked, this can only be handled in
     handle_own_kick() instead of handle_kick() now
 
 * optional delay for channel messages
 * the delay of a Task can be changed now
-* IRCClient.channels now returns an iterator instead of a tuple
+* **(!)** IRCClient.channels now returns an iterator instead of a tuple
 
 v0.2.2 (2015-04-11)
 -------------------

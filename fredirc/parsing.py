@@ -143,7 +143,7 @@ def parse_channel_mode_params(params):
         tuple of ChannelModeChange
     """
     if not params[0].startswith('+') and not params[0].startswith('-'):
-        raise ParserError(str(params))  #TODO ParserError expects the whole mesasge
+        raise ParserError(str(params))  # TODO ParserError expects the whole message
     mode_changes = []
 
     for param in params:

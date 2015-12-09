@@ -48,6 +48,13 @@ class IRCClient(asyncio.Protocol):
     :py:meth:`.join` but only after
     :py:meth:`handle_own_join()<.IRCHandler.handle_own_join>` was called.
 
+    Channel and nick name arguments to methods that send a command to the server
+    are case insensitive, except for methods that change the clients nick.
+    Channel names returned by the server (e.g. in IRCClient's
+    :py:attr:`.channels`-property)
+    are usually lower case while nick names are the case they were registered by
+    it's user.
+
     Args:
         handler (:py:class:`IRCHandler<fredirc.IRCHandler>`): \
             handler that handles events from this client
@@ -145,7 +152,7 @@ class IRCClient(asyncio.Protocol):
             return
         self._reconnect = True
         time.sleep(delay)
-        asyncio.get_event_loop().stop() # TODO use terminate() here?
+        asyncio.get_event_loop().stop()  # TODO use terminate() here?
 
     def enable_logging(self, enable):
         """ Enable or disable logging.
@@ -483,7 +490,7 @@ class IRCClient(asyncio.Protocol):
             #    then loop 'while self._buffer', look for terminator and remove
             #    the message.
             # 2. Make buffer a byte string, split lines to list, iterate list,
-            #    clear buffer. Con: While handling messageis in loop, buffer
+            #    clear buffer. Con: While handling messages in loop, buffer
             #    stays the same (empty or with all messages that were received)
             # Con of buffer byte string: more difficult to debug
             #
@@ -506,6 +513,8 @@ class IRCClient(asyncio.Protocol):
 
     channel_info = property(_get_channel_info)
     """ Get information about channels.
+
+    To get all channel names use :py:attr:`.channels`.
 
     Returns:
         dict: A read-only(!) mapping of channel names to
