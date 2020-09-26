@@ -17,7 +17,7 @@ Contact
 
 If you have problems, questions or ideas for improvement, please use the Github
 `issue tracker <https://github.com/worblehat/FredIRC/issues>`_
-or contact me directly via tm[at]tobix[dot].eu.
+or contact me directly via tmarq.contact@gmail.com.
 
 Development
 -----------
