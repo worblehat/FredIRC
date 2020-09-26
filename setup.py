@@ -27,7 +27,7 @@ setup(
     name='FredIRC',
     version='0.3.0',
     author='Tobias Marquardt',
-    author_email='tm@tobix.eu',
+    author_email='tmarq.contact@gmail.com',
     description=('An easy-to-use, event driven framework for IRC bots.'),
     packages=['fredirc'],
     install_requires=dependencies,
